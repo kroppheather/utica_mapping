@@ -1,8 +1,12 @@
 library(sf)
 library(raster)
 library(mapview)
+library(mapedit)
 
-dirO <- "E:\\Google Drive\\GIS\\utica\\u_train"
+dirO <- c("E:\\Google Drive\\GIS\\utica\\u_train",
+          "/Users/hkropp/Google Drive/research/projects/")
+
+
 
 #### read in data and visualize ----
 trees <- read.csv("E:/Google Drive/GIS/utica/trees/trees_utica.csv")
@@ -87,3 +91,19 @@ uSubs <- crop(u50a, extent(u50a, samplesy[1],
 
 test <- raster(paste0(dirO, "/train_",3,".tif"))
 plot(test)
+
+
+trainD <- raster("/Users/hkropp/Google Drive/research/projects/utica/u_train/train_1.tif")
+
+plot(trainD)
+test <- projectRaster(trainD, crs="+init=epsg:4326")
+trees <- drawFeatures(mapview(test))
+
+plot(trees$geometry)
+
+treeMask <- rasterize(trees,test, field=1, background=0)
+plot(treeMask)
+
+str(treeMask)
+
+makeMat <- matrix(getValues(treeMask
