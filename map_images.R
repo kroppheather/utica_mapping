@@ -96,11 +96,24 @@ writeRaster(treeMask, paste0(dirM,"/trees/tree_mask_",trainNum,".tif"),
 
 buildings <- drawFeatures(mapview(trainDgc, col=grey(1:100/100)))
 
-treeMask <- rasterize(trees,test, field=1, background=0)
+buildingMask <- rasterize(buildings,test, field=1, background=0)
 
-plot(treeMask)
+plot(buildingMask)
 
 
-writeRaster(treeMask, paste0(dirM,"/trees/tree_mask_",trainNum,".tif"),
+writeRaster(buildingMask, paste0(dirM,"/building/building_mask_",trainNum,".tif"),
             format="GTiff")
+
+#### Step 4 make buildings mask   ##
+
+pave <- drawFeatures(mapview(trainDgc, col=grey(1:100/100)))
+
+paveMask <- rasterize(pave,test, field=1, background=0)
+
+plot(paveMask)
+
+
+writeRaster(paveMask, paste0(dirM,"/pavement/pavement_mask_",trainNum,".tif"),
+            format="GTiff")
+
 
