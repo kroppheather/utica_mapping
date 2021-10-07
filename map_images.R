@@ -4,14 +4,14 @@ library(mapview)
 library(mapedit)
 
 #directory of training images
-dirO <- c("/Users/hkropp/Google Drive/research/projects/utica/u_train")
+dirO <- c("/Users/hkropp/Google Drive/research/projects/utica/50s_train")
 #directory for masks
 dirM <- c("/Users/hkropp/Google Drive/research/projects/utica/mask")
 
 
 #### read in data and visualize ----
 #read in data from 1950s
-r50s <- raster("E:/Google Drive/GIS/utica/MyProject4/A550500171317_ref.tif")
+r50s <- raster("/Users/hkropp/Google Drive/research/projects/utica/A550500171317_ref.tif")
 r50s@crs
 plot(r50s, col=gray(1:100/100))
 
@@ -27,7 +27,7 @@ u50a <- crop(r50s,Ucenter2)
 plot(u50a, col=gray(1:100/100))
 #visualize the map
 plot(u50s, col=gray(1:100/100))
-mapview(u50a, col=gray(1:100/100))
+
 
 
 #### subset raster for training ----
@@ -57,9 +57,9 @@ samplesy <- sample(1:(u50a@nrows-257), nSamp)
 #  writeRaster(crop(u50a, extent(u50a, samplesy[i], 
 #                                samplesy[i] +256, 
 #                                samplesx[i], 
-#                                samplesx[i]+256)), 
-#              paste0(dirO, "\\train_",i,".tif"),
-#             format="GTiff" )
+#                               samplesx[i]+256)), 
+#             paste0(dirO, "/train_",i,".tif"),
+#            format="GTiff" )
   
 
 #}
@@ -73,10 +73,12 @@ samplesy <- sample(1:(u50a@nrows-257), nSamp)
 trainNum <- 1
 
 imgN <- raster(paste0(dirO, "/train_",trainNum,".tif"))
-plot(test)
+plot(test, col=grey(1:100/100))
 #reproject to WGS 84 for mapedit
-trainDgc <- projectRaster(trainD, crs="+init=epsg:4326")
+trainDgc <- projectRaster(trainDgc, crs="+init=epsg:4326")
 
+writeRaster(trainDgc, paste0(dirM,"/u_train_reproject/wgs_train_",trainNum,".tif"),
+            format="GTiff")
 
 
 #### Step 2 make trees mask   ##
