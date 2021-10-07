@@ -3,49 +3,40 @@ library(raster)
 library(mapview)
 library(mapedit)
 
-dirO <- c("E:\\Google Drive\\GIS\\utica\\u_train",
-          "/Users/hkropp/Google Drive/research/projects/")
-
+#directory of training images
+dirO <- c("/Users/hkropp/Google Drive/research/projects/utica/u_train")
+#directory for masks
+dirM <- c("/Users/hkropp/Google Drive/research/projects/utica/mask")
 
 
 #### read in data and visualize ----
-trees <- read.csv("E:/Google Drive/GIS/utica/trees/trees_utica.csv")
-treeS <- st_as_sf(trees, coords=c("Longitude","Latitude"),
-                  crs=4326)
-
-
+#read in data from 1950s
 r50s <- raster("E:/Google Drive/GIS/utica/MyProject4/A550500171317_ref.tif")
 r50s@crs
 plot(r50s, col=gray(1:100/100))
+
+#look at a few areas near the city center to start
 Ucenter <- extent(-8377200,-8373500,
                   5326000,5328800)
 
 Ucenter2 <- extent(-8382000,-8373500,
                   5324000,5329000)
-
+#start with working with a small area in the center of
+#utica 
 u50a <- crop(r50s,Ucenter2)
 plot(u50a, col=gray(1:100/100))
-
+#visualize the map
 plot(u50s, col=gray(1:100/100))
-plot(treeP$geometry, col="forestgreen", add=TRUE)
-
 mapview(u50a, col=gray(1:100/100))
-
-
-
-
-
 
 
 #### subset raster for training ----
 u50a
 
-
 # subset size
 # 128 x 128 pixels
+#for training masks
 #convert to matrix
-
-
 
 test <- imgV[1:128,1:128]
 
@@ -55,55 +46,61 @@ samplesx <- sample(1:(u50a@ncols-257), nSamp)
 set.seed(12)
 samplesy <- sample(1:(u50a@nrows-257), nSamp)
 
-uSubs <- crop(u50a, extent(u50a, samplesy[1], 
-                           samplesy[1] +255, 
-                           samplesx[1], 
-                           samplesx[1]+255))
 
-uSubs
-plot(uSubs)
-writeRaster(uSubs, paste0(dirO,"test.tif"),
-            format="GTiff")
+#save data, commented out since does not need to run every time
 
-which(is.na(getValues(uSubs)))
 
-for(i in 1:nSamp){
+
+#for(i in 1:nSamp){
   
   
-  writeRaster(crop(u50a, extent(u50a, samplesy[i], 
-                                samplesy[i] +256, 
-                                samplesx[i], 
-                                samplesx[i]+256)), 
-              paste0(dirO, "\\train_",i,".tif"),
-             format="GTiff" )
+#  writeRaster(crop(u50a, extent(u50a, samplesy[i], 
+#                                samplesy[i] +256, 
+#                                samplesx[i], 
+#                                samplesx[i]+256)), 
+#              paste0(dirO, "\\train_",i,".tif"),
+#             format="GTiff" )
   
 
-}
+#}
+
+#### make masks for training ----
 
 
-plot(uSubs[[10]], col=gray(1:100/100))
+#### Step 1: read in image   ##
 
-uSubs <- crop(u50a, extent(u50a, samplesy[1], 
-                                samplesy[1] +256, 
-                                samplesx[1], 
-                                samplesx[1]+256))
+#give training image number
+trainNum <- 1
 
-
-test <- raster(paste0(dirO, "/train_",3,".tif"))
+imgN <- raster(paste0(dirO, "/train_",trainNum,".tif"))
 plot(test)
+#reproject to WGS 84 for mapedit
+trainDgc <- projectRaster(trainD, crs="+init=epsg:4326")
 
 
-trainD <- raster("/Users/hkropp/Google Drive/research/projects/utica/u_train/train_1.tif")
 
-plot(trainD)
-test <- projectRaster(trainD, crs="+init=epsg:4326")
-trees <- drawFeatures(mapview(test))
+#### Step 2 make trees mask   ##
 
-plot(trees$geometry)
+trees <- drawFeatures(mapview(trainDgc, col=grey(1:100/100)))
 
 treeMask <- rasterize(trees,test, field=1, background=0)
+
 plot(treeMask)
 
-str(treeMask)
 
-makeMat <- matrix(getValues(treeMask
+writeRaster(treeMask, paste0(dirM,"/trees/tree_mask_",trainNum,".tif"),
+            format="GTiff")
+
+
+#### Step 3 make buildings mask   ##
+
+buildings <- drawFeatures(mapview(trainDgc, col=grey(1:100/100)))
+
+treeMask <- rasterize(trees,test, field=1, background=0)
+
+plot(treeMask)
+
+
+writeRaster(treeMask, paste0(dirM,"/trees/tree_mask_",trainNum,".tif"),
+            format="GTiff")
+
