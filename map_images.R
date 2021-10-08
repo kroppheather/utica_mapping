@@ -70,7 +70,7 @@ samplesy <- sample(1:(u50a@nrows-257), nSamp)
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 9
+trainNum <- 10
 
 imgN <- raster(paste0(dirO, "/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
