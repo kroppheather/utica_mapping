@@ -70,12 +70,12 @@ samplesy <- sample(1:(u50a@nrows-257), nSamp)
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 1
+trainNum <- 2
 
 imgN <- raster(paste0(dirO, "/train_",trainNum,".tif"))
-plot(test, col=grey(1:100/100))
+plot(imgN, col=grey(1:100/100))
 #reproject to WGS 84 for mapedit
-trainDgc <- projectRaster(trainDgc, crs="+init=epsg:4326")
+trainDgc <- projectRaster(imgN, crs="+init=epsg:4326")
 
 writeRaster(trainDgc, paste0(dirM,"/u_train_reproject/wgs_train_",trainNum,".tif"),
             format="GTiff")
@@ -85,7 +85,7 @@ writeRaster(trainDgc, paste0(dirM,"/u_train_reproject/wgs_train_",trainNum,".tif
 
 trees <- drawFeatures(mapview(trainDgc, col=grey(1:100/100)))
 
-treeMask <- rasterize(trees,test, field=1, background=0)
+treeMask <- rasterize(trees,trainDgc, field=1, background=0)
 
 plot(treeMask)
 
@@ -98,7 +98,7 @@ writeRaster(treeMask, paste0(dirM,"/trees/tree_mask_",trainNum,".tif"),
 
 buildings <- drawFeatures(mapview(trainDgc, col=grey(1:100/100)))
 
-buildingMask <- rasterize(buildings,test, field=1, background=0)
+buildingMask <- rasterize(buildings,trainDgc, field=1, background=0)
 
 plot(buildingMask)
 
@@ -110,7 +110,7 @@ writeRaster(buildingMask, paste0(dirM,"/building/building_mask_",trainNum,".tif"
 
 pave <- drawFeatures(mapview(trainDgc, col=grey(1:100/100)))
 
-paveMask <- rasterize(pave,test, field=1, background=0)
+paveMask <- rasterize(pave,trainDgc, field=1, background=0)
 
 plot(paveMask)
 
