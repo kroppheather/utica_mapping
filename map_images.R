@@ -70,7 +70,7 @@ samplesy <- sample(1:(u50a@nrows-257), nSamp)
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 12
+trainNum <- 13
 
 imgN <- raster(paste0(dirO, "/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
@@ -80,7 +80,13 @@ trainDgc <- projectRaster(imgN, crs="+init=epsg:4326")
 writeRaster(trainDgc, paste0(dirM,"/u_train_reproject/wgs_train_",trainNum,".tif"),
             format="GTiff")
 
-
+# use zoom 18-21
+# avoid features that are not clearly identifiable
+# do not label shadows as any feature
+# only count immediate coverage of the surface. For example
+# a tree canopy clearly extending over the street gets
+# counted as a tree not street since it is the object that is
+# directly observed.
 #### Step 2 make trees mask   ##
 
 trees <- drawFeatures(mapview(trainDgc, col=grey(1:100/100)))
