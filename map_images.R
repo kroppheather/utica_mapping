@@ -70,16 +70,20 @@ samplesy <- sample(1:(u50a@nrows-257), nSamp)
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 16
+trainNum <- 17
 
 imgN <- raster(paste0(dirO, "/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
+
+imgN@ncols
+imgN@nrows
 #reproject to WGS 84 for mapedit
 trainDgc <- projectRaster(imgN, crs="+init=epsg:4326")
 
 writeRaster(trainDgc, paste0(dirM,"/u_train_reproject/wgs_train_",trainNum,".tif"),
             format="GTiff")
-
+trainDgc@nrows
+trainDgc@ncols
 # use zoom 18-21
 # avoid features that are not clearly identifiable
 # do not label shadows as any feature
@@ -112,6 +116,10 @@ plot(buildingMask)
 writeRaster(buildingMask, paste0(dirM,"/building/building_mask_",trainNum,".tif"),
             format="GTiff")
 
+buildingMask@ncols
+buildingMask@nrows
+
+range(getValues(buildingMask))
 #### Step 4 make buildings mask   ##
 
 pave <- drawFeatures(mapview(trainDgc, col=grey(1:100/100)))
