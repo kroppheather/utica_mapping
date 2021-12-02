@@ -4,14 +4,14 @@ library(mapview)
 library(mapedit)
 
 #directory of training images
-dirO <- c("/Users/hkropp/Google Drive/research/projects/utica/50s_train")
+dirO <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica")
 #directory for masks
-dirM <- c("/Users/hkropp/Google Drive/research/projects/utica/mask")
+dirM <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/mask")
 
 
 #### read in data and visualize ----
 #read in data from 1950s
-r50s <- raster("/Users/hkropp/Google Drive/research/projects/utica/A550500171317_ref.tif")
+r50s <- raster("/Volumes/GoogleDrive/My Drive/research/projects/utica/A550500171317_ref.tif")
 r50s@crs
 plot(r50s, col=gray(1:100/100))
 
@@ -25,8 +25,7 @@ Ucenter2 <- extent(-8382000,-8373500,
 #utica 
 u50a <- crop(r50s,Ucenter2)
 plot(u50a, col=gray(1:100/100))
-#visualize the map
-plot(u50s, col=gray(1:100/100))
+
 
 
 
@@ -47,22 +46,28 @@ set.seed(12)
 samplesy <- sample(1:(u50a@nrows-257), nSamp)
 
 
+#additional samples: 20-40
+nSamp2 <- 40
+set.seed(42)
+samplesx2 <- sample(1:(u50a@ncols-257), nSamp2)[21:40]
+set.seed(12)
+samplesy2 <- sample(1:(u50a@nrows-257), nSamp2)[21:40]
 #save data, commented out since does not need to run every time
 
 
 
-#for(i in 1:nSamp){
+for(i in 1:20){
   
   
-#  writeRaster(crop(u50a, extent(u50a, samplesy[i], 
-#                                samplesy[i] +256, 
-#                                samplesx[i], 
-#                               samplesx[i]+256)), 
-#             paste0(dirO, "/train_",i,".tif"),
-#            format="GTiff" )
+  writeRaster(crop(u50a, extent(u50a, samplesy2[i], 
+                               samplesy2[i] +256, 
+                                samplesx2[i], 
+                              samplesx2[i]+256)), 
+            paste0(dirO, "/50s_train/train_",i+20,".tif"),
+            format="GTiff" ,overwrite=TRUE)
   
 
-#}
+}
 
 #### make masks for training ----
 
@@ -70,9 +75,9 @@ samplesy <- sample(1:(u50a@nrows-257), nSamp)
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 20
+trainNum <- 21
 
-imgN <- raster(paste0(dirO, "/train_",trainNum,".tif"))
+imgN <- raster(paste0(dirO, "/50s_train/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
 
 imgN@ncols
