@@ -75,7 +75,7 @@ for(i in 1:20){
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 34
+trainNum <- 35
 
 imgN <- raster(paste0(dirO, "/50s_train/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
