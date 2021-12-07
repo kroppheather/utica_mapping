@@ -56,18 +56,18 @@ samplesy2 <- sample(1:(u50a@nrows-257), nSamp2)[21:40]
 
 
 
-for(i in 1:20){
-  
-  
-  writeRaster(crop(u50a, extent(u50a, samplesy2[i], 
-                               samplesy2[i] +256, 
-                                samplesx2[i], 
-                              samplesx2[i]+256)), 
-            paste0(dirO, "/50s_train/train_",i+20,".tif"),
-            format="GTiff" ,overwrite=TRUE)
-  
-
-}
+# for(i in 1:20){
+#   
+#   
+#   writeRaster(crop(u50a, extent(u50a, samplesy2[i], 
+#                                samplesy2[i] +256, 
+#                                 samplesx2[i], 
+#                               samplesx2[i]+256)), 
+#             paste0(dirO, "/50s_train/train_",i+20,".tif"),
+#             format="GTiff" ,overwrite=TRUE)
+#   
+# 
+# }
 
 #### make masks for training ----
 
@@ -75,7 +75,7 @@ for(i in 1:20){
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 37
+trainNum <- 38
 
 imgN <- raster(paste0(dirO, "/50s_train/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
@@ -99,10 +99,12 @@ trainDgc@ncols
 #### Step 2 make trees mask   ##
 
 trees <- drawFeatures(mapview(trainDgc, col=grey(1:100/100)))
-
+trees2 <- drawFeatures(mapview(trainDgc, col=grey(1:100/100))+
+                         mapview(trees, col.regions="seagreen") )
 treeMask <- rasterize(trees,trainDgc, field=1, background=0)
-
+treeMask2 <- rasterize(trees2,trainDgc, field=1, background=0)
 plot(treeMask)
+treeMask <- treeMask + treeMask2
 
 
 writeRaster(treeMask, paste0(dirM,"/trees/tree_mask_",trainNum,".tif"),
