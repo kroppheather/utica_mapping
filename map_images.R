@@ -27,7 +27,7 @@ u50a <- crop(r50s,Ucenter2)
 plot(u50a, col=gray(1:100/100))
 
 
-
+u50a@nrows*u50a@ncols/(256*256)
 
 #### subset raster for training ----
 u50a
@@ -54,20 +54,27 @@ set.seed(12)
 samplesy2 <- sample(1:(u50a@nrows-257), nSamp2)[21:40]
 #save data, commented out since does not need to run every time
 
-
-
-# for(i in 1:20){
-#   
-#   
-#   writeRaster(crop(u50a, extent(u50a, samplesy2[i], 
-#                                samplesy2[i] +256, 
-#                                 samplesx2[i], 
-#                               samplesx2[i]+256)), 
-#             paste0(dirO, "/50s_train/train_",i+20,".tif"),
-#             format="GTiff" ,overwrite=TRUE)
-#   
+#additional samples: 40-60
+nSamp3 <- 60
+set.seed(42)
+samplesx3 <- sample(1:(u50a@ncols-257), nSamp3)[41:60]
+set.seed(12)
+samplesy3 <- sample(1:(u50a@nrows-257), nSamp3)[41:60]
+#save data, commented out since does not need to run every time
 # 
-# }
+# 
+#  for(i in 1:20){
+#    
+#    
+#    writeRaster(crop(u50a, extent(u50a, samplesy3[i], 
+#                                 samplesy3[i] +256, 
+#                                  samplesx3[i], 
+#                                samplesx3[i]+256)), 
+#              paste0(dirO, "/50s_train/train_",i+40,".tif"),
+#              format="GTiff" ,overwrite=TRUE)
+#   
+#  
+#  }
 
 #### make masks for training ----
 
@@ -75,7 +82,7 @@ samplesy2 <- sample(1:(u50a@nrows-257), nSamp2)[21:40]
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 40
+trainNum <- 41
 
 imgN <- raster(paste0(dirO, "/50s_train/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
