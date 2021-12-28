@@ -162,7 +162,7 @@ writeRaster(paveMask, paste0(dirM,"/pavement/pavement_mask_",trainNum,".tif"),
 #### Step 1: read in image   ##
 
 #give valid image number
-validNum <- 17
+validNum <- 18
 
 imgN <- raster(paste0(dirO, "/50s_valid/valid_",validNum,".tif"))
 plot(imgN, col=grey(1:100/100))
