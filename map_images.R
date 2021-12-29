@@ -2,6 +2,7 @@ library(sf)
 library(raster)
 library(mapview)
 library(mapedit)
+library(SpaDES)
 
 #directory of training images
 dirO <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica")
@@ -12,6 +13,8 @@ dirMV <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/mask_50s_valid
 
 #### read in data and visualize ----
 #read in data from 1950s
+#georeferenced in ArcPro to the ESRI world imagery basemap
+# crs is in web mercator since that is automatic base map CRS.
 r50s <- raster("/Volumes/GoogleDrive/My Drive/research/projects/utica/A550500171317_ref.tif")
 r50s@crs
 plot(r50s, col=gray(1:100/100))
@@ -228,3 +231,74 @@ plot(paveMask)
 writeRaster(paveMask, paste0(dirMV,"/pavement/pavement_mask_",validNum,".tif"),
             format="GTiff")
 
+
+###### Prep for prediction ----
+
+#reproject to be in WGS 1984 so matches all mask images
+
+u50rp <- projectRaster(u50a,  crs="+init=epsg:4326")
+plot(u50rp, col=gray(1:100/100))
+
+cols50 <- floor(u50a@ncols/256) 
+rows50 <- floor(u50a@nrows/256) 
+
+colsSeq <- seq(1,cols50*256, by=256)
+rowsSeq <- seq(1,rows50*256, by=256)
+subDF <- data.frame(cols=rep(colsSeq,times=length(rowsSeq)),
+                    rows=rep(rowsSeq,each=length(colsSeq)))
+#subdivide raster into 256 x 256
+sub50s <- list()
+#this will shave off extra off south and west 
+for(i in 1:nrow(subDF)){
+  sub50s[[i]] <- crop(u50a, extent(u50a, subDF$cols[i], 
+                                   subDF$cols[i]+255,
+                                   subDF$rows[i], 
+                                   subDF$rows[i]+255))
+                                     
+}
+  
+plot(sub50s[[367]])
+
+u50rp@ncols
+
+256*29
+
+u50rp[3500:3871,1]
+
+ extent(u50rp, subDF$cols[395], 
+                   subDF$cols[395]+255,
+                   subDF$rows[395], 
+                   subDF$rows[395]+255)
+ 
+ymin()
+
+
+plot(test)
+u50rp@nrows
+plot(u50rp)
+
+str(u50rp)
+
+test <- raster(nrows=u50rp@nrows, ncols=u50rp@ncols,
+               xmn=1, xmx=u50rp@ncols, ymn=1, ymx=u50rp@nrows,
+               vals=getValues(u50rp))
+plot(test,col=gray(1:100/100))
+
+
+tsub50s <- list()
+#this will shave off extra off south and west 
+for(i in 1:nrow(subDF)){
+  tsub50s[[i]] <- crop(test, extent(subDF$cols[i], 
+                                    subDF$cols[i]+255,
+                                     subDF$rows[i],
+                                   subDF$rows[i]+255))
+  
+}
+
+plot(tsub50s[[435]], col=gray(1:100/100))
+
+testM <- merge(tsub50s[[1]],tsub50s[[2]])
+for(i in 3:nrow(subDF)){
+  testM <- merge(testM, tsub50s[[i]])
+}  
+plot(testM, col=gray(1:100/100))
