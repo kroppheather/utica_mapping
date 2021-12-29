@@ -302,3 +302,5 @@ for(i in 3:nrow(subDF)){
   testM <- merge(testM, tsub50s[[i]])
 }  
 plot(testM, col=gray(1:100/100))
+
+mapview(testM)
