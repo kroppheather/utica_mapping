@@ -239,8 +239,8 @@ writeRaster(paveMask, paste0(dirMV,"/pavement/pavement_mask_",validNum,".tif"),
 u50rp <- projectRaster(u50a,  crs="+init=epsg:4326")
 plot(u50rp, col=gray(1:100/100))
 
-cols50 <- floor(u50a@ncols/256) 
-rows50 <- floor(u50a@nrows/256) 
+cols50 <- floor(u50rp@ncols/256) 
+rows50 <- floor(u50rp@nrows/256) 
 
 colsSeq <- seq(1,cols50*256, by=256)
 rowsSeq <- seq(1,rows50*256, by=256)
@@ -248,59 +248,34 @@ subDF <- data.frame(cols=rep(colsSeq,times=length(rowsSeq)),
                     rows=rep(rowsSeq,each=length(colsSeq)))
 #subdivide raster into 256 x 256
 sub50s <- list()
+rowcount <- numeric()
+colcount <- numeric()
 #this will shave off extra off south and west 
 for(i in 1:nrow(subDF)){
-  sub50s[[i]] <- crop(u50a, extent(u50a, subDF$cols[i], 
-                                   subDF$cols[i]+255,
-                                   subDF$rows[i], 
-                                   subDF$rows[i]+255))
-                                     
+  sub50s[[i]] <- crop(u50rp, extent(u50rp,  subDF$rows[i], 
+                                   subDF$rows[i]+255,
+                                   subDF$cols[i], 
+                                   subDF$cols[i]+255))
+  rowcount[i] <- sub50s[[i]]@nrows
+  colcount[i] <- sub50s[[i]]@ncols
 }
-  
-plot(sub50s[[367]])
+sub50s[[1]]@ncols
 
-u50rp@ncols
+m <- do.call(merge, sub50s)
+plot(m, col=gray(1:100/100))
+#save
 
-256*29
-
-u50rp[3500:3871,1]
-
- extent(u50rp, subDF$cols[395], 
-                   subDF$cols[395]+255,
-                   subDF$rows[395], 
-                   subDF$rows[395]+255)
- 
-ymin()
-
-
-plot(test)
-u50rp@nrows
-plot(u50rp)
-
-str(u50rp)
-
-test <- raster(nrows=u50rp@nrows, ncols=u50rp@ncols,
-               xmn=1, xmx=u50rp@ncols, ymn=1, ymx=u50rp@nrows,
-               vals=getValues(u50rp))
-plot(test,col=gray(1:100/100))
-
-
-tsub50s <- list()
-#this will shave off extra off south and west 
 for(i in 1:nrow(subDF)){
-  tsub50s[[i]] <- crop(test, extent(subDF$cols[i], 
-                                    subDF$cols[i]+255,
-                                     subDF$rows[i],
-                                   subDF$rows[i]+255))
-  
+  writeRaster(sub50s[[i]],
+             paste0(dirO,"/predict50/predict_",i,".tif"),
+             format="GTiff")
 }
 
-plot(tsub50s[[435]], col=gray(1:100/100))
-
-testM <- merge(tsub50s[[1]],tsub50s[[2]])
-for(i in 3:nrow(subDF)){
-  testM <- merge(testM, tsub50s[[i]])
-}  
-plot(testM, col=gray(1:100/100))
-
-mapview(testM)
+testp <- list()
+rowcountp <- numeric()
+colcountp <- numeric()
+for(i in 1:nrow(subDF)){
+testp[[i]] <- raster(paste0(dirO,"/predict50/predict_",i,".tif"))
+rowcountp[i] <- testp[[i]]@nrows
+colcountp[i] <- testp[[i]]@ncols
+}
