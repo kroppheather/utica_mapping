@@ -279,3 +279,27 @@ testp[[i]] <- raster(paste0(dirO,"/predict50/predict_",i,".tif"))
 rowcountp[i] <- testp[[i]]@nrows
 colcountp[i] <- testp[[i]]@ncols
 }
+
+
+
+#read in test
+testOut <- raster("/Volumes/GoogleDrive/My Drive/research/projects/utica/50s_valid_out/valid_out.tif")
+
+plot(testOut)
+
+
+treesPredict <- list()
+for(i in 1:20){
+  treesPredict[[i]] <- raster(paste0("/Volumes/GoogleDrive/My Drive/research/projects/utica/50s_valid_out/tree/tree_predict_",i,".tif"))
+  
+}
+
+plot(u50rp, col=gray(1:100/100))
+plot(treesPredict[[1]], add=TRUE)
+plot(treesPredict[[2]], add=TRUE)
+plot(treesPredict[[3]], add=TRUE)
+plot(treesPredict[[4]], add=TRUE)
+plot(treesPredict[[5]], add=TRUE)
+
+mapview(u50rp, col=gray(1:100/100))+
+  mapview(treesPredict[[1]])
