@@ -69,7 +69,7 @@ samplesx4 <- sample(1:(u50a@ncols-257), nSamp4)[61:80]
 set.seed(12)
 samplesy4 <- sample(1:(u50a@nrows-257), nSamp4)[61:80]
 
-save data, commented out since does not need to run every time
+# save data, commented out since does not need to run every time
  
  
   # for(i in 1:20){
