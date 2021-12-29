@@ -2,6 +2,7 @@ library(sf)
 library(raster)
 library(mapview)
 library(mapedit)
+library(SpaDES)
 
 #directory of training images
 dirO <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica")
@@ -12,6 +13,8 @@ dirMV <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/mask_50s_valid
 
 #### read in data and visualize ----
 #read in data from 1950s
+#georeferenced in ArcPro to the ESRI world imagery basemap
+# crs is in web mercator since that is automatic base map CRS.
 r50s <- raster("/Volumes/GoogleDrive/My Drive/research/projects/utica/A550500171317_ref.tif")
 r50s@crs
 plot(r50s, col=gray(1:100/100))
@@ -228,3 +231,51 @@ plot(paveMask)
 writeRaster(paveMask, paste0(dirMV,"/pavement/pavement_mask_",validNum,".tif"),
             format="GTiff")
 
+
+###### Prep for prediction ----
+
+#reproject to be in WGS 1984 so matches all mask images
+
+u50rp <- projectRaster(u50a,  crs="+init=epsg:4326")
+plot(u50rp, col=gray(1:100/100))
+
+cols50 <- floor(u50rp@ncols/256) 
+rows50 <- floor(u50rp@nrows/256) 
+
+colsSeq <- seq(1,cols50*256, by=256)
+rowsSeq <- seq(1,rows50*256, by=256)
+subDF <- data.frame(cols=rep(colsSeq,times=length(rowsSeq)),
+                    rows=rep(rowsSeq,each=length(colsSeq)))
+#subdivide raster into 256 x 256
+sub50s <- list()
+rowcount <- numeric()
+colcount <- numeric()
+#this will shave off extra off south and west 
+for(i in 1:nrow(subDF)){
+  sub50s[[i]] <- crop(u50rp, extent(u50rp,  subDF$rows[i], 
+                                   subDF$rows[i]+255,
+                                   subDF$cols[i], 
+                                   subDF$cols[i]+255))
+  rowcount[i] <- sub50s[[i]]@nrows
+  colcount[i] <- sub50s[[i]]@ncols
+}
+sub50s[[1]]@ncols
+
+m <- do.call(merge, sub50s)
+plot(m, col=gray(1:100/100))
+#save
+
+for(i in 1:nrow(subDF)){
+  writeRaster(sub50s[[i]],
+             paste0(dirO,"/predict50/predict_",i,".tif"),
+             format="GTiff")
+}
+
+testp <- list()
+rowcountp <- numeric()
+colcountp <- numeric()
+for(i in 1:nrow(subDF)){
+testp[[i]] <- raster(paste0(dirO,"/predict50/predict_",i,".tif"))
+rowcountp[i] <- testp[[i]]@nrows
+colcountp[i] <- testp[[i]]@ncols
+}
