@@ -9,7 +9,7 @@ dirO <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica")
 #directory for masks
 dirM <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/80s_mask")
 
-dirMV <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/mask_50s_valid")
+dirMV <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/mask_80s_valid")
 
 Ucenter2 <- extent(-8382000,-8373500,
                    5324000,5329000)
@@ -35,3 +35,125 @@ plot(u80a, col=gray(1:100/100))
 u80rp <- projectRaster(u80a,  crs="+init=epsg:4326")
 plot(u80rp, col=gray(1:100/100))
 mapview(u80rp)
+u80rp@crs
+
+
+# random samples
+
+#additional samples: 1-60
+nSamp1 <- 60
+set.seed(342)
+samplesx <- sample(1:(u80rp@ncols-257), nSamp1)[1:60]
+set.seed(142)
+samplesy <- sample(1:(u80rp@nrows-257), nSamp1)[1:60]
+
+#validation samples: 60-80
+nSamp2 <- 80
+set.seed(342)
+samplesx2 <- sample(1:(u80rp@ncols-257), nSamp2)[61:80]
+set.seed(142)
+samplesy2 <- sample(1:(u80rp@nrows-257), nSamp2)[61:80]
+
+
+test <- crop(u80rp, extent(u80rp, samplesy[1], 
+                samplesy[1] + 255,                       
+                samplesx[1], 
+                   samplesx[1]+255))
+plot(test)
+test@crs
+mapview(test)
+testRP <- projectRaster(test,  crs="+init=epsg:4326")
+mapview(testRP)
+testRP@ncols
+testRP@nrows
+# save data, commented out since does not need to run every time
+
+# for(i in 1:60){
+#   
+#   
+#   writeRaster(crop(u80rp, extent(u80rp, samplesy[i], 
+#                                 samplesy[i] +255, 
+#                                 samplesx[i], 
+#                                 samplesx[i]+255)), 
+#               paste0(dirO, "/80s_train/train_",i,".tif"),
+#               format="GTiff" ,overwrite=TRUE)
+#   
+#   
+# }
+ # for(i in 1:20){
+ #   
+ #   
+ #   writeRaster(crop(u80rp, extent(u80rp, samplesy2[i], 
+ #                                samplesy2[i] +255, 
+ #                                 samplesx2[i], 
+ #                               samplesx2[i]+255)), 
+ #             paste0(dirO, "/80s_valid/valid_",i,".tif"),
+ #             format="GTiff" ,overwrite=TRUE)
+ #  
+ # 
+ # }
+
+#### Step 1: read in image   ##
+
+#give training image number
+trainNum <- 1
+
+imgN <- raster(paste0(dirO, "/80s_train/train_",trainNum,".tif"))
+plot(imgN, col=grey(1:100/100))
+
+imgN@ncols
+imgN@nrows
+imgN@crs
+
+# use zoom 18-21
+# avoid features that are not clearly identifiable
+# do not label shadows as any feature
+# only count immediate coverage of the surface. For example
+# a tree canopy clearly extending over the street gets
+# counted as a tree not street since it is the object that is
+# directly observed.
+#### Step 2 make trees mask   ##
+mapview(u80a , col=grey(1:100/100))
+
+trees <- drawFeatures(mapview(imgN, col=grey(1:100/100)))
+
+treeMask <- rasterize(trees,imgN, field=1, background=0)
+
+plot(treeMask)
+
+
+
+writeRaster(treeMask, paste0(dirM,"/trees/tree_mask_",trainNum,".tif"),
+            format="GTiff")
+
+
+#### Step 3 make buildings mask   ##
+
+buildings <- drawFeatures(mapview(trainDgc, col=grey(1:100/100))+
+                            mapview(trees, col.regions="seagreen"))
+
+buildingMask <- rasterize(buildings,trainDgc, field=1, background=0)
+
+plot(buildingMask)
+
+
+writeRaster(buildingMask, paste0(dirM,"/building/building_mask_",trainNum,".tif"),
+            format="GTiff")
+
+buildingMask@ncols
+buildingMask@nrows
+
+range(getValues(buildingMask))
+#### Step 4 make buildings mask   ##
+
+pave <- drawFeatures(mapview(trainDgc, col=grey(1:100/100))+
+                       mapview(trees, col.regions="seagreen")+
+                       mapview(buildings, col.regions="tomato"))
+
+paveMask <- rasterize(pave,trainDgc, field=1, background=0)
+
+plot(paveMask)
+
+
+writeRaster(paveMask, paste0(dirM,"/pavement/pavement_mask_",trainNum,".tif"),
+            format="GTiff")
