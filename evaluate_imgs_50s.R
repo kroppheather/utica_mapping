@@ -122,18 +122,29 @@ for(i in 1:nValid){
 }
 
 buildAssess <- list()
-
+treesAssess <- list()
+paveAssess <- list()
 for(i in 1:nValid){
   buildAssess[[i]] <- freq(buildTot[[i]])
- 
+  treesAssess[[i]] <- freq(treesTot[[i]])
+  paveAssess[[i]] <- freq(paveTot[[i]])
 }  
 
 #calculate IOU using pixels as area (1 pixel)
 # 1+ 2 are union and 2 are intersection
-buildAssess[[1]][[1]][3,2]/(buildAssess[[1]][[1]][2,2]+buildAssess[[1]][[1]][3,2])
+
 threshSeq <- seq(0.1,0.9,by=0.1)
+
+
 buildIOU <- list()
 buildDF<- data.frame()
+
+treesIOU <- list()
+treesDF <- list()
+
+paveIOU <- list()
+treesDF <- list()
+
 for(i in 1:nValid){
   if(nrow(buildAssess[[i]][[1]]) == 3){
     buildDF <- data.frame(thresh=threshSeq[1],
@@ -154,7 +165,52 @@ for(i in 1:nValid){
   buildIOU[[i]] <- buildDF
 }
 
+
+
+for(i in 1:nValid){
+  if(nrow(treesAssess[[i]][[1]]) == 3){
+    treesDF <- data.frame(thresh=threshSeq[1],
+                          IOU = treesAssess[[i]][[1]][3,2]/(treesAssess[[i]][[1]][2,2]+treesAssess[[i]][[1]][3,2]),
+                          imgN = i)
+  }else{ treesDF <- data.frame(thresh=threshSeq[1],
+                               IOU = 0,
+                               imgN = i)}
+  for(j in 2:9){
+    if(nrow(treesAssess[[i]][[j]]) == 3){  
+      treesDF <- rbind(treesDF,data.frame(thresh=threshSeq[j],
+                                          IOU = treesAssess[[i]][[j]][3,2]/(treesAssess[[i]][[j]][2,2]+treesAssess[[i]][[j]][3,2]),
+                                          imgN=i))
+    }else{ treesDF <- rbind(treesDF,data.frame(thresh=threshSeq[j],
+                                               IOU = 0,
+                                               imgN=i))}
+  }
+  treesIOU[[i]] <- treesDF
+}
+
+
+for(i in 1:nValid){
+  if(nrow(paveAssess[[i]][[1]]) == 3){
+    paveDF <- data.frame(thresh=threshSeq[1],
+                          IOU = paveAssess[[i]][[1]][3,2]/(paveAssess[[i]][[1]][2,2]+paveAssess[[i]][[1]][3,2]),
+                          imgN = i)
+  }else{ paveDF <- data.frame(thresh=threshSeq[1],
+                               IOU = 0,
+                               imgN = i)}
+  for(j in 2:9){
+    if(nrow(paveAssess[[i]][[j]]) == 3){  
+      paveDF <- rbind(paveDF,data.frame(thresh=threshSeq[j],
+                                          IOU = paveAssess[[i]][[j]][3,2]/(paveAssess[[i]][[j]][2,2]+paveAssess[[i]][[j]][3,2]),
+                                          imgN=i))
+    }else{ paveDF <- rbind(treesDF,data.frame(thresh=threshSeq[j],
+                                               IOU = 0,
+                                               imgN=i))}
+  }
+  paveIOU[[i]] <- paveDF
+}
+
 IOUbuild <- do.call("rbind",buildIOU)
+IOUtrees <- do.call("rbind", treesIOU)
+IOUpave <- do.call("rbind", paveIOU)
 
 #calculate IOU across all images
 buildTotDF <- list()
@@ -169,18 +225,61 @@ for(i in 1:nValid){
   buildTotDF[[i]] <- tempDF
 }  
 
+
+treesTotDF <- list()
+tempDFt <- data.frame()
+for(i in 1:nValid){
+  tempDFt <- data.frame(treesAssess[[i]][[1]])
+  tempDFt$thresh <- rep(0.1,nrow(tempDFt))
+  for(j in 2:9){
+    tempDFt <- rbind(tempDFt,data.frame(treesAssess[[i]][[j]],
+                                      thresh=rep(j/10,nrow(data.frame(treesAssess[[i]][[j]])))))
+  }  
+  treesTotDF[[i]] <- tempDFt
+}  
+
+paveTotDF <- list()
+tempDFp <- data.frame()
+for(i in 1:nValid){
+  tempDFp <- data.frame(paveAssess[[i]][[1]])
+  tempDFp$thresh <- rep(0.1,nrow(tempDFp))
+  for(j in 2:9){
+    tempDFp <- rbind(tempDFp,data.frame(paveAssess[[i]][[j]],
+                                        thresh=rep(j/10,nrow(data.frame(paveAssess[[i]][[j]])))))
+  }  
+  paveTotDF[[i]] <- tempDFp
+}  
+
+
 buildSumDF <- do.call("rbind",buildTotDF)
+treesSumDF <- do.call("rbind",treesTotDF)
+paveSumDF <- do.call("rbind",paveTotDF)
+
 
 IOUcalc <- function(x,y){
   sum(x[y == 2])/ (sum(x[y == 2])+ sum(x[y == 1]))
 }
 
 
-allIOU <- buildSumDF %>%
+allIOUbuild <- buildSumDF %>%
   group_by(thresh) %>%
   summarize(IOU=IOUcalc(count,value))
 
-IOUcalc(buildSumDF$count[buildSumDF$thresh == 0.1],buildSumDF$value[buildSumDF$thresh == 0.1])
+allIOUtrees <- treesSumDF %>%
+  group_by(thresh) %>%
+  summarize(IOU=IOUcalc(count,value))
+
+
+allIOUpave <- paveSumDF %>%
+  group_by(thresh) %>%
+  summarize(IOU=IOUcalc(count,value))
+
+allIOUpave$type <- rep("pave", nrow(allIOUpave))
+allIOUtrees$type <- rep("trees", nrow(allIOUtrees))
+allIOUbuild$type <- rep("build", nrow(allIOUbuild))
+
+IOU50 <- rbind(allIOUpave,allIOUtrees,allIOUbuild)
+
 #plot IOU over the different thresholds
 
 ggplot(data=IOUbuild, aes(x=thresh,y=IOU,color=imgN))+
@@ -188,4 +287,15 @@ ggplot(data=IOUbuild, aes(x=thresh,y=IOU,color=imgN))+
   geom_path()
 
 
+ggplot(data=IOUpave, aes(x=thresh,y=IOU,color=imgN))+
+  geom_point()+
+  geom_path()
+
+ggplot(data=IOUtrees, aes(x=thresh,y=IOU,color=imgN))+
+  geom_point()+
+  geom_path()
+
+ggplot(data=IOU50, aes(x=thresh,y=IOU,color=type))+
+  geom_point()+
+  geom_path()
 #calculate threshold with hightest IOU
