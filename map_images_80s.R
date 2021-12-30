@@ -43,55 +43,45 @@ u80rp@crs
 #additional samples: 1-60
 nSamp1 <- 60
 set.seed(342)
-samplesx <- sample(1:(u80rp@ncols-257), nSamp1)[1:60]
+samplesx <- sample(1:(u80a@ncols-257), nSamp1)[1:60]
 set.seed(142)
-samplesy <- sample(1:(u80rp@nrows-257), nSamp1)[1:60]
+samplesy <- sample(1:(u80a@nrows-257), nSamp1)[1:60]
 
 #validation samples: 60-80
 nSamp2 <- 80
 set.seed(342)
-samplesx2 <- sample(1:(u80rp@ncols-257), nSamp2)[61:80]
+samplesx2 <- sample(1:(u80a@ncols-257), nSamp2)[61:80]
 set.seed(142)
-samplesy2 <- sample(1:(u80rp@nrows-257), nSamp2)[61:80]
+samplesy2 <- sample(1:(u80a@nrows-257), nSamp2)[61:80]
 
 
-test <- crop(u80rp, extent(u80rp, samplesy[1], 
-                samplesy[1] + 255,                       
-                samplesx[1], 
-                   samplesx[1]+255))
-plot(test)
-test@crs
-mapview(test)
-testRP <- projectRaster(test,  crs="+init=epsg:4326")
-mapview(testRP)
-testRP@ncols
-testRP@nrows
+
 # save data, commented out since does not need to run every time
-
-# for(i in 1:60){
-#   
-#   
-#   writeRaster(crop(u80rp, extent(u80rp, samplesy[i], 
-#                                 samplesy[i] +255, 
-#                                 samplesx[i], 
-#                                 samplesx[i]+255)), 
-#               paste0(dirO, "/80s_train/train_",i,".tif"),
+# 
+#  for(i in 1:60){
+#    
+#    
+#    writeRaster(crop(u80a, extent(u80a, samplesy[i], 
+#                                  samplesy[i] +255, 
+#                                  samplesx[i], 
+#                                  samplesx[i]+255)), 
+#                paste0(dirO, "/80s_train/train_",i,".tif"),
+#                format="GTiff" ,overwrite=TRUE)
+#    
+#    
+#  }
+#   for(i in 1:20){
+#     
+#     
+#     writeRaster(crop(u80a, extent(u80a, samplesy2[i], 
+#                                  samplesy2[i] +255, 
+#                                   samplesx2[i], 
+#                                 samplesx2[i]+255)), 
+#               paste0(dirO, "/80s_valid/valid_",i,".tif"),
 #               format="GTiff" ,overwrite=TRUE)
+#    
 #   
-#   
-# }
- # for(i in 1:20){
- #   
- #   
- #   writeRaster(crop(u80rp, extent(u80rp, samplesy2[i], 
- #                                samplesy2[i] +255, 
- #                                 samplesx2[i], 
- #                               samplesx2[i]+255)), 
- #             paste0(dirO, "/80s_valid/valid_",i,".tif"),
- #             format="GTiff" ,overwrite=TRUE)
- #  
- # 
- # }
+#   }
 
 #### Step 1: read in image   ##
 
@@ -100,6 +90,14 @@ trainNum <- 1
 
 imgN <- raster(paste0(dirO, "/80s_train/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
+
+#reproject to WGS 84 for mapedit
+trainDgc <- projectRaster(imgN, crs="+init=epsg:4326")
+
+writeRaster(trainDgc, paste0(dirM,"/u_train_reproject/wgs_train_",trainNum,".tif"),
+            format="GTiff")
+trainDgc@nrows
+trainDgc@ncols
 
 imgN@ncols
 imgN@nrows
@@ -113,11 +111,11 @@ imgN@crs
 # counted as a tree not street since it is the object that is
 # directly observed.
 #### Step 2 make trees mask   ##
-mapview(u80a , col=grey(1:100/100))
 
-trees <- drawFeatures(mapview(imgN, col=grey(1:100/100)))
 
-treeMask <- rasterize(trees,imgN, field=1, background=0)
+trees <- drawFeatures(mapview(trainDgc, col=grey(1:100/100)))
+
+treeMask <- rasterize(trees,trainDgc, field=1, background=0)
 
 plot(treeMask)
 
