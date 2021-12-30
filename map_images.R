@@ -2,7 +2,7 @@ library(sf)
 library(raster)
 library(mapview)
 library(mapedit)
-library(SpaDES)
+
 
 #directory of training images
 dirO <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica")
