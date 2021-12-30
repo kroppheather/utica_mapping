@@ -1,7 +1,8 @@
 library(sf)
 library(raster)
 library(mapview)
-
+library(ggplot2)
+library(dplyr)
 
 
 # directory 
@@ -92,11 +93,14 @@ buildTot <- list()
 for(i in 1:nValid){
 
     buildTot[[i]] <- buildThresh[[i]]+buildMask[[i]]
+   
 }
 
 buildAssess <- list()
+
 for(i in 1:nValid){
   buildAssess[[i]] <- freq(buildTot[[i]])
+ 
 }  
 
 #calculate IOU using pixels as area (1 pixel)
@@ -108,29 +112,55 @@ buildDF<- data.frame()
 for(i in 1:nValid){
   if(nrow(buildAssess[[i]][[1]]) == 3){
     buildDF <- data.frame(thresh=threshSeq[1],
-                        IOU = buildAssess[[i]][[1]][3,2]/(buildAssess[[i]][[1]][2,2]+buildAssess[[i]][[1]][3,2]))
+                        IOU = buildAssess[[i]][[1]][3,2]/(buildAssess[[i]][[1]][2,2]+buildAssess[[i]][[1]][3,2]),
+                          imgN = i)
   }else{ buildDF <- data.frame(thresh=threshSeq[1],
-                              IOU = 0)}
+                              IOU = 0,
+                              imgN = i)}
   for(j in 2:9){
     if(nrow(buildAssess[[i]][[j]]) == 3){  
       buildDF <- rbind(buildDF,data.frame(thresh=threshSeq[j],
-                        IOU = buildAssess[[i]][[j]][3,2]/(buildAssess[[i]][[j]][2,2]+buildAssess[[i]][[j]][3,2])))
+                        IOU = buildAssess[[i]][[j]][3,2]/(buildAssess[[i]][[j]][2,2]+buildAssess[[i]][[j]][3,2]),
+                        imgN=i))
     }else{ buildDF <- rbind(buildDF,data.frame(thresh=threshSeq[j],
-                                 IOU = 0))}
+                                 IOU = 0,
+                                 imgN=i))}
   }
   buildIOU[[i]] <- buildDF
 }
 
+IOUbuild <- do.call("rbind",buildIOU)
 
-plot(buildThresh[[1]])
+#calculate IOU across all images
+buildTotDF <- list()
+tempDF <- data.frame()
+for(i in 1:nValid){
+  tempDF <- data.frame(buildAssess[[i]][[1]])
+  tempDF$thresh <- rep(0.1,nrow(tempDF))
+  for(j in 2:9){
+    tempDF <- rbind(tempDF,data.frame(buildAssess[[i]][[j]],
+                                      thresh=rep(j/10,nrow(data.frame(buildAssess[[i]][[j]])))))
+  }  
+  buildTotDF[[i]] <- tempDF
+}  
+
+buildSumDF <- do.call("rbind",buildTotDF)
+
+IOUcalc <- function(x,y){
+  sum(x[y == 2])/ (sum(x[y == 2])+ sum(x[y == 1]))
+}
 
 
-plot(sampStack[[1]], col=gray(1:100/100))
-plot(sampStack[[2]], col=gray(1:100/100))
-plot(sampStack[[3]], col=gray(1:100/100))
-plot(sampStack[[4]], col=gray(1:100/100))
-plot(sampStack[[5]], col=gray(1:100/100))
-plot(sampStack[[6]], col=gray(1:100/100))
-plot(sampStack[[7]], col=gray(1:100/100))
-plot(sampStack[[8]], col=gray(1:100/100))
-plot(sampStack[[9]], col=gray(1:100/100))
+allIOU <- buildSumDF %>%
+  group_by(thresh) %>%
+  summarize(IOU=IOUcalc(count,value))
+
+IOUcalc(buildSumDF$count[buildSumDF$thresh == 0.1],buildSumDF$value[buildSumDF$thresh == 0.1])
+#plot IOU over the different thresholds
+
+ggplot(data=IOUbuild, aes(x=thresh,y=IOU,color=imgN))+
+  geom_point()+
+  geom_path()
+
+
+#calculate threshold with hightest IOU
