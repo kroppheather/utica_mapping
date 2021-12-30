@@ -71,6 +71,9 @@ for(i in 1:nValid){
 
 # make class under incremental thresholds
 buildThresh <- list()
+treesThresh <- list()
+paveThresh <- list()
+
 
 for(i in 1:nValid){
   buildThresh[[i]] <- stack(calc(buildPredict[[i]],function(x){ifelse(x <= 0.1, 0, 1)}),
@@ -82,18 +85,40 @@ for(i in 1:nValid){
                       calc(buildPredict[[i]],function(x){ifelse(x <= 0.7, 0, 1)}),
                       calc(buildPredict[[i]],function(x){ifelse(x <= 0.8, 0, 1)}),
                       calc(buildPredict[[i]],function(x){ifelse(x <= 0.9, 0, 1)}))
-  
+
+  treesThresh[[i]] <- stack(calc(treesPredict[[i]],function(x){ifelse(x <= 0.1, 0, 1)}),
+                            calc(treesPredict[[i]],function(x){ifelse(x <= 0.2, 0, 1)}),
+                            calc(treesPredict[[i]],function(x){ifelse(x <= 0.3, 0, 1)}),
+                            calc(treesPredict[[i]],function(x){ifelse(x <= 0.4, 0, 1)}),
+                            calc(treesPredict[[i]],function(x){ifelse(x <= 0.5, 0, 1)}),
+                            calc(treesPredict[[i]],function(x){ifelse(x <= 0.6, 0, 1)}),
+                            calc(treesPredict[[i]],function(x){ifelse(x <= 0.7, 0, 1)}),
+                            calc(treesPredict[[i]],function(x){ifelse(x <= 0.8, 0, 1)}),
+                            calc(treesPredict[[i]],function(x){ifelse(x <= 0.9, 0, 1)}))
+
+  paveThresh[[i]] <- stack(calc(pavePredict[[i]],function(x){ifelse(x <= 0.1, 0, 1)}),
+                           calc(pavePredict[[i]],function(x){ifelse(x <= 0.2, 0, 1)}),
+                           calc(pavePredict[[i]],function(x){ifelse(x <= 0.3, 0, 1)}),
+                           calc(pavePredict[[i]],function(x){ifelse(x <= 0.4, 0, 1)}),
+                           calc(pavePredict[[i]],function(x){ifelse(x <= 0.5, 0, 1)}),
+                           calc(pavePredict[[i]],function(x){ifelse(x <= 0.6, 0, 1)}),
+                           calc(pavePredict[[i]],function(x){ifelse(x <= 0.7, 0, 1)}),
+                           calc(pavePredict[[i]],function(x){ifelse(x <= 0.8, 0, 1)}),
+                           calc(pavePredict[[i]],function(x){ifelse(x <= 0.9, 0, 1)}))    
 }
 
 #calculate IOU and accuracy for each
 plot(buildThresh[[1]][[1]])
 
 buildTot <- list()
+treesTot <- list()
+paveTot <- list()
 
 for(i in 1:nValid){
 
     buildTot[[i]] <- buildThresh[[i]]+buildMask[[i]]
-   
+    treesTot[[i]] <- treesThresh[[i]]+treesMask[[i]]
+    paveTot[[i]] <- paveThresh[[i]]+paveMask[[i]]
 }
 
 buildAssess <- list()
