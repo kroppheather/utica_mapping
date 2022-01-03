@@ -86,7 +86,7 @@ samplesy2 <- sample(1:(u80a@nrows-257), nSamp2)[61:80]
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 31
+trainNum <- 32
 
 imgN <- raster(paste0(dirO, "/80s_train/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
@@ -155,3 +155,4 @@ plot(paveMask)
 
 writeRaster(paveMask, paste0(dirM,"/pavement/pavement_mask_",trainNum,".tif"),
             format="GTiff")
+
