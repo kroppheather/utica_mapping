@@ -86,7 +86,7 @@ samplesy2 <- sample(1:(u80a@nrows-257), nSamp2)[61:80]
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 27
+trainNum <- 28
 
 imgN <- raster(paste0(dirO, "/80s_train/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
