@@ -53,6 +53,8 @@ treeMap <- calc(treeAll,function(x){ifelse(x <= 0.3, 0, 1)})
 buildMap <- calc(buildAll,function(x){ifelse(x <= 0.2, 0, 1)})
 paveMap <- calc(paveAll,function(x){ifelse(x <= 0.2, 0, 1)})
 
+
+
 plot(treeMap)
 plot(origAll, col=gray(1:100/100))
 plot(buildMap)
@@ -79,3 +81,111 @@ mapview(treeMap)
 mapview(buildMap)
 
 help("plot")
+
+cropE <- extent(-75.24,-75.23,43.105,43.107)
+
+treeC <- crop(treeMap, cropE)  
+buildC <- crop(buildMap, cropE)  
+paveC <- crop(paveMap, cropE)  
+origC <- crop(origAll, cropE) 
+
+par(mfrow=c(1,2))
+par(mai=c(0,0,0,0))
+
+plot(treeC, col=c(NA,treeCol), breaks=c(0,0.5,1.5),
+     legend=FALSE, axes=FALSE, box=FALSE)
+plot(paveC, col=c(NA,paveCol), breaks=c(0,0.5,1.5),
+     legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
+plot(buildC, col=c(NA,buildCol), breaks=c(0,0.5,1.5),
+     legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
+par(mai=c(0,0,0,0))
+plot(origC, col=gray(1:100/100),
+     legend=FALSE, axes=FALSE, box=FALSE)
+
+
+cropE <- extent(-75.24,-75.23,43.103,43.109)
+
+treeC <- crop(treeMap, cropE)  
+buildC <- crop(buildMap, cropE)  
+paveC <- crop(paveMap, cropE)  
+origC <- crop(origAll, cropE) 
+
+par(mfrow=c(1,2))
+par(mai=c(0,0,0,0))
+
+plot(treeC, col=c(NA,treeCol), breaks=c(0,0.5,1.5),
+     legend=FALSE, axes=FALSE, box=FALSE)
+plot(paveC, col=c(NA,paveCol), breaks=c(0,0.5,1.5),
+     legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
+plot(buildC, col=c(NA,buildCol), breaks=c(0,0.5,1.5),
+     legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
+par(mai=c(0,0,0,0))
+plot(origC, col=gray(1:100/100),
+     legend=FALSE, axes=FALSE, box=FALSE)
+
+
+
+cropE <- extent(-75.26,-75.25,43.080,43.085)
+
+treeC <- crop(treeMap, cropE)  
+buildC <- crop(buildMap, cropE)  
+paveC <- crop(paveMap, cropE)  
+origC <- crop(origAll, cropE) 
+
+par(mfrow=c(1,2))
+par(mai=c(0,0,0,0))
+
+plot(treeC, col=c(NA,treeCol), breaks=c(0,0.5,1.5),
+     legend=FALSE, axes=FALSE, box=FALSE)
+plot(paveC, col=c(NA,paveCol), breaks=c(0,0.5,1.5),
+     legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
+plot(buildC, col=c(NA,buildCol), breaks=c(0,0.5,1.5),
+     legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
+par(mai=c(0,0,0,0))
+plot(origC, col=gray(1:100/100),
+     legend=FALSE, axes=FALSE, box=FALSE)
+
+
+cropE <- extent(-75.28,-75.27,43.082,43.087)
+
+treeC <- crop(treeMap, cropE)  
+buildC <- crop(buildMap, cropE)  
+paveC <- crop(paveMap, cropE)  
+origC <- crop(origAll, cropE) 
+
+par(mfrow=c(1,2))
+par(mai=c(0,0,0,0))
+
+plot(treeC, col=c(NA,treeCol), breaks=c(0,0.5,1.5),
+     legend=FALSE, axes=FALSE, box=FALSE)
+plot(paveC, col=c(NA,paveCol), breaks=c(0,0.5,1.5),
+     legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
+plot(buildC, col=c(NA,buildCol), breaks=c(0,0.5,1.5),
+     legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
+par(mai=c(0,0,0,0))
+plot(origC, col=gray(1:100/100),
+     legend=FALSE, axes=FALSE, box=FALSE)
+
+
+cropE <- extent(-75.29,-75.27,43.095,43.105)
+
+treeC <- crop(treeMap, cropE)  
+buildC <- crop(buildMap, cropE)  
+paveC <- crop(paveMap, cropE)  
+origC <- crop(origAll, cropE) 
+
+par(mfrow=c(1,2))
+par(mai=c(0,0,0,0))
+
+plot(treeC, col=c(NA,treeCol), breaks=c(0,0.5,1.5),
+     legend=FALSE, axes=FALSE, box=FALSE)
+plot(paveC, col=c(NA,paveCol), breaks=c(0,0.5,1.5),
+     legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
+plot(buildC, col=c(NA,buildCol), breaks=c(0,0.5,1.5),
+     legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
+par(mai=c(0,0,0,0))
+plot(origC, col=gray(1:100/100),
+     legend=FALSE, axes=FALSE, box=FALSE)
+
+
+plot(merge(treeImg[[35]],treeImg[[36]],treeImg[[37]],treeImg[[38]]))
