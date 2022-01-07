@@ -156,3 +156,77 @@ plot(paveMask)
 writeRaster(paveMask, paste0(dirM,"/pavement/pavement_mask_",trainNum,".tif"),
             format="GTiff")
 
+
+###### Validation ----
+
+#### Step 1: read in image   ##
+
+#give valid image number
+validNum <- 1
+
+imgN <- raster(paste0(dirO, "/80s_valid/valid_",validNum,".tif"))
+plot(imgN, col=grey(1:100/100))
+
+imgN@ncols
+imgN@nrows
+#reproject to WGS 84 for mapedit
+validDgc <- projectRaster(imgN, crs="+init=epsg:4326")
+
+writeRaster(validDgc, paste0(dirMV,"/u_valid_reproject/wgs_valid_",validNum,".tif"),
+            format="GTiff")
+validDgc@nrows
+validDgc@ncols
+# use zoom 18-21
+# avoid features that are not clearly identifiable
+# do not label shadows as any feature
+# only count immediate coverage of the surface. For example
+# a tree canopy clearly extending over the street gets
+# counted as a tree not street since it is the object that is
+# directly observed.
+#### Step 2 make trees mask   ##
+
+trees <- drawFeatures(mapview(validDgc, col=grey(1:100/100)))
+
+treeMask <- rasterize(trees,validDgc, field=1, background=0)
+
+plot(treeMask)
+
+
+
+writeRaster(treeMask, paste0(dirMV,"/trees/tree_mask_",validNum,".tif"),
+            format="GTiff")
+
+
+#### Step 3 make buildings mask   ##
+
+buildings <- drawFeatures(mapview(validDgc, col=grey(1:100/100))+
+                            mapview(trees, col.regions="seagreen"))
+
+buildingMask <- rasterize(buildings,validDgc, field=1, background=0)
+
+plot(buildingMask)
+
+
+writeRaster(buildingMask, paste0(dirMV,"/building/building_mask_",validNum,".tif"),
+            format="GTiff")
+
+buildingMask@ncols
+buildingMask@nrows
+
+range(getValues(buildingMask))
+#### Step 4 make buildings mask   ##
+
+pave <- drawFeatures(mapview(validDgc, col=grey(1:100/100))+
+                       mapview(trees, col.regions="seagreen")+
+                       mapview(buildings, col.regions="tomato"))
+
+paveMask <- rasterize(pave,validDgc, field=1, background=0)
+
+plot(paveMask)
+
+
+writeRaster(paveMask, paste0(dirMV,"/pavement/pavement_mask_",validNum,".tif"),
+            format="GTiff")
+
+
+
