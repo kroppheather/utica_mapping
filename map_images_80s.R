@@ -86,7 +86,7 @@ samplesy2 <- sample(1:(u80a@nrows-257), nSamp2)[61:80]
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 60
+trainNum <- 1
 
 imgN <- raster(paste0(dirO, "/80s_train/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
@@ -94,11 +94,20 @@ plot(imgN, col=grey(1:100/100))
 #reproject to WGS 84 for mapedit
 trainDgc <- projectRaster(imgN, crs="+init=epsg:4326")
 
-writeRaster(trainDgc, paste0(dirM,"/u_train_reproject/wgs_train_",trainNum,".tif"),
+writeRaster(trainDgc, paste0(dirM,"/reproj_test/wgs_train_",trainNum,".tif"),
             format="GTiff")
+
+writeRaster(trainDgc, paste0(dirM,"/u_train_reproject/wgs_train_",trainNum,".tif"),
+            format="GTiff", overwrite=TRUE)
 trainDgc@nrows
 trainDgc@ncols
+plot(trainDgc)
 
+#check
+trainNum <- 1
+imCheck <- raster(paste0(dirM,"/u_train_reproject/wgs_train_",trainNum,".tif"))
+plot(imCheck)
+range(imCheck)
 imgN@ncols
 imgN@nrows
 imgN@crs
