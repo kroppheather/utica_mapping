@@ -171,7 +171,7 @@ writeRaster(paveMask, paste0(dirM,"/pavement/pavement_mask_",trainNum,".tif"),
 #### Step 1: read in image   ##
 
 #give valid image number
-validNum <- 20
+validNum <- 1
 
 imgN <- raster(paste0(dirO, "/80s_valid/valid_",validNum,".tif"))
 plot(imgN, col=grey(1:100/100))
@@ -234,8 +234,42 @@ paveMask <- rasterize(pave,validDgc, field=1, background=0)
 plot(paveMask)
 
 
-writeRaster(paveMask, paste0(dirMV,"/pavement/pavement_mask_",validNum,".tif"),
-            format="GTiff")
+
+
+###### Prep for prediction ----
+
+#reproject to be in WGS 1984 so matches all mask images
 
 
 
+cols80 <- floor(u80rp@ncols/256) 
+rows80 <- floor(u80rp@nrows/256) 
+
+colsSeq <- seq(1,cols80*256, by=256)
+rowsSeq <- seq(1,rows80*256, by=256)
+subDF <- data.frame(cols=rep(colsSeq,times=length(rowsSeq)),
+                    rows=rep(rowsSeq,each=length(colsSeq)))
+#subdivide raster into 256 x 256
+sub80s <- list()
+rowcount <- numeric()
+colcount <- numeric()
+#this will shave off extra off south and west 
+for(i in 1:nrow(subDF)){
+  sub80s[[i]] <- crop(u80rp, extent(u80rp,  subDF$rows[i], 
+                                    subDF$rows[i]+255,
+                                    subDF$cols[i], 
+                                    subDF$cols[i]+255))
+  rowcount[i] <- sub80s[[i]]@nrows
+  colcount[i] <- sub80s[[i]]@ncols
+}
+sub80s[[1]]@ncols
+
+m <- do.call(merge, sub80s)
+plot(m, col=gray(1:100/100))
+#save
+
+for(i in 1:nrow(subDF)){
+  writeRaster(sub80s[[i]],
+              paste0(dirO,"/predict80/predict_",i,".tif"),
+              format="GTiff")
+}
