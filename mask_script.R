@@ -29,7 +29,7 @@ dirMask <- "/Volumes/GoogleDrive/My Drive/research/projects/utica/50s_mask_small
 ####################
 
 #give training image number 81-120
-trainNum <- 81
+trainNum <- 82
 
 
 #read in image 
