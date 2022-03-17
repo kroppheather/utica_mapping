@@ -99,7 +99,7 @@ samplesy5 <- sample(1:(u50a@nrows-257), nSamp5)[81:120]
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 85
+trainNum <- 90
 
 imgN <- raster(paste0("/Volumes/GoogleDrive/My Drive/research/projects/utica/50s_train_small/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
@@ -148,8 +148,7 @@ writeRaster(treeMask, paste0(dirM,"/trees/tree_mask_",trainNum,".tif"),
 
 #### Step 3 make buildings mask   ##
 
-buildings <- drawFeatures(mapview(trainDgc, col=grey(1:100/100))+
-                            mapview(trees, col.regions="seagreen"))
+buildings <- drawFeatures(mapview(trainDgc, col=grey(1:100/100)))
 
 buildingMask <- rasterize(buildings,trainDgc, field=1, background=0)
 
