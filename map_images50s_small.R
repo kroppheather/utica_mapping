@@ -99,7 +99,7 @@ samplesy5 <- sample(1:(u50a@nrows-257), nSamp5)[81:120]
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 95
+trainNum <- 96
 
 imgN <- raster(paste0("/Volumes/GoogleDrive/My Drive/research/projects/utica/50s_train_small/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
