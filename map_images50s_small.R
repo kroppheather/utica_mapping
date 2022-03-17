@@ -7,9 +7,7 @@ library(mapedit)
 #directory of training images
 dirO <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica")
 #directory for masks
-dirM <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/mask")
-
-dirMV <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/mask_50s_valid")
+dirM <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/50s_small_mask")
 
 #### read in data and visualize ----
 #read in data from 1950s
@@ -81,19 +79,19 @@ samplesy5 <- sample(1:(u50a@nrows-257), nSamp5)[81:120]
 
 # save data, commented out since does not need to run every time
  
- 
-   for(i in 1:40){
-    
-     
-     writeRaster(crop(u50a, extent(u50a, samplesy5[i], 
-                                 samplesy5[i] +127, 
-                                   samplesx5[i], 
-                                 samplesx5[i]+127)), 
-               paste0("/Volumes/GoogleDrive/My Drive/research/projects/utica/50s_train_small/train_",i+80,".tif"),
-               format="GTiff" ,overwrite=TRUE)
-    
-   
-   }
+   # 
+   # for(i in 1:40){
+   #  
+   #   
+   #   writeRaster(crop(u50a, extent(u50a, samplesy5[i], 
+   #                               samplesy5[i] +127, 
+   #                                 samplesx5[i], 
+   #                               samplesx5[i]+127)), 
+   #             paste0("/Volumes/GoogleDrive/My Drive/research/projects/utica/50s_train_small/train_",i+80,".tif"),
+   #             format="GTiff" ,overwrite=TRUE)
+   #  
+   # 
+   # }
 
 #### make masks for training & validation ----
 
@@ -101,7 +99,7 @@ samplesy5 <- sample(1:(u50a@nrows-257), nSamp5)[81:120]
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 83
+trainNum <- 85
 
 imgN <- raster(paste0("/Volumes/GoogleDrive/My Drive/research/projects/utica/50s_train_small/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
@@ -110,11 +108,24 @@ imgN@ncols
 imgN@nrows
 #reproject to WGS 84 for mapedit
 trainDgc <- projectRaster(imgN, crs="+init=epsg:4326")
-
+plot(trainDgc, col=grey(1:100/100))
 writeRaster(trainDgc, paste0(dirM,"/u_train_reproject/wgs_train_",trainNum,".tif"),
             format="GTiff")
+
 trainDgc@nrows
 trainDgc@ncols
+#check images that were made:
+
+treeM <- raster(paste0("/Volumes/GoogleDrive/My Drive/research/projects/utica/50s_small_mask/trees/tree_mask_",trainNum,".tif"))
+buildM <- raster(paste0("/Volumes/GoogleDrive/My Drive/research/projects/utica/50s_small_mask/building/building_mask_",trainNum,".tif"))
+paveM <- raster(paste0("/Volumes/GoogleDrive/My Drive/research/projects/utica/50s_small_mask/pavement/pavement_mask_",trainNum,".tif"))
+
+plot(trainDgc, col=grey(1:100/100))
+
+plot(treeM)
+plot(buildM)
+plot(paveM)
+
 # use zoom 18-21
 # avoid features that are not clearly identifiable
 # do not label shadows as any feature
@@ -164,77 +175,6 @@ plot(paveMask)
 
 
 writeRaster(paveMask, paste0(dirM,"/pavement/pavement_mask_",trainNum,".tif"),
-            format="GTiff")
-
-###### Validation ----
-
-#### Step 1: read in image   ##
-
-#give valid image number
-validNum <- 20
-
-imgN <- raster(paste0(dirO, "/50s_valid/valid_",validNum,".tif"))
-plot(imgN, col=grey(1:100/100))
-
-imgN@ncols
-imgN@nrows
-#reproject to WGS 84 for mapedit
-validDgc <- projectRaster(imgN, crs="+init=epsg:4326")
-
-writeRaster(validDgc, paste0(dirMV,"/u_valid_reproject/wgs_valid_",validNum,".tif"),
-            format="GTiff")
-validDgc@nrows
-validDgc@ncols
-# use zoom 18-21
-# avoid features that are not clearly identifiable
-# do not label shadows as any feature
-# only count immediate coverage of the surface. For example
-# a tree canopy clearly extending over the street gets
-# counted as a tree not street since it is the object that is
-# directly observed.
-#### Step 2 make trees mask   ##
-
-trees <- drawFeatures(mapview(validDgc, col=grey(1:100/100)))
-
-treeMask <- rasterize(trees,validDgc, field=1, background=0)
-
-plot(treeMask)
-
-
-
-writeRaster(treeMask, paste0(dirMV,"/trees/tree_mask_",validNum,".tif"),
-            format="GTiff")
-
-
-#### Step 3 make buildings mask   ##
-
-buildings <- drawFeatures(mapview(validDgc, col=grey(1:100/100))+
-                            mapview(trees, col.regions="seagreen"))
-
-buildingMask <- rasterize(buildings,validDgc, field=1, background=0)
-
-plot(buildingMask)
-
-
-writeRaster(buildingMask, paste0(dirMV,"/building/building_mask_",validNum,".tif"),
-            format="GTiff")
-
-buildingMask@ncols
-buildingMask@nrows
-
-range(getValues(buildingMask))
-#### Step 4 make buildings mask   ##
-
-pave <- drawFeatures(mapview(validDgc, col=grey(1:100/100))+
-                       mapview(trees, col.regions="seagreen")+
-                       mapview(buildings, col.regions="tomato"))
-
-paveMask <- rasterize(pave,validDgc, field=1, background=0)
-
-plot(paveMask)
-
-
-writeRaster(paveMask, paste0(dirMV,"/pavement/pavement_mask_",validNum,".tif"),
             format="GTiff")
 
 
