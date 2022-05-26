@@ -2,8 +2,8 @@ library(raster)
 library(sf)
 library(mapview)
 
-dirP <- "E:/Google Drive/research/projects/utica/50s_predict_out"
-dirI <- "E:/Google Drive/research/projects/utica/predict50"
+dirP <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_256/image"
+dirI <- "E:/Google Drive/research/projects/utica/model_save/1950/img_tile256/predict50"
 
 
 treeImg <- list()
@@ -16,7 +16,9 @@ for(i in 1:Nimg){
   
 }
 
-treeAll <- do.call(merge, treeImg)
+treeAll <- do.call(merge, treeImg,tolerance=0.)
+
+
 
 paveImg <- list()
 
@@ -46,6 +48,14 @@ for(i in 1:Nimg){
 }
 
 origAll <- do.call(merge, origImg)
+
+
+# check out weird line artifacts:
+
+plot(treeImg[[300]])
+plot(treeImg[[301]], add=TRUE)
+plot(treeImg[[299]], add=TRUE)
+
 
 
 
