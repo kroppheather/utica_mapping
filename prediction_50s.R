@@ -57,7 +57,9 @@ plot(treeImg[[301]], add=TRUE)
 plot(treeImg[[299]], add=TRUE)
 
 
-
+plot(origImg[[300]], col=grey(1:100/100))
+plot(origImg[[301]], col=grey(1:100/100),add=TRUE)
+plot(origImg[[299]], col=grey(1:100/100),add=TRUE)
 
 treeMap <- calc(treeAll,function(x){ifelse(x <= 0.3, 0, 1)})
 buildMap <- calc(buildAll,function(x){ifelse(x <= 0.2, 0, 1)})
