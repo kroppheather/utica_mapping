@@ -2,8 +2,8 @@ library(raster)
 library(sf)
 library(mapview)
 
-#########################
-####### Image merge -----
+
+# Image merge ---------
 
 dirP <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_256/image"
 dirI <- "E:/Google Drive/research/projects/utica/model_save/1950/img_tile256/predict50"
@@ -53,8 +53,8 @@ for(i in 1:Nimg){
 origAll <- do.call(merge, origImg)
 
 
-#########################
-####### Offset 2 merge -----
+
+# Offset 2 merge ------------------
 
 
 dirP2 <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_256/image_2"
@@ -106,8 +106,8 @@ origAll2 <- do.call(merge, origImg2)
 
 
 
-#########################
-####### Offset 3 merge -----
+
+# Offset 3 merge -----------------
 
 
 dirP3 <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_256/image_3"
@@ -159,15 +159,30 @@ origAll3 <- do.call(merge, origImg3)
 
 
 
+# Combine overlays -------------
+
+#match offsets to original
+
+treeAll2rs <- resample(treeAll2, treeAll)
+treeAll3rs <- resample(treeAll3, treeAll)
+
+
+treeCombine <- stack(treeAll, treeAll2rs, treeAll3rs)
+
+
+treeLayer <- calc(treeCombine, function(x){max(x, na.rm=TRUE)})
+
+
 
 # check out weird line artifacts:
 
 plot(treeImg[[300]])
 plot(treeImg2[[300]], add=TRUE)
+plot(treeImg2[[301]], add=TRUE)
 
 plot(treeImg[[301]], add=TRUE)
 plot(treeImg[[299]], add=TRUE)
-
+plot(treeImg2[[299]], add=TRUE)
 
 plot(origImg[[300]], col=grey(1:100/100))
 plot(origImg2[[300]], col=grey(1:100/100),add=TRUE)
