@@ -310,8 +310,8 @@ for(i in 1:nrow(subDF2)){
 
 # break up into tiles to do second offset:
 
-colsSeq3 <- seq(50,((cols50-1)*256)+50, by=256)
-rowsSeq3 <- seq(50,((rows50-1)*256)+50, by=256)
+colsSeq3 <- seq(100,((cols50-2)*256)+100, by=256)
+rowsSeq3 <- seq(100,((rows50-2)*256)+100, by=256)
 subDF3 <- data.frame(cols=rep(colsSeq3,times=length(rowsSeq3)),
                      rows=rep(rowsSeq3,each=length(colsSeq3)))
 
@@ -320,7 +320,7 @@ sub50s3 <- list()
 rowcount3 <- numeric()
 colcount3 <- numeric()
 #this will shave off extra off south and west 
-for(i in 1:nrow(subDF2)){
+for(i in 1:nrow(subDF3)){
   sub50s3[[i]] <- crop(u50rp, extent(u50rp,  subDF3$rows[i], 
                                      subDF3$rows[i]+255,
                                      subDF3$cols[i], 
