@@ -163,37 +163,74 @@ origAll3 <- do.call(merge, origImg3)
 
 #match offsets to original
 
+## Trees  
+
+
+
+#resample to original
 treeAll2rs <- resample(treeAll2, treeAll)
 treeAll3rs <- resample(treeAll3, treeAll)
 
 
 treeCombine <- stack(treeAll, treeAll2rs, treeAll3rs)
 
-
+# get maximum prob
 treeLayer <- calc(treeCombine, function(x){max(x, na.rm=TRUE)})
+plot(treeLayer)
 
 
+## Buildings
 
-# check out weird line artifacts:
+#resample to original
+buildAll2rs <- resample(buildAll2, buildAll)
+buildAll3rs <- resample(buildAll3, buildAll)
 
-plot(treeImg[[300]])
-plot(treeImg2[[300]], add=TRUE)
-plot(treeImg2[[301]], add=TRUE)
-
-plot(treeImg[[301]], add=TRUE)
-plot(treeImg[[299]], add=TRUE)
-plot(treeImg2[[299]], add=TRUE)
-
-plot(origImg[[300]], col=grey(1:100/100))
-plot(origImg2[[300]], col=grey(1:100/100),add=TRUE)
+buildCombine <- stack(buildAll,buildAll2rs,buildAll3rs)
+buildLayer <- calc(buildCombine, function(x){max(x, na.rm=TRUE)})
+plot(buildLayer)
 
 
-plot(origImg[[301]], col=grey(1:100/100),add=TRUE)
-plot(origImg[[299]], col=grey(1:100/100),add=TRUE)
+## Pavement
+paveAll2rs <- resample(paveAll2, paveAll)
+paveAll3rs <- resample(paveAll3, paveAll)
 
-treeMap <- calc(treeAll,function(x){ifelse(x <= 0.3, 0, 1)})
-buildMap <- calc(buildAll,function(x){ifelse(x <= 0.15, 0, 1)})
-paveMap <- calc(paveAll,function(x){ifelse(x <= 0.15, 0, 1)})
+paveCombine <- stack(paveAll, paveAll2rs, paveAll3rs)
+paveLayer <- calc(paveCombine, function(x){max(x, na.rm=TRUE)})
+plot(paveLayer)
+
+
+# Make final map cover -------------
+
+# remove noise below set threshold
+
+treeMap <- calc(treeAll,function(x){ifelse(x <= 0.15, 0, x)})
+buildMap <- calc(buildAll,function(x){ifelse(x <= 0.15, 0, x)})
+paveMap <- calc(paveAll,function(x){ifelse(x <= 0.15, 0, x)})
+
+
+# binary map of above
+
+treeMapB <- calc(treeAll,function(x){ifelse(x <= 0.15, 0, 1)})
+buildMapB <- calc(buildAll,function(x){ifelse(x <= 0.15, 0, 1)})
+paveMapB <- calc(paveAll,function(x){ifelse(x <= 0.15, 0, 1)})
+
+
+# need to filter so only one class for each pixel
+# take the highest probability
+
+coverStack <- stack(treeMap, buildMap, paveMap)
+
+which.max2 <- function(x){
+  max_idx <- which.max(x)   # Get the max
+  ifelse(length(max_idx)== 0,return(NA),return(max_idx))
+}
+
+classR <- calc(coverStack, which.max2)
+
+#now need to make a rule for determining if the class has a high enough threshold
+# need to muliply by binary so turns to zero if too low
+
+
 
 
 
