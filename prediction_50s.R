@@ -203,16 +203,16 @@ plot(paveLayer)
 
 # remove noise below set threshold
 
-treeMap <- calc(treeAll,function(x){ifelse(x <= 0.15, 0, x)})
-buildMap <- calc(buildAll,function(x){ifelse(x <= 0.15, 0, x)})
-paveMap <- calc(paveAll,function(x){ifelse(x <= 0.15, 0, x)})
+treeMap <- calc(treeLayer,function(x){ifelse(x <= 0.15, 0, x)})
+buildMap <- calc(buildLayer,function(x){ifelse(x <= 0.15, 0, x)})
+paveMap <- calc(paveLayer,function(x){ifelse(x <= 0.15, 0, x)})
 
 
 # binary map of above
 
-treeMapB <- calc(treeAll,function(x){ifelse(x <= 0.15, 0, 1)})
-buildMapB <- calc(buildAll,function(x){ifelse(x <= 0.15, 0, 1)})
-paveMapB <- calc(paveAll,function(x){ifelse(x <= 0.15, 0, 1)})
+treeMapB <- calc(treeLayer,function(x){ifelse(x <= 0.15, 0, 1)})
+buildMapB <- calc(buildLayer,function(x){ifelse(x <= 0.15, 0, 1)})
+paveMapB <- calc(paveLayer,function(x){ifelse(x <= 0.15, 0, 1)})
 
 binaryStack <- stack(treeMapB,buildMapB,paveMapB)
 
@@ -232,20 +232,57 @@ classR <- calc(coverStack, which.max2)
 #now need to make a rule for determining if the class has a high enough threshold
 # need to muliply by binary so turns to zero if too low
 
-plot(treeMapB)
-classFunction <- function(x,y){
-  ifelse(x == 1, return(y[[1]]),
-         ifelse(x ==2, return(y[[2]]),
-          return(y[[3]])))
-}
-
-classB <- overlay(classR,coverStack,fun=classFunction)
+treeCalc <- calc(classR, function(x){ifelse(x ==1,1,0)})
+treeClass <- treeMapB*treeCalc
 
 
-plot(treeMap)
-plot(origAll, col=gray(1:100/100))
-plot(buildMap)
-plot(paveMap)
+buildCalc <- calc(classR, function(x){ifelse(x ==2,1,0)})
+buildClass <- buildMapB*buildCalc
+
+
+paveCalc <- calc(classR, function(x){ifelse(x ==3,1,0)})
+paveClass <- paveMapB*paveCalc
+
+plot(treeClass)
+plot(paveClass)
+plot(buildClass)
+
+
+buildClass2 <- buildClass*2
+paveClass2 <- paveClass*3
+
+# other will be zero, trees =1, buildings =2, pavement =3
+uticaClass <- treeClass+buildClass2+paveClass2
+
+plot(uticaClass)
+
+uticaRes <- resample(uticaClass, origAll, method="ngb")
+
+
+plot(origAll, col=grey(1:100/100))
+
+treeCol1 <- rgb(0.13,0.54,0.13,0.5)
+paveCol1 <- rgb(0.96,0.49,0,0.5)
+buildCol1 <- rgb(0.53,0.17,0.09,0.5)
+
+treeCol1 <- rgb(0.13,0.54,0.13)
+paveCol1 <- rgb(0.96,0.49,0)
+buildCol1 <- rgb(0.53,0.17,0.09)
+
+png("E:/Google Drive/research/projects/utica/model_save/1950/maps_256/utica_classification.png", width=7424,height=3840)
+
+plot(origAll, col=grey(1:100/100), axes=FALSE, legend=FALSE, box=FALSE, maxpixels= 28508160)
+
+plot(uticaRes, breaks=c(-0.1,0.5,#breaks between other
+                          1.5, # tree
+                          2.5, # building
+                          3.5 ), #pavement
+     col=c(NA, treeCol1,buildCol1, paveCol1),add=TRUE, legend=FALSE, box=FALSE, maxpixels=28508160)
+
+
+dev.off()
+
+
 
 treeCol <- rgb(0.13,0.54,0.13,0.5)
 paveCol <- rgb(0.5,0.5,0.5,0.5)
@@ -279,36 +316,36 @@ origC <- crop(origAll, cropE)
 par(mfrow=c(1,2))
 par(mai=c(0,0,0,0))
 
-plot(treeC, col=c(NA,treeCol), breaks=c(0,0.5,1.5),
+plot(treeC, col=c(NA,treeCol1), breaks=c(0,0.5,1.5),
      legend=FALSE, axes=FALSE, box=FALSE)
-plot(paveC, col=c(NA,paveCol), breaks=c(0,0.5,1.5),
+plot(paveC, col=c(NA,paveCol1), breaks=c(0,0.5,1.5),
      legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
-plot(buildC, col=c(NA,buildCol), breaks=c(0,0.5,1.5),
-     legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
-par(mai=c(0,0,0,0))
-plot(origC, col=gray(1:100/100),
-     legend=FALSE, axes=FALSE, box=FALSE)
-
-
-cropE <- extent(-75.24,-75.23,43.103,43.109)
-
-treeC <- crop(treeMap, cropE)  
-buildC <- crop(buildMap, cropE)  
-paveC <- crop(paveMap, cropE)  
-origC <- crop(origAll, cropE) 
-
-par(mfrow=c(1,2))
-par(mai=c(0,0,0,0))
-
-plot(treeC, col=c(NA,treeCol), breaks=c(0,0.5,1.5),
-     legend=FALSE, axes=FALSE, box=FALSE)
-plot(paveC, col=c(NA,paveCol), breaks=c(0,0.5,1.5),
-     legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
-plot(buildC, col=c(NA,buildCol), breaks=c(0,0.5,1.5),
+plot(buildC, col=c(NA,buildCol1), breaks=c(0,0.5,1.5),
      legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
 par(mai=c(0,0,0,0))
 plot(origC, col=gray(1:100/100),
      legend=FALSE, axes=FALSE, box=FALSE)
+
+  
+  cropE <- extent(-75.24,-75.23,43.103,43.109)
+  
+  treeC <- crop(treeMap, cropE)  
+  buildC <- crop(buildMap, cropE)  
+  paveC <- crop(paveMap, cropE)  
+  origC <- crop(origAll, cropE) 
+  
+  par(mfrow=c(1,2))
+  par(mai=c(0,0,0,0))
+  
+  plot(treeC, col=c(NA,treeCol1), breaks=c(0,0.5,1.5),
+       legend=FALSE, axes=FALSE, box=FALSE)
+  plot(paveC, col=c(NA,paveCol1), breaks=c(0,0.5,1.5),
+       legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
+  plot(buildC, col=c(NA,buildCol1), breaks=c(0,0.5,1.5),
+       legend=FALSE, add=TRUE, axes=FALSE, box=FALSE)
+  par(mai=c(0,0,0,0))
+  plot(origC, col=gray(1:100/100),
+     legend=FALSE, axes=FALSE, box=FALSE)   
 
 
 
