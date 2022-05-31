@@ -214,6 +214,8 @@ treeMapB <- calc(treeAll,function(x){ifelse(x <= 0.15, 0, 1)})
 buildMapB <- calc(buildAll,function(x){ifelse(x <= 0.15, 0, 1)})
 paveMapB <- calc(paveAll,function(x){ifelse(x <= 0.15, 0, 1)})
 
+binaryStack <- stack(treeMapB,buildMapB,paveMapB)
+
 
 # need to filter so only one class for each pixel
 # take the highest probability
@@ -230,8 +232,14 @@ classR <- calc(coverStack, which.max2)
 #now need to make a rule for determining if the class has a high enough threshold
 # need to muliply by binary so turns to zero if too low
 
+plot(treeMapB)
+classFunction <- function(x,y){
+  ifelse(x == 1, return(y[[1]]),
+         ifelse(x ==2, return(y[[2]]),
+          return(y[[3]])))
+}
 
-
+classB <- overlay(classR,coverStack,fun=classFunction)
 
 
 plot(treeMap)
