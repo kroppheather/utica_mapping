@@ -6,9 +6,9 @@ library(dplyr)
 
 
 # directory 
-dirP <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_256/valid"
+dirP <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_128/valid"
 #directory for orig img
-dirI <- "E:/Google Drive/research/projects/utica/model_save/1950/data_256/crop_valid"
+dirI <- "E:/Google Drive/research/projects/utica/model_save/1950/data_128/crop_valid"
 
 # number of validation images
 nValid <- 20
@@ -16,7 +16,7 @@ nValid <- 20
 # predictions
 treesPredict <- list()
 for(i in 1:nValid){
-  treesPredict[[i]] <- raster(paste0(dirP,"/trees/tree_predict_",i,".tif"))
+  treesPredict[[i]] <- raster(paste0(dirP,"/tree/tree_predict_",i,".tif"))
 }
 
 buildPredict <- list()
