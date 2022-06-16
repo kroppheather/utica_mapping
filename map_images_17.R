@@ -15,7 +15,7 @@ dirMV <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/201
 #read in data from 2017
 # crs is in state plane from State website
 
-r17 <- stack("/Volumes/GoogleDrive/My Drive/research/projects/utica/utica17/u2017.tif")
+r17 <- stack("e:/Google Drive/research/projects/utica/utica17/u2017.tif")
 
 r17@crs
 plotRGB(r17)
