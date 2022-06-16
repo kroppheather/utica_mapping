@@ -23,9 +23,9 @@ plotRGB(r17)
 r17rp <- projectRaster(r17,crs="+init=epsg:4326")
 
 # save reprojected because too long to reload:
+writeRaster(r17rp,"e:/Google Drive/research/projects/utica/utica17/u2017_rp.tif", format="GTiff")
 
-
-
+plotRGB(r17rp)
 #look at a few areas near the city center to start
 Ucenter <- extent(-8377200,-8373500,
                   5326000,5328800)
