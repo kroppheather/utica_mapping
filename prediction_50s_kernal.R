@@ -5,8 +5,8 @@ library(mapview)
 
 # Image merge ---------
 
-dirP <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_256/image"
-dirI <- "E:/Google Drive/research/projects/utica/model_save/1950/img_tile256/predict50"
+dirP <- "E:/Google Drive/research/projects/utica/model_save/1950/model_kernal/prediction/image"
+dirI <- "E:/Google Drive/research/projects/utica/model_save/1950/model_kernal/predict50"
 
 
 treeImg <- list()
@@ -57,7 +57,7 @@ origAll <- do.call(merge, origImg)
 # Offset 2 merge ------------------
 
 
-dirP2 <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_256/image_2"
+dirP2 <- "E:/Google Drive/research/projects/utica/model_save/1950/model_kernal/prediction/image_2"
 dirI2 <- "E:/Google Drive/research/projects/utica/model_save/1950/img_tile256/predict50_2"
 
 
@@ -110,7 +110,7 @@ origAll2 <- do.call(merge, origImg2)
 # Offset 3 merge -----------------
 
 
-dirP3 <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_256/image_3"
+dirP3 <- "E:/Google Drive/research/projects/utica/model_save/1950/model_kernal/prediction/image_3"
 dirI3 <- "E:/Google Drive/research/projects/utica/model_save/1950/img_tile256/predict50_3"
 
 
