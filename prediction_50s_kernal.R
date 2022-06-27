@@ -269,7 +269,7 @@ treeCol1 <- rgb(0.13,0.54,0.13)
 paveCol1 <- rgb(0.96,0.49,0)
 buildCol1 <- rgb(0.53,0.17,0.09)
 
-png("E:/Google Drive/research/projects/utica/model_save/1950/maps_256/utica_classification.png", width=7424,height=3840)
+png("E:/Google Drive/research/projects/utica/model_save/1950/model_kernal/prediction/maps/utica_classification.png", width=7424,height=3840)
 
 plot(origAll, col=grey(1:100/100), axes=FALSE, legend=FALSE, box=FALSE, maxpixels= 28508160)
 
