@@ -184,23 +184,23 @@ writeRaster(paveMask, paste0(dirM,"/pavement/pavement_mask_",trainNum,".tif"),
 u50rp <- projectRaster(u50a,  crs="+init=epsg:4326")
 plot(u50rp, col=gray(1:100/100))
 
-cols50 <- floor(u50rp@ncols/256) 
-rows50 <- floor(u50rp@nrows/256) 
+cols50 <- floor(u50rp@ncols/128) 
+rows50 <- floor(u50rp@nrows/128) 
 
-colsSeq <- seq(1,cols50*256, by=256)
-rowsSeq <- seq(1,rows50*256, by=256)
+colsSeq <- seq(1,cols50*128, by=128)
+rowsSeq <- seq(1,rows50*128, by=128)
 subDF <- data.frame(cols=rep(colsSeq,times=length(rowsSeq)),
                     rows=rep(rowsSeq,each=length(colsSeq)))
-#subdivide raster into 256 x 256
+#subdivide raster into 128 x 128
 sub50s <- list()
 rowcount <- numeric()
 colcount <- numeric()
 #this will shave off extra off south and west 
 for(i in 1:nrow(subDF)){
   sub50s[[i]] <- crop(u50rp, extent(u50rp,  subDF$rows[i], 
-                                   subDF$rows[i]+255,
+                                   subDF$rows[i]+127,
                                    subDF$cols[i], 
-                                   subDF$cols[i]+255))
+                                   subDF$cols[i]+127))
   rowcount[i] <- sub50s[[i]]@nrows
   colcount[i] <- sub50s[[i]]@ncols
 }
@@ -212,7 +212,7 @@ plot(m, col=gray(1:100/100))
 
 for(i in 1:nrow(subDF)){
   writeRaster(sub50s[[i]],
-             paste0(dirO,"/predict50/predict_",i,".tif"),
+             paste0("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/1950/prediction_128/image/predict_",i,".tif"),
              format="GTiff")
 }
 
@@ -248,3 +248,27 @@ plot(treesPredict[[5]], add=TRUE)
 
 mapview(u50rp, col=gray(1:100/100))+
   mapview(treesPredict[[1]])
+
+
+# break up into tiles
+colsSeq <- seq(1,cols50*128, by=128)
+rowsSeq <- seq(1,rows50*128, by=128)
+subDF <- data.frame(cols=rep(colsSeq,times=length(rowsSeq)),
+                    rows=rep(rowsSeq,each=length(colsSeq)))
+#subdivide raster into 256 x 256
+sub50s <- list()
+rowcount <- numeric()
+colcount <- numeric()
+#this will shave off extra off south and west 
+for(i in 1:nrow(subDF)){
+   sub50s[[i]] <- crop(u50rp, extent(u50rp,  subDF$rows[i], 
+                                     subDF$rows[i]+255,
+                                     subDF$cols[i], 
+                                     subDF$cols[i]+255))
+   rowcount[i] <- sub50s[[i]]@nrows
+   colcount[i] <- sub50s[[i]]@ncols
+}
+sub50s[[1]]@ncols
+
+m <- do.call(merge, sub50s)
+plot(m, col=gray(1:100/100))
