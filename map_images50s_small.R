@@ -283,3 +283,5 @@ for(i in 1:nrow(subDF3)){
                paste0("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/1950/prediction_128/image_3/predict_",i,".tif"),
                format="GTiff")
 }
+
+# final save
