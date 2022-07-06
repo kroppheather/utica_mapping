@@ -123,13 +123,61 @@ trees_kern <- reclassify(map50_kern, matrix(c(0,0,
                                             2,0,
                                             3,0), ncol=2, byrow=TRUE))
 
-test <- crop(trees_256, treesMask[[1]])
-test2 <- resample(test, treesMask[[1]], method="ngb")
+
+build_256 <- reclassify(map50_256, matrix(c(0,0,
+                                            1,0,
+                                            2,1,
+                                            3,0), ncol=2, byrow=TRUE))
+
+build_128 <- reclassify(map50_128, matrix(c(0,0,
+                                            1,0,
+                                            2,1,
+                                            3,0), ncol=2, byrow=TRUE))
+build_kern <- reclassify(map50_kern, matrix(c(0,0,
+                                            1,0,
+                                            2,1,
+                                            3,0), ncol=2, byrow=TRUE))
+
+pave_256 <- reclassify(map50_256, matrix(c(0,0,
+                                            1,0,
+                                            2,0,
+                                            3,1), ncol=2, byrow=TRUE))
+
+pave_128 <- reclassify(map50_128, matrix(c(0,0,
+                                           1,0,
+                                           2,0,
+                                           3,1), ncol=2, byrow=TRUE))
+
+pave_kern <- reclassify(map50_kern, matrix(c(0,0,
+                                           1,0,
+                                           2,0,
+                                           3,1), ncol=2, byrow=TRUE))
+
+treesCrop_256 <- list()
+treesResamp_256 <- list()
+buildCrop_256 <- list()
+buildResamp_256 <- list()
+paveCrop_256 <- list()
+paveResamp_256 <- list()
+
+for(i in 1:nValid){
+  treesCrop_256[[i]] <- crop(trees_256, treesMask[[i]])
+  treesResamp_256[[i]] <- resample(treesCrop_256[[i]], treesMask[[i]], method="ngb")
+  buildCrop_256[[i]] <- crop(build_256, buildMask[[i]])
+  buildResamp_256[[i]] <- resample(buildCrop_256[[i]], buildMask[[i]], method="ngb")
+  paveCrop_256[[i]] <- crop(pave_256, paveMask[[i]])
+  paveResamp_256[[i]] <- resample(paveCrop_256[[i]], paveMask[[i]], method="ngb")
+  
+}
 
 
-plot(test)
-plot(treesMask[[1]], add=TRUE)
 
+
+plot(paveResamp_256[[20]])
+plot(paveMask[[20]], add=TRUE)
+
+
+for(i in 1:nValid){
 treeOverlap <- test2 + treesMask[[1]]
 plot(treeOverlap)
 
