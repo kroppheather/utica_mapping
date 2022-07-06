@@ -110,7 +110,7 @@ origAll2 <- do.call(merge, origImg2)
 # Offset 3 merge -----------------
 
 
-dirP3 <- "E:E:/Google Drive/research/projects/utica/model_save/1950/prediction_128/out/image_3"
+dirP3 <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_128/out/image_3"
 dirI3 <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_128/image_3"
 
 
@@ -145,6 +145,8 @@ for(i in 1:Nimg3){
   
   
 }
+
+
 
 buildAll3 <- do.call(merge, buildImg3)
 
@@ -269,7 +271,7 @@ treeCol1 <- rgb(0.13,0.54,0.13)
 paveCol1 <- rgb(0.96,0.49,0)
 buildCol1 <- rgb(0.53,0.17,0.09)
 
-png("E:/Google Drive/research/projects/utica/model_save/1950/prediction_128maps/utica_classification.png", width=7424,height=3840)
+png("E:/Google Drive/research/projects/utica/model_save/1950/prediction_128/maps/utica_classification.png", width=7424,height=3840)
 
 plot(origAll, col=grey(1:100/100), axes=FALSE, legend=FALSE, box=FALSE, maxpixels= 28508160)
 

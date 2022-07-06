@@ -15,36 +15,38 @@ dirMV <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/201
 #read in data from 2017
 # crs is in state plane from State website
 
-r17 <- stack("e:/Google Drive/research/projects/utica/utica17/u2017.tif")
+# r17 <- stack("e:/Google Drive/research/projects/utica/utica17/u2017.tif")
 
-r17@crs
-plotRGB(r17)
+# r17@crs
+# plotRGB(r17)
 
-r17rp <- projectRaster(r17,crs="+init=epsg:4326")
+# r17rp <- projectRaster(r17,crs="+init=epsg:4326")
 
 # save reprojected because too long to reload:
-writeRaster(r17rp,"e:/Google Drive/research/projects/utica/utica17/u2017_rp.tif", format="GTiff")
+# writeRaster(r17rp,"e:/Google Drive/research/projects/utica/utica17/u2017_rp.tif", format="GTiff")
 
 
-r17rp <- stack("e:/Google Drive/research/projects/utica/utica17/u2017_rp.tif")
-
-plotRGB(r17rp)
-#look at a few areas near the city center to start
-Ucenter <- extent(-8377200,-8373500,
-                  5326000,5328800)
-
-Ucenter2 <- extent(-8382000,-8373500,
-                  5324000,5329000)
+# r17rp <- stack("e:/Google Drive/research/projects/utica/utica17/u2017_rp.tif")
 
 
+
+
+# Ucenter <- extent(-75.3386, -75.21397, 43.07212, 43.115 )
 
 #start with working with a small area in the center of
 #utica 
-u50a <- crop(r50s,Ucenter2)
-plot(u50a, col=gray(1:100/100))
+# u17a <- crop(r17rp,Ucenter)
+# plot(u17a[[1]], col=gray(1:100/100))
+
+# writeRaster(u17a,"e:/Google Drive/research/projects/utica/utica17/u2017_crop.tif", format="GTiff")
+
+u17a <- stack("e:/Google Drive/research/projects/utica/utica17/u2017_crop.tif")
+
+plotRGB(u17a)
 
 
-u50a@nrows*u50a@ncols/(256*256)
+
+u17a@nrows*u17a@ncols/(256*256)
 
 #### subset raster for training ----
 u50a
