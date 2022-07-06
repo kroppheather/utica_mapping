@@ -5,7 +5,7 @@ library(mapedit)
 
 
 #directory of training images
-dirO <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica")
+dirO <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/1980/img_tile_256")
 #directory for masks
 dirM <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/80s_mask")
 
@@ -270,6 +270,74 @@ plot(m, col=gray(1:100/100))
 
 for(i in 1:nrow(subDF)){
   writeRaster(sub80s[[i]],
-              paste0(dirO,"/predict80/predict_",i,".tif"),
+              paste0(dirO,"/image/predict_",i,".tif"),
+              format="GTiff")
+}
+
+
+# break up into tiles to do offset:
+
+colsSeq2 <- seq(25,((cols80-1)*256)+25, by=256)
+rowsSeq2 <- seq(25,(rows80*256-1)-25, by=256)
+subDF2 <- data.frame(cols=rep(colsSeq2,times=length(rowsSeq2)),
+                     rows=rep(rowsSeq2,each=length(colsSeq2)))
+
+#subdivide raster into 256 x 256
+sub80s2 <- list()
+rowcount2 <- numeric()
+colcount2 <- numeric()
+#this will shave off extra off south and west 
+for(i in 1:nrow(subDF2)){
+  sub80s2[[i]] <- crop(u80rp, extent(u80rp,  subDF2$rows[i], 
+                                     subDF2$rows[i]+255,
+                                     subDF2$cols[i], 
+                                     subDF2$cols[i]+255))
+  rowcount2[i] <- sub80s2[[i]]@nrows
+  colcount2[i] <- sub80s2[[i]]@ncols
+}
+
+sub80s2[[1]]@ncols
+
+m2 <- do.call(merge, sub80s2)
+plot(m2, col=gray(1:100/100))
+#save
+
+for(i in 1:nrow(subDF2)){
+  writeRaster(sub80s2[[i]],
+              paste0(dirO,"/image_2/predict_",i,".tif"),
+              format="GTiff")
+}
+
+
+colsSeq3 <- seq(100,((cols80-2)*256)+100, by=256)
+rowsSeq3 <- seq(100,((rows80-2)*256)+100, by=256)
+subDF3 <- data.frame(cols=rep(colsSeq3,times=length(rowsSeq3)),
+                     rows=rep(rowsSeq3,each=length(colsSeq3)))
+
+#subdivide raster into 256 x 256
+sub80s3 <- list()
+rowcount3 <- numeric()
+colcount3 <- numeric()
+#this will shave off extra off south and west 
+for(i in 1:nrow(subDF3)){
+  sub80s3[[i]] <- crop(u80rp, extent(u80rp,  subDF3$rows[i], 
+                                     subDF3$rows[i]+255,
+                                     subDF3$cols[i], 
+                                     subDF3$cols[i]+255))
+  rowcount3[i] <- sub80s3[[i]]@nrows
+  colcount3[i] <- sub80s3[[i]]@ncols
+}
+
+plot(sub80s[[1]])
+plot(sub80s2[[1]])
+plot(sub80s3[[1]])
+
+m3 <- do.call(merge, sub80s3)
+plot(m3, col=gray(1:100/100))
+#save
+
+for(i in 1:nrow(subDF3)){
+  writeRaster(sub80s3[[i]],
+              paste0(dirO,"/image_3/predict_",i,".tif"),
               format="GTiff")
 }
