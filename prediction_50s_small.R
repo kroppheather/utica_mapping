@@ -282,3 +282,4 @@ plot(uticaRes, breaks=c(-0.1,0.5,#breaks between other
 
 dev.off()
 
+writeRaster(uticaRes, "E:/Google Drive/research/projects/utica/model_save/1950/all_maps/utica50s_128.tif", format="GTiff" )

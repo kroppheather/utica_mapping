@@ -286,5 +286,4 @@ dev.off()
 
 writeRaster(uticaRes, "E:/Google Drive/research/projects/utica/model_save/1950/all_maps/utica50s_256.tif", format="GTiff" )
 
-test <- raster("E:/Google Drive/research/projects/utica/model_save/1950/all_maps/utica50s_256.tif")
-plot(test)
+
