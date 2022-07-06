@@ -173,14 +173,18 @@ for(i in 1:nValid){
 
 
 
-plot(paveResamp_256[[20]])
-plot(paveMask[[20]], add=TRUE)
 
+
+treeOverlap_256 <- list()
+buildOverlap_256 <- list()
+paveOverlap_256 <- list()
 
 for(i in 1:nValid){
-treeOverlap <- test2 + treesMask[[1]]
-plot(treeOverlap)
-
+  treeOverlap_256[[i]] <- treesResamp_256[[i]] + treesMask[[i]]
+  buildOverlap_256[[i]] <- buildResamp_256[[i]] + buildMask[[i]]
+  paveOverlap_256[[i]] <- paveResamp_256[[i]] + paveMask[[i]]
+ 
+}
 #IOU
 treeCalc <- freq(treeOverlap)
 
