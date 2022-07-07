@@ -409,7 +409,7 @@ IOUtable <- data.frame(method = rep(c("256", "kern", "128"), times=3),
                                IOU_pave_256,IOU_pave_kern, IOU_pave_128))
 
 
-# confusion matrix
+#### confusion matrix 256 ---
 validClass <- list()
 predictCrop_256 <- list()
 predictClass_256 <- list()
@@ -421,10 +421,92 @@ validClass[[i]] <-  (treesMask[[i]]*1) + (buildMask[[i]]*2) + (paveMask[[i]]*3)
 predictCrop_256[[i]] <- crop(map50_256, treesMask[[i]])
 predictClass_256[[i]] <- resample(predictCrop_256[[i]], validClass[[i]], method="ngb")
 conMat_256[[i]] <- confusionMatrix(as.factor(getValues(validClass[[i]])),as.factor(getValues(predictClass_256[[i]])))
-confDF_256[[i]] <- data.frame(pix = as.vector(conMat[[i]]$table),
-                         pred.class = rep(row.names(conMat[[i]]$table), times=4),
-                         ref.clas = rep(colnames(conMat[[i]]$table), each=4))
+confDF_256[[i]] <- data.frame(pix = as.vector(conMat_256[[i]]$table),
+                         pred.class = rep(row.names(conMat_256[[i]]$table), times=4),
+                         ref.clas = rep(colnames(conMat_256[[i]]$table), each=4))
 }
 
 conMat_256[[1]]$table
 conFcalcDF_256 <- do.call("rbind",confDF_256)
+
+
+# users accuracy
+tree_UA_256 <- sum(conFcalcDF_256$pix[conFcalcDF_256$pred.class == "1" & conFcalcDF_256$ref.clas == "1"])/sum(conFcalcDF_256$pix[conFcalcDF_256$ref.clas == "1"])
+build_UA_256 <- sum(conFcalcDF_256$pix[conFcalcDF_256$pred.class == "2" & conFcalcDF_256$ref.clas == "2"])/sum(conFcalcDF_256$pix[conFcalcDF_256$ref.clas == "2"])
+pave_UA_256 <- sum(conFcalcDF_256$pix[conFcalcDF_256$pred.class == "3" & conFcalcDF_256$ref.clas == "3"])/sum(conFcalcDF_256$pix[conFcalcDF_256$ref.clas == "3"])
+
+# producers accuracy
+tree_PA_256 <- sum(conFcalcDF_256$pix[conFcalcDF_256$pred.class == "1" & conFcalcDF_256$ref.clas == "1"])/sum(conFcalcDF_256$pix[conFcalcDF_256$pred.clas == "1"])
+build_PA_256 <- sum(conFcalcDF_256$pix[conFcalcDF_256$pred.class == "2" & conFcalcDF_256$ref.clas == "2"])/sum(conFcalcDF_256$pix[conFcalcDF_256$pred.clas == "2"])
+pave_PA_256 <- sum(conFcalcDF_256$pix[conFcalcDF_256$pred.class == "3" & conFcalcDF_256$ref.clas == "3"])/sum(conFcalcDF_256$pix[conFcalcDF_256$pred.clas == "3"])
+
+
+
+#### confusion matrix kernal ---
+validClass <- list()
+predictCrop_kern <- list()
+predictClass_kern <- list()
+conMat_kern <- list()
+confDF_kern <- list()
+for(i in 1:20){
+  
+  validClass[[i]] <-  (treesMask[[i]]*1) + (buildMask[[i]]*2) + (paveMask[[i]]*3)
+  predictCrop_kern[[i]] <- crop(map50_kern, treesMask[[i]])
+  predictClass_kern[[i]] <- resample(predictCrop_kern[[i]], validClass[[i]], method="ngb")
+  conMat_kern[[i]] <- confusionMatrix(as.factor(getValues(validClass[[i]])),as.factor(getValues(predictClass_kern[[i]])))
+  confDF_kern[[i]] <- data.frame(pix = as.vector(conMat_kern[[i]]$table),
+                                pred.class = rep(row.names(conMat_kern[[i]]$table), times=4),
+                                ref.clas = rep(colnames(conMat_kern[[i]]$table), each=4))
+}
+
+
+conFcalcDF_kern <- do.call("rbind",confDF_kern)
+
+
+# users accuracy
+tree_UA_kern <- sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "1" & conFcalcDF_kern$ref.clas == "1"])/sum(conFcalcDF_kern$pix[conFcalcDF_kern$ref.clas == "1"])
+build_UA_kern <- sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "2" & conFcalcDF_kern$ref.clas == "2"])/sum(conFcalcDF_kern$pix[conFcalcDF_kern$ref.clas == "2"])
+pave_UA_kern <- sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "3" & conFcalcDF_kern$ref.clas == "3"])/sum(conFcalcDF_kern$pix[conFcalcDF_kern$ref.clas == "3"])
+
+# producers accuracy
+tree_PA_kern <- sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "1" & conFcalcDF_kern$ref.clas == "1"])/sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.clas == "1"])
+build_PA_kern <- sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "2" & conFcalcDF_kern$ref.clas == "2"])/sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.clas == "2"])
+pave_PA_kern <- sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "3" & conFcalcDF_kern$ref.clas == "3"])/sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.clas == "3"])
+
+#### confusion matrix 128 ---
+validClass <- list()
+predictCrop_128 <- list()
+predictClass_128 <- list()
+conMat_128 <- list()
+confDF_128 <- list()
+for(i in 1:20){
+  
+  validClass[[i]] <-  (treesMask[[i]]*1) + (buildMask[[i]]*2) + (paveMask[[i]]*3)
+  
+  predictCrop_128[[i]] <- crop(map50_128, treesMask[[i]])
+  
+  predictClass_128[[i]] <- resample(predictCrop_128[[i]], validClass[[i]], method="ngb")
+
+  conMat_128[[i]] <- confusionMatrix(as.factor(getValues(validClass[[i]])),as.factor(getValues(predictClass_128[[i]])))
+
+  confDF_128[[i]] <- data.frame(pix = as.vector(conMat_128[[i]]$table),
+                                pred.class = rep(row.names(conMat_128[[i]]$table), times=4),
+                                ref.clas = rep(colnames(conMat_128[[i]]$table), each=4))
+}
+
+conMat_128[[1]]$table
+conFcalcDF_128 <- do.call("rbind",confDF_128)
+
+
+test <- crop(map50_128, treesMask[[3]])
+
+# users accuracy
+tree_UA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "1" & conFcalcDF_128$ref.clas == "1"])/sum(conFcalcDF_128$pix[conFcalcDF_128$ref.clas == "1"])
+build_UA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "2" & conFcalcDF_128$ref.clas == "2"])/sum(conFcalcDF_128$pix[conFcalcDF_128$ref.clas == "2"])
+pave_UA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "3" & conFcalcDF_128$ref.clas == "3"])/sum(conFcalcDF_128$pix[conFcalcDF_128$ref.clas == "3"])
+
+# producers accuracy
+tree_PA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "1" & conFcalcDF_128$ref.clas == "1"])/sum(conFcalcDF_128$pix[conFcalcDF_128$pred.clas == "1"])
+build_PA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "2" & conFcalcDF_128$ref.clas == "2"])/sum(conFcalcDF_128$pix[conFcalcDF_128$pred.clas == "2"])
+pave_PA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "3" & conFcalcDF_128$ref.clas == "3"])/sum(conFcalcDF_128$pix[conFcalcDF_128$pred.clas == "3"])
+
