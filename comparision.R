@@ -320,14 +320,111 @@ IOU_pave_256 <- totalPavePix_256[3,2]/(totalPavePix_256[2,2]+totalPavePix_256[3,
 
 
 
+##### IOU calc 128 ----
+
+treesCrop_128 <- list()
+treesResamp_128 <- list()
+buildCrop_128 <- list()
+buildResamp_128 <- list()
+paveCrop_128 <- list()
+paveResamp_128 <- list()
+
+for(i in 1:nValid){
+  treesCrop_128[[i]] <- crop(trees_128, treesMask[[i]])
+  treesResamp_128[[i]] <- resample(treesCrop_128[[i]], treesMask[[i]], method="ngb")
+  buildCrop_128[[i]] <- crop(build_128, buildMask[[i]])
+  buildResamp_128[[i]] <- resample(buildCrop_128[[i]], buildMask[[i]], method="ngb")
+  paveCrop_128[[i]] <- crop(pave_128, paveMask[[i]])
+  paveResamp_128[[i]] <- resample(paveCrop_128[[i]], paveMask[[i]], method="ngb")
+  
+}
+
+
+
+
+
+
+treeOverlap_128 <- list()
+buildOverlap_128 <- list()
+paveOverlap_128 <- list()
+
+for(i in 1:nValid){
+  treeOverlap_128[[i]] <- treesResamp_128[[i]] + treesMask[[i]]
+  buildOverlap_128[[i]] <- buildResamp_128[[i]] + buildMask[[i]]
+  paveOverlap_128[[i]] <- paveResamp_128[[i]] + paveMask[[i]]
+  
+}
+#IOU
+treeCalc_128 <- list()
+buildCalc_128 <- list()
+paveCalc_128 <- list()
+for(i in 1:nValid){
+  treeCalc_128[[i]] <- freq(treeOverlap_128[[i]])
+  buildCalc_128[[i]] <- freq(buildOverlap_128[[i]])
+  paveCalc_128[[i]] <- freq(paveOverlap_128[[i]])
+  
+}
+
+
+
+treeSum_128 <- do.call("rbind", treeCalc_128)
+colnames(treeSum_128) <- c("overlapID","pix")
+treeSum_128 <- data.frame(treeSum_128)
+
+buildSum_128 <- do.call("rbind", buildCalc_128)
+colnames(buildSum_128) <- c("overlapID","pix")
+buildSum_128 <- data.frame(buildSum_128)
+
+paveSum_128 <- do.call("rbind", paveCalc_128)
+colnames(paveSum_128) <- c("overlapID","pix")
+paveSum_128 <- data.frame(paveSum_128)
+
+# some masks on edge of offset image produced that changed original extent
+# need to remove NA
+
+
+totalTreePix_128 <- na.omit(treeSum_128) %>%
+  group_by(overlapID) %>%
+  summarize(totalPix = sum(pix))
+
+totalBuildPix_128 <- na.omit(buildSum_128) %>%
+  group_by(overlapID) %>%
+  summarize(totalPix = sum(pix))
+
+totalPavePix_128 <- na.omit(paveSum_128) %>%
+  group_by(overlapID) %>%
+  summarize(totalPix = sum(pix))
+
+
+
+IOU_tree_128 <- totalTreePix_128[3,2]/(totalTreePix_128[2,2]+totalTreePix_128[3,2])
+IOU_build_128 <- totalBuildPix_128[3,2]/(totalBuildPix_128[2,2]+totalBuildPix_128[3,2])
+IOU_pave_128 <- totalPavePix_128[3,2]/(totalPavePix_128[2,2]+totalPavePix_128[3,2])
+
+##### All IOU----
+IOUtable <- data.frame(method = rep(c("256", "kern", "128"), times=3),
+                       class = rep(c("tree","build","pave"), each=3),
+                       IOU = c(IOU_tree_256,IOU_tree_kern, IOU_tree_128,
+                               IOU_build_256,IOU_build_kern, IOU_build_128,
+                               IOU_pave_256,IOU_pave_kern, IOU_pave_128))
+
+
 # confusion matrix
+validClass <- list()
+predictCrop_256 <- list()
+predictClass_256 <- list()
+conMat_256 <- list()
+confDF_256 <- list()
+for(i in 1:20){
 
-validClass <-  (treesMask[[1]]*1) + (buildMask[[1]]*2) + (paveMask[[1]]*3)
-plot(validClass)
+validClass[[i]] <-  (treesMask[[i]]*1) + (buildMask[[i]]*2) + (paveMask[[i]]*3)
+predictCrop_256[[i]] <- crop(map50_256, treesMask[[i]])
+predictClass_256[[i]] <- resample(predictCrop_256[[i]], validClass[[i]], method="ngb")
+conMat_256[[i]] <- confusionMatrix(as.factor(getValues(validClass[[i]])),as.factor(getValues(predictClass_256[[i]])))
+confDF_256[[i]] <- data.frame(pix = as.vector(conMat[[i]]$table),
+                         pred.class = rep(row.names(conMat[[i]]$table), times=4),
+                         ref.clas = rep(colnames(conMat[[i]]$table), each=4))
+}
 
-predictCrop <- crop(map50_256, treesMask[[1]])
-predictClass <- resample(predictCrop, validClass, method="ngb")
-
-testC <- confusionMatrix(as.factor(getValues(validClass)),as.factor(getValues(predictClass)))
-
-testC$table + testC$table
+conMat_256[[1]]$table
+conFcalcDF_256 <- do.call("rbind",confDF_256)
