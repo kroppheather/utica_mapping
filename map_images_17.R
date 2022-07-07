@@ -49,43 +49,27 @@ plotRGB(u17a)
 u17a@nrows*u17a@ncols/(256*256)
 
 #### subset raster for training ----
-u50a
+
 
 # subset size
-# 128 x 128 pixels
+# 256 x 256 pixels
 #for training masks
 #convert to matrix
 
-test <- imgV[1:128,1:128]
 
-nSamp <- 20
-set.seed(42)
-samplesx <- sample(1:(u50a@ncols-257), nSamp)
-set.seed(12)
-samplesy <- sample(1:(u50a@nrows-257), nSamp)
+nSamp <- 60
+set.seed(452)
+samplesx <- sample(1:(u17a@ncols-257), nSamp)
+set.seed(102)
+samplesy <- sample(1:(u17a@nrows-257), nSamp)
 
-
-#additional samples: 20-40
-nSamp2 <- 40
-set.seed(42)
-samplesx2 <- sample(1:(u50a@ncols-257), nSamp2)[21:40]
-set.seed(12)
-samplesy2 <- sample(1:(u50a@nrows-257), nSamp2)[21:40]
-#save data, commented out since does not need to run every time
-
-#additional samples: 40-60
-nSamp3 <- 60
-set.seed(42)
-samplesx3 <- sample(1:(u50a@ncols-257), nSamp3)[41:60]
-set.seed(12)
-samplesy3 <- sample(1:(u50a@nrows-257), nSamp3)[41:60]
 
 #validation samples: 60-80
 nSamp4 <- 80
-set.seed(42)
-samplesx4 <- sample(1:(u50a@ncols-257), nSamp4)[61:80]
-set.seed(12)
-samplesy4 <- sample(1:(u50a@nrows-257), nSamp4)[61:80]
+set.seed(452)
+samplesx4 <- sample(1:(u17a@ncols-257), nSamp4)[61:80]
+set.seed(102)
+samplesy4 <- sample(1:(u17a@nrows-257), nSamp4)[61:80]
 
 # save data, commented out since does not need to run every time
  
