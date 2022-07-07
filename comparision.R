@@ -2,6 +2,7 @@ library(raster)
 library(sf)
 library(mapview)
 library(caret)
+library(dplyr)
 
 ##### Overview ----
 
@@ -186,9 +187,24 @@ for(i in 1:nValid){
  
 }
 #IOU
-treeCalc <- freq(treeOverlap)
+treeCalc_256 <- list()
+for(i in 1:nValid){
+  treeCalc_256[[i]] <- freq(treeOverlap_256[[i]])
+}
 
-treeCalc[3,2]/(treeCalc[2,2]+treeCalc[3,2])
+
+
+treeSum <- do.call("rbind", treeCalc_256)
+colnames(treeSum) <- c("overlapID","pix")
+treeSum <- data.frame(treeSum)
+#some masks on edge of 
+totalTreePix <- na.omit(treeSum) %>%
+  group_by(overlapID) %>%
+  summarize(totalPix = sum(pix))
+
+
+
+IOU_256 <- totalTreePix[3,2]/(totalTreePix[2,2]+totalTreePix[3,2])
 
 # confusion matrix
 
