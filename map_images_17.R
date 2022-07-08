@@ -128,7 +128,7 @@ samplesy2 <- sample(1:(u17a@nrows-257), nSamp2)[81]
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 23
+trainNum <- 24
 
 imgN <- stack(paste0(dirO[dirN], "/train_",trainNum,".tif"))
 plotRGB(imgN)
@@ -146,7 +146,7 @@ imgN@nrows
 # directly observed.
 #### Step 2 make trees mask   ##
 
-trees <- drawFeatures(viewRGB(imgN, quantiles=c(0,1)))
+trees <- drawFeatures(viewRGB(imgN, quantiles=c(0.01,0.99)))
 
 treeMask <- rasterize(trees,imgN, field=1, background=0)
 
