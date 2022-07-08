@@ -3,13 +3,18 @@ library(raster)
 library(mapview)
 library(mapedit)
 
-
+dirN <- 2
 #directory of training images
-dirO <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/2017/data/train/images")
-#directory for masks
-dirM <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/2017/data/train/mask")
+dirO <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/2017/data/train/images",
+          "e:/Google Drive/research/projects/utica/model_save/2017/data/train/images")
 
-dirMV <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/2017/data/valid")
+
+#directory for masks
+dirM <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/2017/data/train/mask",
+          "e:/Google Drive/research/projects/utica/model_save/2017/data/train/mask")
+
+dirMV <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/2017/data/valid",
+           "e:/Google Drive/research/projects/utica/model_save/2017/data/valid" )
 
 #### read in data and visualize ----
 #read in data from 2017
@@ -74,18 +79,32 @@ samplesy4 <- sample(1:(u17a@nrows-257), nSamp4)[61:80]
 # save data, commented out since does not need to run every time
  
  
-  # for(i in 1:20){
-  #   
-  #   
-  #   writeRaster(crop(u50a, extent(u50a, samplesy4[i], 
-  #                                samplesy4[i] +256, 
-  #                                 samplesx4[i], 
-  #                               samplesx4[i]+256)), 
-  #             paste0(dirO, "/50s_valid/valid_",i,".tif"),
-  #             format="GTiff" ,overwrite=TRUE)
-  #  
-  # 
-  # }
+   for(i in 1:60){
+     
+     
+     writeRaster(crop(u17a, extent(u17a, samplesy[i], 
+                                  samplesy[i] +255, 
+                                   samplesx[i], 
+                                 samplesx[i]+255)), 
+               paste0(dirO[dirN], "/train_",i,".tif"),
+               format="GTiff" ,overwrite=TRUE)
+    
+   
+   }
+
+
+for(i in 1:20){
+  
+  
+  writeRaster(crop(u17a, extent(u17a, samplesy4[i], 
+                                samplesy4[i] +255, 
+                                samplesx4[i], 
+                                samplesx4[i]+255)), 
+              paste0(dirMV[dirN], "images/valid_",i,".tif"),
+              format="GTiff" ,overwrite=TRUE)
+  
+  
+}
 
 #### make masks for training & validation ----
 
