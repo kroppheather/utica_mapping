@@ -128,7 +128,7 @@ samplesy2 <- sample(1:(u17a@nrows-257), nSamp2)[81]
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 12
+trainNum <- 13
 
 imgN <- stack(paste0(dirO[dirN], "/train_",trainNum,".tif"))
 plotRGB(imgN)
@@ -146,7 +146,7 @@ imgN@nrows
 # directly observed.
 #### Step 2 make trees mask   ##
 
-trees <- drawFeatures(viewRGB(imgN))
+trees <- drawFeatures(viewRGB(imgN, quantiles=c(0,1)))
 
 treeMask <- rasterize(trees,imgN, field=1, background=0)
 
@@ -178,7 +178,7 @@ buildingMask@nrows
 range(getValues(buildingMask))
 #### Step 4 make buildings mask   ##
 
-pave <- drawFeatures(viewRGB(imgN)+
+pave <- drawFeatures(viewRGB(imgN, quantiles=c(0,1))+
                        mapview(trees, col.regions="seagreen")+
                        mapview(buildings, col.regions="tomato"))
 
