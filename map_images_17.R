@@ -178,7 +178,7 @@ buildingMask@nrows
 range(getValues(buildingMask))
 #### Step 4 make buildings mask   ##
 
-pave <- drawFeatures(mapview(imgN, col=grey(1:100/100))+
+pave <- drawFeatures(viewRGB(imgN, col=grey(1:100/100))+
                        mapview(trees, col.regions="seagreen")+
                        mapview(buildings, col.regions="tomato"))
 
