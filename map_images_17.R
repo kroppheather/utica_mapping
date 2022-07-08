@@ -46,7 +46,7 @@ dirMV <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/201
 # writeRaster(u17a,"e:/Google Drive/research/projects/utica/utica17/u2017_crop.tif", format="GTiff")
 
 u17a <- stack("e:/Google Drive/research/projects/utica/utica17/u2017_crop.tif")
-
+u17a <- stack("/Volumes/GoogleDrive/My Drive/research/projects/utica/utica17/u2017_crop.tif")
 plotRGB(u17a)
 
 
@@ -76,6 +76,12 @@ samplesx4 <- sample(1:(u17a@ncols-257), nSamp4)[61:80]
 set.seed(102)
 samplesy4 <- sample(1:(u17a@nrows-257), nSamp4)[61:80]
 
+nSamp2 <- 81
+set.seed(452)
+samplesx2 <- sample(1:(u17a@ncols-257), nSamp2)[81]
+set.seed(102)
+samplesy2 <- sample(1:(u17a@nrows-257), nSamp2)[81]
+
 # save data, commented out since does not need to run every time
  
 #  
@@ -93,18 +99,28 @@ samplesy4 <- sample(1:(u17a@nrows-257), nSamp4)[61:80]
 #    }
 # 
 # 
-# for(i in 1:20){
-#   
-#   
-#   writeRaster(crop(u17a, extent(u17a, samplesy4[i], 
-#                                 samplesy4[i] +255, 
-#                                 samplesx4[i], 
-#                                 samplesx4[i]+255)), 
-#               paste0(dirMV[dirN], "/images/valid_",i,".tif"),
-#               format="GTiff" ,overwrite=TRUE)
-#   
-#   
-# }
+ # for(i in 1:20){
+ #   
+ #   
+ #   writeRaster(crop(u17a, extent(u17a, samplesy4[i], 
+ #                                samplesy4[i] +255, 
+ #                                 samplesx4[i], 
+ #                                 samplesx4[i]+255)), 
+ #               paste0(dirMV[dirN], "/images/valid_",i,".tif"),
+ #               format="GTiff" ,overwrite=TRUE)
+ #   
+ #  
+ # }
+
+# image 2 is in a weird location on edge of map but within extent. 
+# too many NA
+
+   # writeRaster(crop(u17a, extent(u17a, samplesy2, 
+   #                               samplesy2 +255, 
+   #                               samplesx2, 
+   #                              samplesx2+255)), 
+   #             paste0(dirO[dirN], "/train_",2,".tif"),
+   #             format="GTiff" )
 
 #### make masks for training & validation ----
 
@@ -112,7 +128,7 @@ samplesy4 <- sample(1:(u17a@nrows-257), nSamp4)[61:80]
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 1
+trainNum <- 2
 
 imgN <- stack(paste0(dirO[dirN], "/train_",trainNum,".tif"))
 plotRGB(imgN)
