@@ -78,33 +78,33 @@ samplesy4 <- sample(1:(u17a@nrows-257), nSamp4)[61:80]
 
 # save data, commented out since does not need to run every time
  
- 
-   for(i in 1:60){
-     
-     
-     writeRaster(crop(u17a, extent(u17a, samplesy[i], 
-                                  samplesy[i] +255, 
-                                   samplesx[i], 
-                                 samplesx[i]+255)), 
-               paste0(dirO[dirN], "/train_",i,".tif"),
-               format="GTiff" ,overwrite=TRUE)
-    
-   
-   }
-
-
-for(i in 1:20){
-  
-  
-  writeRaster(crop(u17a, extent(u17a, samplesy4[i], 
-                                samplesy4[i] +255, 
-                                samplesx4[i], 
-                                samplesx4[i]+255)), 
-              paste0(dirMV[dirN], "/images/valid_",i,".tif"),
-              format="GTiff" ,overwrite=TRUE)
-  
-  
-}
+#  
+#    for(i in 1:60){
+#      
+#      
+#      writeRaster(crop(u17a, extent(u17a, samplesy[i], 
+#                                   samplesy[i] +255, 
+#                                    samplesx[i], 
+#                                  samplesx[i]+255)), 
+#                paste0(dirO[dirN], "/train_",i,".tif"),
+#                format="GTiff" ,overwrite=TRUE)
+#     
+#    
+#    }
+# 
+# 
+# for(i in 1:20){
+#   
+#   
+#   writeRaster(crop(u17a, extent(u17a, samplesy4[i], 
+#                                 samplesy4[i] +255, 
+#                                 samplesx4[i], 
+#                                 samplesx4[i]+255)), 
+#               paste0(dirMV[dirN], "/images/valid_",i,".tif"),
+#               format="GTiff" ,overwrite=TRUE)
+#   
+#   
+# }
 
 #### make masks for training & validation ----
 
@@ -112,10 +112,10 @@ for(i in 1:20){
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 60
+trainNum <- 3
 
 imgN <- stack(paste0(dirO[dirN], "/train_",trainNum,".tif"))
-plot(imgN, col=grey(1:100/100))
+plotRGB(imgN)
 
 imgN@ncols
 imgN@nrows
@@ -135,7 +135,7 @@ trainDgc@ncols
 # directly observed.
 #### Step 2 make trees mask   ##
 
-trees <- drawFeatures(mapview(trainDgc, col=grey(1:100/100)))
+trees <- drawFeatures(viewRGB(trainDgc))
 
 treeMask <- rasterize(trees,trainDgc, field=1, background=0)
 
