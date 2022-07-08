@@ -100,7 +100,7 @@ for(i in 1:20){
                                 samplesy4[i] +255, 
                                 samplesx4[i], 
                                 samplesx4[i]+255)), 
-              paste0(dirMV[dirN], "images/valid_",i,".tif"),
+              paste0(dirMV[dirN], "/images/valid_",i,".tif"),
               format="GTiff" ,overwrite=TRUE)
   
   
@@ -114,7 +114,7 @@ for(i in 1:20){
 #give training image number
 trainNum <- 60
 
-imgN <- raster(paste0(dirO, "/50s_train/train_",trainNum,".tif"))
+imgN <- stack(paste0(dirO[dirN], "/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
 
 imgN@ncols
