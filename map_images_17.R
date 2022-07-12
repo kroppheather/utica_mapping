@@ -192,7 +192,7 @@ writeRaster(paveMask, paste0(dirM[dirN],"/pavement/pavement_mask_",trainNum,".ti
 
 ###### Validation ----
 
-validNum <- 1
+validNum <- 2
 
 imgN <- stack(paste0(dirMV[dirN], "/images/valid_",validNum,".tif"))
 plotRGB(imgN)
@@ -251,7 +251,7 @@ paveMask <- rasterize(pave,imgN, field=1, background=0)
 plot(paveMask)
 
 
-writeRaster(paveMask, paste0(dirMV[dirN],"/mask/pavement/pavement_mask_",trainNum,".tif"),
+writeRaster(paveMask, paste0(dirMV[dirN],"/mask/pavement/pavement_mask_",validNum,".tif"),
             format="GTiff")
 
 ###### Prep for prediction ----
