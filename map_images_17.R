@@ -192,7 +192,9 @@ writeRaster(paveMask, paste0(dirM[dirN],"/pavement/pavement_mask_",trainNum,".ti
 
 ###### Validation ----
 
-imgN <- stack(paste0(dirMV[dirN], "/train_",trainNum,".tif"))
+validNum <- 1
+
+imgN <- stack(paste0(dirMV[dirN], "/images/valid_",validNum,".tif"))
 plotRGB(imgN)
 
 imgN@ncols
@@ -217,7 +219,7 @@ plot(treeMask)
 treeMask@ncols
 treeMask@nrows
 
-writeRaster(treeMask, paste0(dirMV[dirN],"/trees/tree_mask_",trainNum,".tif"),
+writeRaster(treeMask, paste0(dirMV[dirN],"/mask/trees/tree_mask_",trainNum,".tif"),
             format="GTiff")
 
 
@@ -231,7 +233,7 @@ buildingMask <- rasterize(buildings,imgN, field=1, background=0)
 plot(buildingMask)
 
 
-writeRaster(buildingMask, paste0(dirMV[dirN],"/building/building_mask_",trainNum,".tif"),
+writeRaster(buildingMask, paste0(dirMV[dirN],"/mask/building/building_mask_",validNum,".tif"),
             format="GTiff")
 
 buildingMask@ncols
@@ -249,7 +251,7 @@ paveMask <- rasterize(pave,imgN, field=1, background=0)
 plot(paveMask)
 
 
-writeRaster(paveMask, paste0(dirMV[dirN],"/pavement/pavement_mask_",trainNum,".tif"),
+writeRaster(paveMask, paste0(dirMV[dirN],"/mask/pavement/pavement_mask_",trainNum,".tif"),
             format="GTiff")
 
 ###### Prep for prediction ----
