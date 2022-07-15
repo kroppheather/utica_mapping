@@ -6,7 +6,9 @@ library(dplyr)
 
 
 # directory 
-dirP <- "/Volumes/GoogleDrive/My Drive/research/projects/utica/80s_valid_out"
+dirP <- "E:/Google Drive/research/projects/utica/model_save/1980/prediction_256/valid"
+#directory for orig img
+dirI <- "E:/Google Drive/research/projects/utica/model_save/1980/data_256/crop_valid"
 
 # number of validation images
 nValid <- 20
@@ -31,23 +33,23 @@ for(i in 1:nValid){
 
 treesMask <- list()
 for(i in 1:nValid){
-treesMask[[i]] <- raster(paste0(dirP,"/orig/tree/tree_mask_",i,".tif"))
+treesMask[[i]] <- raster(paste0(dirI,"/tree/tree_mask_",i,".tif"))
 }
 
 buildMask <- list()
 for(i in 1:nValid){
-  buildMask[[i]] <- raster(paste0(dirP,"/orig/building/building_mask_",i,".tif"))
+  buildMask[[i]] <- raster(paste0(dirI,"/building/building_mask_",i,".tif"))
 }
 
 paveMask <- list()
 for(i in 1:nValid){
-  paveMask[[i]] <- raster(paste0(dirP,"/orig/pavement/pavement_mask_",i,".tif"))
+  paveMask[[i]] <- raster(paste0(dirI,"/pavement/pavement_mask_",i,".tif"))
 }
 
 img50 <- list()
 
 for(i in 1:nValid){
-  img50[[i]] <- raster(paste0(dirP,"/orig/image/image_",i,".tif"))
+  img50[[i]] <- raster(paste0(dirI,"/image/image_",i,".tif"))
 }
 
 
