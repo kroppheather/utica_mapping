@@ -2,8 +2,8 @@ library(raster)
 library(sf)
 library(mapview)
 
-dirP <- "E:/Google Drive/research/projects/utica/odel_save/1980/prediction_256/image"
-dirI <- "E:/Google Drive/research/projects/utica/odel_save/1980/img_tile_256"
+dirP <- "E:/Google Drive/research/projects/utica/model_save/1980/prediction_256/image"
+dirI <- "E:/Google Drive/research/projects/utica/model_save/1980/img_tile_256"
 
 
 
