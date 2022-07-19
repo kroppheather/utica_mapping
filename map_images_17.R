@@ -16,6 +16,9 @@ dirM <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/2017
 dirMV <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/2017/data/valid",
            "e:/Google Drive/research/projects/utica/model_save/2017/data/valid" )
 
+dirI <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/2017/img_tile_256",
+          "e:/Google Drive/research/projects/utica/model_save/2017/dimg_tile_256")
+
 #### read in data and visualize ----
 #read in data from 2017
 # crs is in state plane from State website
@@ -256,42 +259,39 @@ writeRaster(paveMask, paste0(dirMV[dirN],"/mask/pavement/pavement_mask_",validNu
 
 ###### Prep for prediction ----
 
-#reproject to be in WGS 1984 so matches all mask images
 
-u50rp <- projectRaster(u50a,  crs="+init=epsg:4326")
-plot(u50rp, col=gray(1:100/100))
 
-cols50 <- floor(u50rp@ncols/256) 
-rows50 <- floor(u50rp@nrows/256) 
+cols17 <- floor(u17a@ncols/256) 
+rows17 <- floor(u17a@nrows/256) 
 
 
 # break up into tiles
-colsSeq <- seq(1,cols50*256, by=256)
-rowsSeq <- seq(1,rows50*256, by=256)
+colsSeq <- seq(1,cols17*256, by=256)
+rowsSeq <- seq(1,rows17*256, by=256)
 subDF <- data.frame(cols=rep(colsSeq,times=length(rowsSeq)),
                     rows=rep(rowsSeq,each=length(colsSeq)))
 #subdivide raster into 256 x 256
-sub50s <- list()
+sub17s <- list()
 rowcount <- numeric()
 colcount <- numeric()
 #this will shave off extra off south and west 
 for(i in 1:nrow(subDF)){
-  sub50s[[i]] <- crop(u50rp, extent(u50rp,  subDF$rows[i], 
+  sub17s[[i]] <- crop(u17a, extent(u17a,  subDF$rows[i], 
                                    subDF$rows[i]+255,
                                    subDF$cols[i], 
                                    subDF$cols[i]+255))
-  rowcount[i] <- sub50s[[i]]@nrows
-  colcount[i] <- sub50s[[i]]@ncols
+  rowcount[i] <- sub17s[[i]]@nrows
+  colcount[i] <- sub17s[[i]]@ncols
 }
-sub50s[[1]]@ncols
+sub17s[[1]]@ncols
 
-m <- do.call(merge, sub50s)
-plot(m, col=gray(1:100/100))
+m <- do.call(merge, sub17s)
+plotRGB(m)
 #save
 
 for(i in 1:nrow(subDF)){
-  writeRaster(sub50s[[i]],
-             paste0(dirO,"/predict50/predict_",i,".tif"),
+  writeRaster(sub17s[[i]],
+             paste0(dirI[dirN],"/image/predict_",i,".tif"),
              format="GTiff")
 }
 
