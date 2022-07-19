@@ -3,7 +3,7 @@ library(sf)
 library(mapview)
 
 dirP <- "E:/Google Drive/research/projects/utica/model_save/1980/prediction_256/image"
-dirI <- "E:/Google Drive/research/projects/utica/model_save/1980/img_tile_256"
+dirI <- "E:/Google Drive/research/projects/utica/model_save/1980/img_tile_256/image"
 
 
 
@@ -55,13 +55,13 @@ origAll <- do.call(merge, origImg)
 # Offset 2 merge ------------------
 
 
-dirP2 <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_256/image_2"
-dirI2 <- "E:/Google Drive/research/projects/utica/model_save/1950/img_tile256/predict50_2"
+dirP2 <- "E:/Google Drive/research/projects/utica/model_save/1980/prediction_256/image_2"
+dirI2 <- "E:/Google Drive/research/projects/utica/model_save/1980/img_tile256/predict_2"
 
 
 treeImg2 <- list()
 
-Nimg2 <- 435
+Nimg2 <- 627
 
 for(i in 1:Nimg2){
   treeImg2[[i]] <- raster(paste0(dirP2,"/tree/tree_",i,".tif"))
@@ -108,13 +108,13 @@ origAll2 <- do.call(merge, origImg2)
 # Offset 3 merge -----------------
 
 
-dirP3 <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_256/image_3"
-dirI3 <- "E:/Google Drive/research/projects/utica/model_save/1950/img_tile256/predict50_3"
+dirP3 <- "E:/Google Drive/research/projects/utica/model_save/1980/prediction_256/image_3"
+dirI3 <- "E:/Google Drive/research/projects/utica/model_save/1980/img_tile256/image_3"
 
 
 treeImg3 <- list()
 
-Nimg3 <- 392
+Nimg3 <- 576
 
 for(i in 1:Nimg3){
   treeImg3[[i]] <- raster(paste0(dirP3,"/tree/tree_",i,".tif"))
