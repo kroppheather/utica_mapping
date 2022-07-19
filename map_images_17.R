@@ -192,7 +192,7 @@ writeRaster(paveMask, paste0(dirM[dirN],"/pavement/pavement_mask_",trainNum,".ti
 
 ###### Validation ----
 
-validNum <- 10
+validNum <- 11
 
 imgN <- stack(paste0(dirMV[dirN], "/images/valid_",validNum,".tif"))
 plotRGB(imgN)
