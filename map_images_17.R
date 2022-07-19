@@ -3,7 +3,7 @@ library(raster)
 library(mapview)
 library(mapedit)
 
-dirN <- 1
+dirN <- 2
 #directory of training images
 dirO <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/2017/data/train/images",
           "e:/Google Drive/research/projects/utica/model_save/2017/data/train/images")
@@ -17,7 +17,7 @@ dirMV <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/201
            "e:/Google Drive/research/projects/utica/model_save/2017/data/valid" )
 
 dirI <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/2017/img_tile_256",
-          "e:/Google Drive/research/projects/utica/model_save/2017/dimg_tile_256")
+          "e:/Google Drive/research/projects/utica/model_save/2017/img_tile_256")
 
 #### read in data and visualize ----
 #read in data from 2017
@@ -276,13 +276,16 @@ rowcount <- numeric()
 colcount <- numeric()
 #this will shave off extra off south and west 
 for(i in 1:nrow(subDF)){
-  sub17s[[i]] <- crop(u17a, extent(u17a,  subDF$rows[i], 
+  writeRaster(crop(u17a, extent(u17a,  subDF$rows[i], 
                                    subDF$rows[i]+255,
                                    subDF$cols[i], 
-                                   subDF$cols[i]+255))
-  rowcount[i] <- sub17s[[i]]@nrows
-  colcount[i] <- sub17s[[i]]@ncols
+                                   subDF$cols[i]+255)),  
+              paste0(dirI[dirN],"/image/predict_",i,".tif"),
+              format="GTiff")
+
 }
+
+
 sub17s[[1]]@ncols
 
 m <- do.call(merge, sub17s)
