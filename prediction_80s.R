@@ -56,7 +56,7 @@ origAll <- do.call(merge, origImg)
 
 
 dirP2 <- "E:/Google Drive/research/projects/utica/model_save/1980/prediction_256/image_2"
-dirI2 <- "E:/Google Drive/research/projects/utica/model_save/1980/img_tile256/predict_2"
+dirI2 <- "E:/Google Drive/research/projects/utica/model_save/1980/img_tile_256/image_2"
 
 
 treeImg2 <- list()
@@ -109,7 +109,7 @@ origAll2 <- do.call(merge, origImg2)
 
 
 dirP3 <- "E:/Google Drive/research/projects/utica/model_save/1980/prediction_256/image_3"
-dirI3 <- "E:/Google Drive/research/projects/utica/model_save/1980/img_tile256/image_3"
+dirI3 <- "E:/Google Drive/research/projects/utica/model_save/1980/img_tile_256/image_3"
 
 
 treeImg3 <- list()
