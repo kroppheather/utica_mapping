@@ -321,7 +321,7 @@ rowsSeq3 <- seq(100,((rows80-2)*128)+100, by=128)
 subDF3 <- data.frame(cols=rep(colsSeq3,times=length(rowsSeq3)),
                      rows=rep(rowsSeq3,each=length(colsSeq3)))
 
-#subdivide raster into 256 x 256
+#subdivide raster
 sub80s3 <- list()
 rowcount3 <- numeric()
 colcount3 <- numeric()
