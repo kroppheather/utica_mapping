@@ -296,10 +296,10 @@ subDF2 <- data.frame(cols=rep(colsSeq2,times=length(rowsSeq2)),
 
 #this will shave off extra off south and west 
 for(i in 1:nrow(subDF2)){
-  writeRaster(crop(u17a, extent(u17a,  subDF$rows[i], 
-                                subDF$rows[i]+255,
-                                subDF$cols[i], 
-                                subDF$cols[i]+255)),  
+  writeRaster(crop(u17a, extent(u17a,  subDF2$rows[i], 
+                                subDF2$rows[i]+255,
+                                subDF2$cols[i], 
+                                subDF2$cols[i]+255)),  
               paste0(dirI[dirN],"/image_2/predict_",i,".tif"),
               format="GTiff")
   
@@ -310,47 +310,22 @@ for(i in 1:nrow(subDF2)){
 
 # break up into tiles to do second offset:
 
-colsSeq3 <- seq(100,((cols50-2)*256)+100, by=256)
-rowsSeq3 <- seq(100,((rows50-2)*256)+100, by=256)
+colsSeq3 <- seq(100,((cols17-2)*256)+100, by=256)
+rowsSeq3 <- seq(100,((rows17-2)*256)+100, by=256)
 subDF3 <- data.frame(cols=rep(colsSeq3,times=length(rowsSeq3)),
                      rows=rep(rowsSeq3,each=length(colsSeq3)))
 
 #subdivide raster into 256 x 256
-sub50s3 <- list()
-rowcount3 <- numeric()
-colcount3 <- numeric()
-#this will shave off extra off south and west 
 for(i in 1:nrow(subDF3)){
-  sub50s3[[i]] <- crop(u50rp, extent(u50rp,  subDF3$rows[i], 
-                                     subDF3$rows[i]+255,
-                                     subDF3$cols[i], 
-                                     subDF3$cols[i]+255))
-  rowcount3[i] <- sub50s3[[i]]@nrows
-  colcount3[i] <- sub50s3[[i]]@ncols
-}
-
-plot(sub50s[[1]])
-plot(sub50s2[[1]])
-plot(sub50s3[[1]])
-
-m3 <- do.call(merge, sub50s3)
-plot(m3, col=gray(1:100/100))
-#save
-
-for(i in 1:nrow(subDF3)){
-  writeRaster(sub50s3[[i]],
-              paste0("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/1950/img_tile256/predict50_3/predict_",i,".tif"),
+  writeRaster(crop(u17a, extent(u17a,  subDF3$rows[i], 
+                                subDF3$rows[i]+255,
+                                subDF3$cols[i], 
+                                subDF3$cols[i]+255)),  
+              paste0(dirI[dirN],"/image_3/predict_",i,".tif"),
               format="GTiff")
+  
 }
 
-testp <- list()
-rowcountp <- numeric()
-colcountp <- numeric()
-for(i in 1:nrow(subDF)){
-testp[[i]] <- raster(paste0(dirO,"/predict50/predict_",i,".tif"))
-rowcountp[i] <- testp[[i]]@nrows
-colcountp[i] <- testp[[i]]@ncols
-}
 
 
 
