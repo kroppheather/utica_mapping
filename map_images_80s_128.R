@@ -5,7 +5,8 @@ library(mapedit)
 
 
 #directory of training images
-dirO <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/1980/img_tile_256")
+dirO <- c(#"/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/1980/img_tile_128"
+  "e:/Google Drive/research/projects/utica/model_save/1980/img_tile_128")
 #directory for masks
 dirM <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/80s_mask")
 
@@ -22,7 +23,8 @@ Ucenter3 <- extent(-8379200,-8371200,
 #read in data from 1950s
 #georeferenced in ArcPro to the ESRI world imagery basemap
 # crs is in web mercator since that is automatic base map CRS.
-r80s <- raster("/Volumes/GoogleDrive/My Drive/research/projects/utica/utica80/utica80_10086.tif")
+r80s <- raster( # "/Volumes/GoogleDrive/My Drive/research/projects/utica/utica80/utica80_10086.tif")
+              "e:/Google Drive/research/projects/utica/utica80/utica80_10086.tif")
 r80s@crs
 plot(r80s, col=gray(1:100/100))
 
@@ -247,23 +249,23 @@ plot(paveMask)
 
 
 
-cols80 <- floor(u80rp@ncols/256) 
-rows80 <- floor(u80rp@nrows/256) 
+cols80 <- floor(u80rp@ncols/128) 
+rows80 <- floor(u80rp@nrows/128) 
 
-colsSeq <- seq(1,cols80*256, by=256)
-rowsSeq <- seq(1,rows80*256, by=256)
+colsSeq <- seq(1,cols80*128, by=128)
+rowsSeq <- seq(1,rows80*128, by=128)
 subDF <- data.frame(cols=rep(colsSeq,times=length(rowsSeq)),
                     rows=rep(rowsSeq,each=length(colsSeq)))
-#subdivide raster into 256 x 256
+#subdivide raster 
 sub80s <- list()
 rowcount <- numeric()
 colcount <- numeric()
 #this will shave off extra off south and west 
 for(i in 1:nrow(subDF)){
   sub80s[[i]] <- crop(u80rp, extent(u80rp,  subDF$rows[i], 
-                                    subDF$rows[i]+255,
+                                    subDF$rows[i]+127,
                                     subDF$cols[i], 
-                                    subDF$cols[i]+255))
+                                    subDF$cols[i]+127))
   rowcount[i] <- sub80s[[i]]@nrows
   colcount[i] <- sub80s[[i]]@ncols
 }
@@ -282,8 +284,8 @@ for(i in 1:nrow(subDF)){
 
 # break up into tiles to do offset:
 
-colsSeq2 <- seq(25,((cols80-1)*256)+25, by=256)
-rowsSeq2 <- seq(25,(rows80*256-1)-25, by=256)
+colsSeq2 <- seq(25,((cols80-1)*128)+25, by=128)
+rowsSeq2 <- seq(25,(rows80*128-1)-25, by=128)
 subDF2 <- data.frame(cols=rep(colsSeq2,times=length(rowsSeq2)),
                      rows=rep(rowsSeq2,each=length(colsSeq2)))
 
@@ -294,9 +296,9 @@ colcount2 <- numeric()
 #this will shave off extra off south and west 
 for(i in 1:nrow(subDF2)){
   sub80s2[[i]] <- crop(u80rp, extent(u80rp,  subDF2$rows[i], 
-                                     subDF2$rows[i]+255,
+                                     subDF2$rows[i]+127,
                                      subDF2$cols[i], 
-                                     subDF2$cols[i]+255))
+                                     subDF2$cols[i]+127))
   rowcount2[i] <- sub80s2[[i]]@nrows
   colcount2[i] <- sub80s2[[i]]@ncols
 }
@@ -314,8 +316,8 @@ for(i in 1:nrow(subDF2)){
 }
 
 
-colsSeq3 <- seq(100,((cols80-2)*256)+100, by=256)
-rowsSeq3 <- seq(100,((rows80-2)*256)+100, by=256)
+colsSeq3 <- seq(100,((cols80-2)*128)+100, by=128)
+rowsSeq3 <- seq(100,((rows80-2)*128)+100, by=128)
 subDF3 <- data.frame(cols=rep(colsSeq3,times=length(rowsSeq3)),
                      rows=rep(rowsSeq3,each=length(colsSeq3)))
 
@@ -326,9 +328,9 @@ colcount3 <- numeric()
 #this will shave off extra off south and west 
 for(i in 1:nrow(subDF3)){
   sub80s3[[i]] <- crop(u80rp, extent(u80rp,  subDF3$rows[i], 
-                                     subDF3$rows[i]+255,
+                                     subDF3$rows[i]+127,
                                      subDF3$cols[i], 
-                                     subDF3$cols[i]+255))
+                                     subDF3$cols[i]+127))
   rowcount3[i] <- sub80s3[[i]]@nrows
   colcount3[i] <- sub80s3[[i]]@ncols
 }
