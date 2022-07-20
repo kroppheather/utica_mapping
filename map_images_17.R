@@ -285,53 +285,28 @@ for(i in 1:nrow(subDF)){
 
 }
 
-
-sub17s[[1]]@ncols
-
-m <- do.call(merge, sub17s)
-plotRGB(m)
-#save
-
-for(i in 1:nrow(subDF)){
-  writeRaster(sub17s[[i]],
-             paste0(dirI[dirN],"/image/predict_",i,".tif"),
-             format="GTiff")
-}
-
-plot(sub50s2[[1]])
-
 # break up into tiles to do offset:
 
-colsSeq2 <- seq(25,((cols50-1)*256)+25, by=256)
-rowsSeq2 <- seq(25,(rows50*256-1)-25, by=256)
+colsSeq2 <- seq(25,((cols17-1)*256)+25, by=256)
+rowsSeq2 <- seq(25,(rows17*256-1)-25, by=256)
 subDF2 <- data.frame(cols=rep(colsSeq2,times=length(rowsSeq2)),
                     rows=rep(rowsSeq2,each=length(colsSeq2)))
 
 #subdivide raster into 256 x 256
-sub50s2 <- list()
-rowcount2 <- numeric()
-colcount2 <- numeric()
+
 #this will shave off extra off south and west 
 for(i in 1:nrow(subDF2)){
-  sub50s2[[i]] <- crop(u50rp, extent(u50rp,  subDF2$rows[i], 
-                                    subDF2$rows[i]+255,
-                                    subDF2$cols[i], 
-                                    subDF2$cols[i]+255))
-  rowcount2[i] <- sub50s2[[i]]@nrows
-  colcount2[i] <- sub50s2[[i]]@ncols
+  writeRaster(crop(u17a, extent(u17a,  subDF$rows[i], 
+                                subDF$rows[i]+255,
+                                subDF$cols[i], 
+                                subDF$cols[i]+255)),  
+              paste0(dirI[dirN],"/image_2/predict_",i,".tif"),
+              format="GTiff")
+  
 }
 
-sub50s2[[1]]@ncols
-
-m2 <- do.call(merge, sub50s2)
-plot(m2, col=gray(1:100/100))
 #save
 
-for(i in 1:nrow(subDF2)){
-  writeRaster(sub50s2[[i]],
-              paste0("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/1950/img_tile256/predict50_2/predict_",i,".tif"),
-              format="GTiff")
-}
 
 # break up into tiles to do second offset:
 
