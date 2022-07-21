@@ -4,7 +4,17 @@ library(dplyr)
 library(tidycensus)
 
 # directory
-dirI <- "E:/Google Drive/GIS/landsat/utica/LC08_L2SP_015030_20160904_20200906_02_T1"
+dirI <- "E:/Google Drive/GIS/landsat/utica"
+
+dirs <- list.dirs(dirI, recursive=FALSE)
+
+# get dates
+dirsDates <- character()
+
+for(i in 1:length(dirs)){
+  dirsDates[i] <- strsplit(dirs[i], "_" )[[1]][4]
+}
+
 
 # ST in K
 ST09_04_16 <- raster(paste0(dirI,"/LC08_L2SP_015030_20160904_20200906_02_T1_ST_B10.tif"))
