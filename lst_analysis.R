@@ -15,6 +15,16 @@ for(i in 1:length(dirs)){
   dirsDates[i] <- strsplit(dirs[i], "_" )[[1]][4]
 }
 
+# get files in each directory
+Lfiles <- list()
+STraster <- list()
+
+for(i in 1:length(dirs)){
+  Lfiles[[i]] <- list.files(dirs[i])
+  STraster[[i]] <- raster(paste0(dirs[i], "/",Lfiles[[i]][grep("ST_B10.TIF", Lfiles[[i]])]))
+}
+
+plot(STraster[[3]])
 
 # ST in K
 ST09_04_16 <- raster(paste0(dirI,"/LC08_L2SP_015030_20160904_20200906_02_T1_ST_B10.tif"))
