@@ -28,6 +28,7 @@ for(i in 1:length(dirs)){
 
 # get files in each directory
 # can't stack since mix of L09 and L08
+# landsat between 2015 -2022 mid May - Sept 
 Lfiles <- list()
 STraster <- list()
 STQAraster <- list()
@@ -42,6 +43,7 @@ for(i in 1:length(dirs)){
 
 
 
+
 # take the clear value from the QA pixel to remove clouds
 
 cloudf <- function(x){
@@ -50,24 +52,64 @@ cloudf <- function(x){
 
 QAf <- list()
 STM <- list()
+STQM <- list()
 for(i in 1:length(dirs)){
   QAf[[i]] <- calc(QAraster[[i]],cloudf)
   STM[[i]] <- mask(STraster[[i]], QAf[[i]], maskvalue=0)
+  STQM[[i]] <- mask(STQAraster[[i]], QAf[[i]], maskvalue=0)
 }
 
 # mask rasters by oneida county
 STK <- list()
-
+STQA <- list()
 for(i in 1:length(dirs)){
   STK[[i]] <- crop(STM[[i]],extent(475000, 483000, 4768000, 4775000 ))
+  STQA[[i]] <- crop(STQM[[i]],extent(475000, 483000, 4768000, 4775000 ))
 }
-  
-  
 
-plot(STK[[9]], col=grey(1:100/100))
+plot(STK[[1]])
+  
+# DN conversion
+ST_C <- list()
+ST_QA <- list()
+ST_calc <- list()
 
-dirs[4]
-dirs[9]
+for(i in 1:length(dirs)){
+  ST_calc[[i]] <- (0.00341802*STK[[i]]) + 149
+  ST_QA[[i]] <- (0.01*STQA[[i]]) 
+  ST_C[[i]] <-  ST_calc[[i]]-273.15
+}
+
+#average all cells
+plot(ST_calc[[2]])
+
+# resample first
+ST_resamp <- list(ST_C[[1]])
+
+for(i in 2:length(dirs)){
+  ST_resamp[[i]] <- resample(ST_C[[i]], ST_C[[1]])
+}
+
+ST_st <- stack(ST_resamp)
+
+plot(ST_st)
+
+
+dayMean <- cellStats(ST_st, stat='mean', na.rm=TRUE)
+
+
+ST_diff <- list()
+for(i in 1:length(dirs)){
+  ST_diff[[i]] <- ST_st[[i]] - dayMean[i]
+}
+
+ST_diffs <- stack(ST_diff)
+meanNA <- function(x){mean(x, na.rm=TRUE)}
+
+ST_anom <- calc(ST_diffs, meanNA)
+
+plot(ST_anom)
+
 
 treeCol1 <- rgb(0.13,0.54,0.13)
 paveCol1 <- rgb(0.96,0.49,0)
@@ -79,55 +121,20 @@ plot(lc50p, breaks=c(-0.1,0.5,#breaks between other
      col=c(NA, treeCol1,buildCol1, paveCol1),add=TRUE, legend=FALSE, box=FALSE)
 
 
-STM <- mask(STC, QAf, maskvalue=0)
-plot(STM)
-
-# ST in K
-ST09_04_16 <- raster(paste0(dirI,"/LC08_L2SP_015030_20160904_20200906_02_T1_ST_B10.tif"))
-ST09_04_16
-plot(ST09_04_16)
-# DN conversion
-ST1 <- 0.00341802*ST09_04_16 + 149
-plot(ST1)
-STC <-ST1 -273.15
-plot(STC)
-
-# QA in K
-ST09_04_16Q <- raster(paste0(dirI,"/LC08_L2SP_015030_20160904_20200906_02_T1_ST_QA.tif"))
-plot(ST09_04_16Q)
-STQK <- (0.01*ST09_04_16Q) 
-plot(STQK)
 
 
-QA <- stack(paste0(dirI,"/LC08_L2SP_015030_20160904_20200906_02_T1_QA_PIXEL.tif"))
-plot(QA)
-unique(getValues(QA))
-
-freq(QA)
-
-cloudf <- function(x){
-  ifelse(x == 21824, 1,0)
-}
-
-QAf <- calc(QA,cloudf)
-plot(QAf)
-
-STM <- mask(STC, QAf, maskvalue=0)
-plot(STM)
-
-ctm <- st_read("E:/Google Drive/research/projects/utica/census/tl_2020_36_tract/tl_2020_36_tract.shp")
-crmp <- st_transform(ctm, 32618)
-
-onc <- crmp[crmp$COUNTYFP == "065",]
 
 plot(onc$geometry)
 onc$Tract <- as.numeric(onc$TRACTCE)
 
-ottr <- rasterize(onc,STC, field="Tract")
+ottr <- rasterize(onc,ST_anom, field="Tract")
 plot(ottr)
 
-stc <- zonal(STC,ottr)
+stc <- zonal(ST_anom,ottr)
 stc
+
+stcA <- zonal(ST_st,ottr)
+stcA
 
 source("c:/Users/hkropp/Documents/census_key.r")
 census_api_key(key)
