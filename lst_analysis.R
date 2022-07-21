@@ -3,6 +3,17 @@ library(sf)
 library(dplyr)
 library(tidycensus)
 
+# census boundary
+ctm <- st_read("E:/Google Drive/research/projects/utica/census/tl_2020_36_tract/tl_2020_36_tract.shp")
+crmp <- st_transform(ctm, 32618)
+
+onc <- crmp[crmp$COUNTYFP == "065",]
+
+#land cover data
+
+lc50 <- raster("E:/Google Drive/research/projects/utica/model_save/1950/all_maps/utica50s_128.tif")
+lc50p <- projectRaster(lc50, crs="+init=epsg:32618")
+
 # directory
 dirI <- "E:/Google Drive/GIS/landsat/utica"
 
@@ -16,15 +27,60 @@ for(i in 1:length(dirs)){
 }
 
 # get files in each directory
+# can't stack since mix of L09 and L08
 Lfiles <- list()
 STraster <- list()
+STQAraster <- list()
+QAraster <- list()
 
 for(i in 1:length(dirs)){
   Lfiles[[i]] <- list.files(dirs[i])
   STraster[[i]] <- raster(paste0(dirs[i], "/",Lfiles[[i]][grep("ST_B10.TIF", Lfiles[[i]])]))
+  STQAraster[[i]] <- raster(paste0(dirs[i], "/",Lfiles[[i]][grep("ST_QA.TIF", Lfiles[[i]])]))
+  QAraster[[i]] <- raster(paste0(dirs[i], "/",Lfiles[[i]][grep("QA_PIXEL.TIF", Lfiles[[i]])]))  
 }
 
-plot(STraster[[3]])
+
+
+# take the clear value from the QA pixel to remove clouds
+
+cloudf <- function(x){
+  ifelse(x == 21824, 1,0)
+}
+
+QAf <- list()
+STM <- list()
+for(i in 1:length(dirs)){
+  QAf[[i]] <- calc(QAraster[[i]],cloudf)
+  STM[[i]] <- mask(STraster[[i]], QAf[[i]], maskvalue=0)
+}
+
+# mask rasters by oneida county
+STK <- list()
+
+for(i in 1:length(dirs)){
+  STK[[i]] <- crop(STM[[i]],extent(475000, 483000, 4768000, 4775000 ))
+}
+  
+  
+
+plot(STK[[9]], col=grey(1:100/100))
+
+dirs[4]
+dirs[9]
+
+treeCol1 <- rgb(0.13,0.54,0.13)
+paveCol1 <- rgb(0.96,0.49,0)
+buildCol1 <- rgb(0.53,0.17,0.09)
+plot(lc50p, breaks=c(-0.1,0.5,#breaks between other
+                        1.5, # tree
+                        2.5, # building
+                        3.5 ), #pavement
+     col=c(NA, treeCol1,buildCol1, paveCol1),add=TRUE, legend=FALSE, box=FALSE)
+
+
+STM <- mask(STC, QAf, maskvalue=0)
+plot(STM)
 
 # ST in K
 ST09_04_16 <- raster(paste0(dirI,"/LC08_L2SP_015030_20160904_20200906_02_T1_ST_B10.tif"))
