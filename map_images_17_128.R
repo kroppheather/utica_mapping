@@ -137,7 +137,7 @@ samplesy5 <- sample(1:(u17a@nrows-257), nSamp5)[82:121]
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 18
+trainNum <- 19
 
 imgN <- stack(paste0(dirO[dirN], "/train_",trainNum,".tif"))
 plotRGB(imgN)
