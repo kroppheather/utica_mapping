@@ -510,3 +510,36 @@ tree_PA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "1" & conFcal
 build_PA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "2" & conFcalcDF_128$ref.clas == "2"])/sum(conFcalcDF_128$pix[conFcalcDF_128$pred.clas == "2"])
 pave_PA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "3" & conFcalcDF_128$ref.clas == "3"])/sum(conFcalcDF_128$pix[conFcalcDF_128$pred.clas == "3"])
 
+
+#total accuracy
+
+total.acc_256 <- sum(conFcalcDF_256$pix[conFcalcDF_256$pred.class == "1" & conFcalcDF_256$ref.clas == "1"],
+                     conFcalcDF_256$pix[conFcalcDF_256$pred.class == "2" & conFcalcDF_256$ref.clas == "2"],
+                     conFcalcDF_256$pix[conFcalcDF_256$pred.class == "3" & conFcalcDF_256$ref.clas == "3"])/sum(conFcalcDF_256$pix)
+total.acc_kern <- sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "1" & conFcalcDF_kern$ref.clas == "1"],
+                     conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "2" & conFcalcDF_kern$ref.clas == "2"],
+                     conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "3" & conFcalcDF_kern$ref.clas == "3"])/sum(conFcalcDF_kern$pix)
+
+
+
+total.acc_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "1" & conFcalcDF_128$ref.clas == "1"],
+                 conFcalcDF_128$pix[conFcalcDF_128$pred.class == "2" & conFcalcDF_128$ref.clas == "2"],
+                 conFcalcDF_128$pix[conFcalcDF_128$pred.class == "3" & conFcalcDF_128$ref.clas == "3"])/sum(conFcalcDF_128$pix)
+
+#output table
+MetOut <- data.frame(class=rep(c("tree", "building","pavement"), each=3),
+                     model=rep(c("256","128","kernal"), times=3),
+                     users.Accuracy=c(tree_UA_256,tree_UA_128,tree_UA_kern,
+                                      build_UA_256,build_UA_128,build_UA_kern,
+                                      pave_UA_256,pave_UA_128,pave_UA_kern),
+                     producers.Accuracy = c(tree_PA_256,tree_PA_128,tree_PA_kern,
+                                            build_PA_256,build_PA_128,build_PA_kern,
+                                            pave_PA_256,pave_PA_128,pave_PA_kern),
+                      IOU=c(IOU_tree_256$totalPix, IOU_tree_128$totalPix,IOU_tree_kern$totalPix,
+                           IOU_build_256$totalPix,IOU_build_128$totalPix,IOU_build_kern$totalPix, 
+                           IOU_pave_256$totalPix,IOU_pave_128$totalPix, IOU_pave_kern$totalPix),
+                     total.Accuracy=(rep(c(total.acc_256, total.acc_128,total.acc_kern),times=3)))
+
+
+write.table(MetOut, "E:/Google Drive/research/projects/utica/model_save/1950/all_maps/metric_comp.csv",
+            sep=",", row.names=FALSE)
