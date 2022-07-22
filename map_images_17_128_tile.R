@@ -68,130 +68,71 @@ dir256 <- "E:/Google Drive/research/projects/utica/model_save/2017/img_tile_256/
 
 
 Nimg <- 7930
-
-
-for(i in 1:Nimg){
-
-imgT <- stack(paste0(dir256, "/predict_5.tif"))
-plotRGB(imgT)
+imgT <- stack(paste0(dir256, "/predict_1.tif"))
 imgT1 <- crop(imgT, extent(imgT, 1,
-                            128,
-                            1,
-                            128))
-imgT1
-plotRGB(imgT1)
+                                128,
+                                1,
+                                128))
+
 imgT2 <- crop(imgT, extent(imgT, 129,
                            256,
                            1,
                            128))
-imgT2
-plotRGB(imgT2)
 
 imgT3 <- crop(imgT, extent(imgT, 1,
-                          128,
+                           128,
                            129,
                            256))
-imgT3
-plotRGB(imgT3)
 
 imgT4 <- crop(imgT, extent(imgT, 129,
                            256,
                            129,
                            256))
-imgT4
-plotRGB(imgT4)
-
-}
-tilesNum 
 
 
+writeRaster(imgT1, paste0(dirI[dirN], "/image/predict_", ((1*4)-3), ".tif"), 
+            format="GTiff")
+writeRaster(imgT2, paste0(dirI[dirN], "/image/predict_", ((1*4)-2), ".tif"), 
+            format="GTiff")
+writeRaster(imgT3, paste0(dirI[dirN], "/image/predict_", ((1*4)-1), ".tif"), 
+            format="GTiff")
+writeRaster(imgT4, paste0(dirI[dirN], "/image/predict_", ((1*4)), ".tif"), 
+            format="GTiff")
 
-cols17 <- floor(u17a@ncols/128) 
-rows17 <- floor(u17a@nrows/128) 
 
 
-# break up into tiles
-colsSeq <- seq(1,cols17*128, by=128)
-rowsSeq <- seq(1,rows17*128, by=128)
-subDF <- data.frame(cols=rep(colsSeq,times=length(rowsSeq)),
-                    rows=rep(rowsSeq,each=length(colsSeq)))
-#subdivide raster into 
-sub17s <- list()
-rowcount <- numeric()
-colcount <- numeric()
-#this will shave off extra off south and west 
-for(i in 1:nrow(subDF)){
-  writeRaster(crop(u17a, extent(u17a,  subDF$rows[i], 
-                                   subDF$rows[i]+127,
-                                   subDF$cols[i], 
-                                   subDF$cols[i]+127)),  
-              paste0(dirI[dirN],"/image/predict_",i,".tif"),
+for(i in 2:Nimg){
+
+  imgT <- stack(paste0(dir256, "/predict_", i,".tif"))
+
+  imgT1 <- crop(imgT, extent(imgT, 1,
+                            128,
+                            1,
+                            128))
+
+  imgT2 <- crop(imgT, extent(imgT, 129,
+                           256,
+                           1,
+                           128))
+
+  imgT3 <- crop(imgT, extent(imgT, 1,
+                          128,
+                           129,
+                           256))
+
+  imgT4 <- crop(imgT, extent(imgT, 129,
+                           256,
+                           129,
+                           256))
+
+  writeRaster(imgT1, paste0(dirI[dirN], "/image/predict_", ((i*4)-3), ".tif"), 
+              format="GTiff")
+  writeRaster(imgT2, paste0(dirI[dirN], "/image/predict_", ((i*4)-2), ".tif"), 
+              format="GTiff")
+  writeRaster(imgT3, paste0(dirI[dirN], "/image/predict_", ((i*4)-1), ".tif"), 
+              format="GTiff")
+  writeRaster(imgT4, paste0(dirI[dirN], "/image/predict_", ((i*4)), ".tif"), 
               format="GTiff")
 
 }
 
-# break up into tiles to do offset:
-
-colsSeq2 <- seq(25,((cols17-1)*256)+25, by=256)
-rowsSeq2 <- seq(25,(rows17*256-1)-25, by=256)
-subDF2 <- data.frame(cols=rep(colsSeq2,times=length(rowsSeq2)),
-                    rows=rep(rowsSeq2,each=length(colsSeq2)))
-
-#subdivide raster into 256 x 256
-
-#this will shave off extra off south and west 
-for(i in 1:nrow(subDF2)){
-  writeRaster(crop(u17a, extent(u17a,  subDF2$rows[i], 
-                                subDF2$rows[i]+255,
-                                subDF2$cols[i], 
-                                subDF2$cols[i]+255)),  
-              paste0(dirI[dirN],"/image_2/predict_",i,".tif"),
-              format="GTiff")
-  
-}
-
-#save
-
-
-# break up into tiles to do second offset:
-
-colsSeq3 <- seq(100,((cols17-2)*256)+100, by=256)
-rowsSeq3 <- seq(100,((rows17-2)*256)+100, by=256)
-subDF3 <- data.frame(cols=rep(colsSeq3,times=length(rowsSeq3)),
-                     rows=rep(rowsSeq3,each=length(colsSeq3)))
-
-#subdivide raster into 256 x 256
-for(i in 1:nrow(subDF3)){
-  writeRaster(crop(u17a, extent(u17a,  subDF3$rows[i], 
-                                subDF3$rows[i]+255,
-                                subDF3$cols[i], 
-                                subDF3$cols[i]+255)),  
-              paste0(dirI[dirN],"/image_3/predict_",i,".tif"),
-              format="GTiff")
-  
-}
-
-
-
-
-#read in test
-testOut <- raster("/Volumes/GoogleDrive/My Drive/research/projects/utica/50s_valid_out/valid_out.tif")
-
-plot(testOut)
-
-
-treesPredict <- list()
-for(i in 1:20){
-  treesPredict[[i]] <- raster(paste0("/Volumes/GoogleDrive/My Drive/research/projects/utica/50s_valid_out/tree/tree_predict_",i,".tif"))
-  
-}
-
-plot(u50rp, col=gray(1:100/100))
-plot(treesPredict[[1]], add=TRUE)
-plot(treesPredict[[2]], add=TRUE)
-plot(treesPredict[[3]], add=TRUE)
-plot(treesPredict[[4]], add=TRUE)
-plot(treesPredict[[5]], add=TRUE)
-
-mapview(u50rp, col=gray(1:100/100))+
-  mapview(treesPredict[[1]])
