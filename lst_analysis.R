@@ -12,7 +12,8 @@ onc <- crmp[crmp$COUNTYFP == "065",]
 #land cover data
 
 lc50 <- raster("E:/Google Drive/research/projects/utica/model_save/1950/all_maps/utica50s_128.tif")
-lc50p <- projectRaster(lc50, crs="+init=epsg:32618")
+plot(lc50)
+lc50p <- projectRaster(lc50, crs="+init=epsg:32618", method="ngb")
 
 # directory
 dirI <- "E:/Google Drive/GIS/landsat/utica"
@@ -59,6 +60,8 @@ for(i in 1:length(dirs)){
   STQM[[i]] <- mask(STQAraster[[i]], QAf[[i]], maskvalue=0)
 }
 
+
+
 # mask rasters by oneida county
 STK <- list()
 STQA <- list()
@@ -68,6 +71,8 @@ for(i in 1:length(dirs)){
 }
 
 plot(STK[[1]])
+
+
   
 # DN conversion
 ST_C <- list()
@@ -83,7 +88,7 @@ for(i in 1:length(dirs)){
 #average all cells
 plot(ST_calc[[2]])
 
-# resample first
+# resample since L08 and L09 are present
 ST_resamp <- list(ST_C[[1]])
 
 for(i in 2:length(dirs)){
@@ -146,7 +151,74 @@ race <- get_acs("tract", state="36", county="065",
 # median household income in dollars
 income_house <- get_acs("tract", state="36", county="065",
                 variables = c("B19013_001"),year=2020, geometry=TRUE)
-plot(income_house)
+plot(income_house["estimate"])
+income_housep <- st_transform(income_house,32618 )
+
+inc_crop <- st_crop(income_housep, lc50p)
+plot(inc_crop["estimate"])
+
+temp_lc50 <- crop(ST_st, lc50p) 
+
+plot(temp_lc50)
+
+dayMeanLC <- cellStats(temp_lc50, stat='mean', na.rm=TRUE)
+
+
+ST_diffLC <- list()
+for(i in 1:length(dirs)){
+  ST_diffLC[[i]] <- temp_lc50[[i]] - dayMeanLC[i]
+}
+
+ST_diffsLC <- stack(ST_diffLC)
+meanNA <- function(x){mean(x, na.rm=TRUE)}
+
+ST_anomLC <- calc(ST_diffsLC, meanNA)
+
+inc_crop$Tract <- as.numeric(inc_crop$GEOID)
+
+incomeRast <- rasterize(inc_crop, ST_anomLC, field="Tract")
+
+incomeZonal <- zonal(ST_anomLC, incomeRast)
+
+tempZone <- data.frame(Tract = incomeZonal[,1], 
+                       Anom.C = incomeZonal[,2])
+
+income_join <- left_join(inc_crop, tempZone, by="Tract")
+
+plot(income_join["Anom.C"])
+plot(income_join["estimate"])
+
+plot(income_join$estimate, income_join$Anom.C, 
+     ylab="Temperature Anomaly (C)",
+     xlab="Median household income ($)", pch=19)
+plot(lc50p)
+
+tree50 <- reclassify(lc50p, matrix(c(0,0,
+                                     1,1,
+                                     2,0,
+                                     3,0), byrow=TRUE, ncol=2))
+plot(tree50)  
+
+incomeTree <- rasterize(inc_crop, tree50, field="Tract")
+
+
+#line up 
+  
+tree50_zone <- raster::zonal(tree50, incomeTree, fun="sum"  )
+
+tree50DF <- data.frame(Tract = tree50_zone[,1],
+                       area_tree_m2 = tree50_zone[,2]*res(incomeTree)[1]*res(incomeTree)[2])
+
+income_join2 <- left_join(inc_crop, tree50DF, by="Tract")
+income_join2$area <- st_area(income_join2)
+
+income_join2$percTree50 <- (income_join2$area_tree_m2/income_join2$area)*100
+
+plot(income_join2["percTree50"])
+
+plot(income_join2$estimate, income_join2$percTree50, 
+     ylab="Percentage tree in 1950 (%)",
+     xlab="Median household income ($)", pch=19)
 
 # total population B01003 
 

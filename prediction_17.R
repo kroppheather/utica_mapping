@@ -108,8 +108,8 @@ origAll2 <- do.call(merge, origImg2)
 # Offset 3 merge -----------------
 
 
-dirP3 <- "E:/Google Drive/research/projects/utica/model_save/1980/prediction_256/image_3"
-dirI3 <- "E:/Google Drive/research/projects/utica/model_save/1980/img_tile_256/image_3"
+dirP3 <- "E:/Google Drive/research/projects/utica/model_save/2017/prediction_256/image_3"
+dirI3 <- "E:/Google Drive/research/projects/utica/model_save/2017/img_tile_256/image_3"
 
 
 treeImg3 <- list()
@@ -203,14 +203,14 @@ plot(paveLayer)
 
 treeMap <- calc(treeLayer,function(x){ifelse(x <= 0.15, 0, x)})
 buildMap <- calc(buildLayer,function(x){ifelse(x <= 0.15, 0, x)})
-paveMap <- calc(paveLayer,function(x){ifelse(x <= 0.15, 0, x)})
+paveMap <- calc(paveLayer,function(x){ifelse(x <= 0.5, 0, x)})
 
 
 # binary map of above
 
 treeMapB <- calc(treeLayer,function(x){ifelse(x <= 0.15, 0, 1)})
 buildMapB <- calc(buildLayer,function(x){ifelse(x <= 0.15, 0, 1)})
-paveMapB <- calc(paveLayer,function(x){ifelse(x <= 0.15, 0, 1)})
+paveMapB <- calc(paveLayer,function(x){ifelse(x <= 0.5, 0, 1)})
 
 binaryStack <- stack(treeMapB,buildMapB,paveMapB)
 
@@ -257,7 +257,7 @@ plot(uticaClass)
 uticaRes <- resample(uticaClass, origAll, method="ngb")
 
 
-plot(origAll, col=grey(1:100/100))
+plotRGB(origAll3)
 
 treeCol1 <- rgb(0.13,0.54,0.13,0.5)
 paveCol1 <- rgb(0.96,0.49,0,0.5)
@@ -267,9 +267,9 @@ treeCol1 <- rgb(0.13,0.54,0.13)
 paveCol1 <- rgb(0.96,0.49,0)
 buildCol1 <- rgb(0.53,0.17,0.09)
 
-png("E:/Google Drive/research/projects/utica/model_save/1980/maps_256/utica_classification.png", width=8448,height=4864)
+png("E:/Google Drive/research/projects/utica/model_save/2017/maps_256/utica_classification.png", width=8448,height=4864)
 
-plot(origAll, col=grey(1:100/100), axes=FALSE, legend=FALSE, box=FALSE, maxpixels= 8448*4864)
+plotRGB(origAll3, axes=FALSE, legend=FALSE, box=FALSE, maxpixels= 8448*4864)
 
 plot(uticaRes, breaks=c(-0.1,0.5,#breaks between other
                         1.5, # tree
@@ -282,6 +282,6 @@ dev.off()
 
 #save raster
 
-writeRaster(uticaRes, "E:/Google Drive/research/projects/utica/model_save/1980/all_maps/utica80s_256.tif", format="GTiff" )
+writeRaster(uticaRes, "E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_256.tif", format="GTiff" )
 
 
