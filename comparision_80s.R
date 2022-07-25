@@ -34,11 +34,8 @@ plot(u80a, col=gray(1:100/100))
 
 
 u80rp <- projectRaster(u80a,  crs="+init=epsg:4326")
-plot(u80rp, col=gray(1:100/100))
-mapview(u80rp)
-u80rp@crs
 
-
+u80rp
 
 ###### 1950s comparison map----
 
@@ -55,7 +52,7 @@ plot(map50_256, axes=FALSE, legend=FALSE, box=FALSE,
               1.5, # tree
               2.5, # building
               3.5), #pavement
-     maxpixels=7424*3840 ,
+     maxpixels=map50_256@ncols*map50_256@nrows ,
      col=c(NA, treeCol1,buildCol1, paveCol1))
 mtext("Training n=60: 256 x 256", side=3, cex=20, line=-50)
 
@@ -65,7 +62,7 @@ plot(map50_kern, axes=FALSE, legend=FALSE, box=FALSE,
               2.5, # building
               3.5 ), #pavement
      col=c(NA, treeCol1,buildCol1, paveCol1),
-    maxpixels=7424*3840
+    maxpixels=map50_kern@ncols*map50_kern@nrows
      )
 mtext("Kernal size = 5", side=3, cex=20, line=-50)
 plot(map50_128, axes=FALSE, legend=FALSE, box=FALSE, 
@@ -74,12 +71,12 @@ plot(map50_128, axes=FALSE, legend=FALSE, box=FALSE,
               2.5, # building
               3.5 ), #pavement
      col=c(NA, treeCol1,buildCol1, paveCol1),
-     maxpixels=7424*3840
+     maxpixels=map50_128@ncols*map50_128@nrows
      )
 mtext("Training n=120: 128 x 128", side=3, cex=20, line=-30)
 
-plot(u50a, col=gray(1:100/100), axes=FALSE, legend=FALSE, box=FALSE, 
-     maxpixels=7424*3840
+plot(u80rp, col=gray(1:100/100), axes=FALSE, legend=FALSE, box=FALSE, 
+     maxpixels=u80rp@nrows*u80rp@ncols
      )
 mtext("Original", side=3, cex=20, line=-30)
 dev.off()
@@ -425,6 +422,7 @@ confDF_256 <- list()
 for(i in 1:20){
 
 validClass[[i]] <-  (treesMask[[i]]*1) + (buildMask[[i]]*2) + (paveMask[[i]]*3)
+validClass[[i]] <- calc(validClass[[i]], function(x){ifelse(x > 3, 0,x)})
 predictCrop_256[[i]] <- crop(map50_256, treesMask[[i]])
 predictClass_256[[i]] <- resample(predictCrop_256[[i]], validClass[[i]], method="ngb")
 conMat_256[[i]] <- confusionMatrix(as.factor(getValues(validClass[[i]])),as.factor(getValues(predictClass_256[[i]])))
@@ -458,6 +456,7 @@ confDF_kern <- list()
 for(i in 1:20){
   
   validClass[[i]] <-  (treesMask[[i]]*1) + (buildMask[[i]]*2) + (paveMask[[i]]*3)
+  validClass[[i]] <- calc(validClass[[i]], function(x){ifelse(x > 3, 0,x)})
   predictCrop_kern[[i]] <- crop(map50_kern, treesMask[[i]])
   predictClass_kern[[i]] <- resample(predictCrop_kern[[i]], validClass[[i]], method="ngb")
   conMat_kern[[i]] <- confusionMatrix(as.factor(getValues(validClass[[i]])),as.factor(getValues(predictClass_kern[[i]])))
@@ -489,7 +488,7 @@ confDF_128 <- list()
 for(i in 1:20){
   
   validClass[[i]] <-  (treesMask[[i]]*1) + (buildMask[[i]]*2) + (paveMask[[i]]*3)
-  
+  validClass[[i]] <- calc(validClass[[i]], function(x){ifelse(x > 3, 0,x)})
   predictCrop_128[[i]] <- crop(map50_128, treesMask[[i]])
   
   predictClass_128[[i]] <- resample(predictCrop_128[[i]], validClass[[i]], method="ngb")
@@ -522,16 +521,19 @@ pave_PA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "3" & conFcal
 
 total.acc_256 <- sum(conFcalcDF_256$pix[conFcalcDF_256$pred.class == "1" & conFcalcDF_256$ref.clas == "1"],
                      conFcalcDF_256$pix[conFcalcDF_256$pred.class == "2" & conFcalcDF_256$ref.clas == "2"],
-                     conFcalcDF_256$pix[conFcalcDF_256$pred.class == "3" & conFcalcDF_256$ref.clas == "3"])/sum(conFcalcDF_256$pix)
+                     conFcalcDF_256$pix[conFcalcDF_256$pred.class == "3" & conFcalcDF_256$ref.clas == "3"],
+                     conFcalcDF_256$pix[conFcalcDF_256$pred.class == "0" & conFcalcDF_256$ref.clas == "0"])/sum(conFcalcDF_256$pix)
 total.acc_kern <- sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "1" & conFcalcDF_kern$ref.clas == "1"],
                      conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "2" & conFcalcDF_kern$ref.clas == "2"],
-                     conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "3" & conFcalcDF_kern$ref.clas == "3"])/sum(conFcalcDF_kern$pix)
+                     conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "3" & conFcalcDF_kern$ref.clas == "3"],
+                     conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "0" & conFcalcDF_kern$ref.clas == "0"])/sum(conFcalcDF_kern$pix)
 
 
 
 total.acc_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "1" & conFcalcDF_128$ref.clas == "1"],
                  conFcalcDF_128$pix[conFcalcDF_128$pred.class == "2" & conFcalcDF_128$ref.clas == "2"],
-                 conFcalcDF_128$pix[conFcalcDF_128$pred.class == "3" & conFcalcDF_128$ref.clas == "3"])/sum(conFcalcDF_128$pix)
+                 conFcalcDF_128$pix[conFcalcDF_128$pred.class == "3" & conFcalcDF_128$ref.clas == "3"],
+                 conFcalcDF_128$pix[conFcalcDF_128$pred.class == "0" & conFcalcDF_128$ref.clas == "0"] )/sum(conFcalcDF_128$pix)
 
 #output table
 MetOut <- data.frame(class=rep(c("tree", "building","pavement"), each=3),
@@ -548,5 +550,5 @@ MetOut <- data.frame(class=rep(c("tree", "building","pavement"), each=3),
                      total.Accuracy=(rep(c(total.acc_256, total.acc_128,total.acc_kern),times=3)))
 
 
-write.table(MetOut, "E:/Google Drive/research/projects/utica/model_save/1950/all_maps/metric_comp.csv",
+write.table(MetOut, "E:/Google Drive/research/projects/utica/model_save/1980/all_maps/metric_comp.csv",
             sep=",", row.names=FALSE)

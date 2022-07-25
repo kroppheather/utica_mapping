@@ -156,7 +156,8 @@ for(i in 1:Nimg3){
 }
 
 origAll3 <- do.call(merge, origImg3)
-
+# writeRaster(origAll3, "E:/Google Drive/research/projects/utica/utica50/utica50_3.tif",
+            format="GTiff")
 
 
 # Combine overlays -------------
