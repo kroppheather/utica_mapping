@@ -41,14 +41,14 @@ for(i in 1:Nimg){
 
 buildAll <- do.call(merge, buildImg)
 
-origImg <- list()
-for(i in 1:Nimg){
-  origImg[[i]] <- raster(paste0(dirI,"/predict_",i,".tif"))
+# origImg <- list()
+# for(i in 1:Nimg){
+#  origImg[[i]] <- raster(paste0(dirI,"/predict_",i,".tif"))
   
   
-}
+#}
 
-origAll <- do.call(merge, origImg)
+# origAll <- do.call(merge, origImg)
 
 
 
