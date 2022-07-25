@@ -22,6 +22,15 @@ map50_128 <- raster("E:/Google Drive/research/projects/utica/model_save/1950/all
 # original
 r50s <- raster("e:/Google Drive/research/projects/utica/A550500171317_ref.tif")
 
+# read in validation points from entire map
+treeValid <- st_read("E:/Google Drive/research/projects/utica/model_save/1950/valid_pt/valid_50_tree.shp")
+
+buildValid <- st_read("E:/Google Drive/research/projects/utica/model_save/1950/valid_pt/valid_50_build.shp")
+
+paveValid <- st_read("E:/Google Drive/research/projects/utica/model_save/1950/valid_pt/valid_50_pave.shp")
+
+otherValid <- st_read("E:/Google Drive/research/projects/utica/model_save/1950/valid_pt/valid_50_other_all.shp")
+
 
 #look at a few areas near the city center to start
 
@@ -401,130 +410,110 @@ IOU_tree_128 <- totalTreePix_128[3,2]/(totalTreePix_128[2,2]+totalTreePix_128[3,
 IOU_build_128 <- totalBuildPix_128[3,2]/(totalBuildPix_128[2,2]+totalBuildPix_128[3,2])
 IOU_pave_128 <- totalPavePix_128[3,2]/(totalPavePix_128[2,2]+totalPavePix_128[3,2])
 
-##### All IOU----
-IOUtable <- data.frame(method = rep(c("256", "kern", "128"), times=3),
-                       class = rep(c("tree","build","pave"), each=3),
-                       IOU = c(IOU_tree_256,IOU_tree_kern, IOU_tree_128,
-                               IOU_build_256,IOU_build_kern, IOU_build_128,
-                               IOU_pave_256,IOU_pave_kern, IOU_pave_128))
-
-
-#### confusion matrix 256 ---
-validClass <- list()
-predictCrop_256 <- list()
-predictClass_256 <- list()
-conMat_256 <- list()
-confDF_256 <- list()
-for(i in 1:20){
-
-validClass[[i]] <-  (treesMask[[i]]*1) + (buildMask[[i]]*2) + (paveMask[[i]]*3)
-predictCrop_256[[i]] <- crop(map50_256, treesMask[[i]])
-predictClass_256[[i]] <- resample(predictCrop_256[[i]], validClass[[i]], method="ngb")
-conMat_256[[i]] <- confusionMatrix(as.factor(getValues(validClass[[i]])),as.factor(getValues(predictClass_256[[i]])))
-confDF_256[[i]] <- data.frame(pix = as.vector(conMat_256[[i]]$table),
-                         pred.class = rep(row.names(conMat_256[[i]]$table), times=4),
-                         ref.clas = rep(colnames(conMat_256[[i]]$table), each=4))
-}
-
-conMat_256[[1]]$table
-conFcalcDF_256 <- do.call("rbind",confDF_256)
-
-
-# users accuracy
-tree_UA_256 <- sum(conFcalcDF_256$pix[conFcalcDF_256$pred.class == "1" & conFcalcDF_256$ref.clas == "1"])/sum(conFcalcDF_256$pix[conFcalcDF_256$ref.clas == "1"])
-build_UA_256 <- sum(conFcalcDF_256$pix[conFcalcDF_256$pred.class == "2" & conFcalcDF_256$ref.clas == "2"])/sum(conFcalcDF_256$pix[conFcalcDF_256$ref.clas == "2"])
-pave_UA_256 <- sum(conFcalcDF_256$pix[conFcalcDF_256$pred.class == "3" & conFcalcDF_256$ref.clas == "3"])/sum(conFcalcDF_256$pix[conFcalcDF_256$ref.clas == "3"])
-
-# producers accuracy
-tree_PA_256 <- sum(conFcalcDF_256$pix[conFcalcDF_256$pred.class == "1" & conFcalcDF_256$ref.clas == "1"])/sum(conFcalcDF_256$pix[conFcalcDF_256$pred.clas == "1"])
-build_PA_256 <- sum(conFcalcDF_256$pix[conFcalcDF_256$pred.class == "2" & conFcalcDF_256$ref.clas == "2"])/sum(conFcalcDF_256$pix[conFcalcDF_256$pred.clas == "2"])
-pave_PA_256 <- sum(conFcalcDF_256$pix[conFcalcDF_256$pred.class == "3" & conFcalcDF_256$ref.clas == "3"])/sum(conFcalcDF_256$pix[conFcalcDF_256$pred.clas == "3"])
 
 
 
-#### confusion matrix kernal ---
-validClass <- list()
-predictCrop_kern <- list()
-predictClass_kern <- list()
-conMat_kern <- list()
-confDF_kern <- list()
-for(i in 1:20){
-  
-  validClass[[i]] <-  (treesMask[[i]]*1) + (buildMask[[i]]*2) + (paveMask[[i]]*3)
-  predictCrop_kern[[i]] <- crop(map50_kern, treesMask[[i]])
-  predictClass_kern[[i]] <- resample(predictCrop_kern[[i]], validClass[[i]], method="ngb")
-  conMat_kern[[i]] <- confusionMatrix(as.factor(getValues(validClass[[i]])),as.factor(getValues(predictClass_kern[[i]])))
-  confDF_kern[[i]] <- data.frame(pix = as.vector(conMat_kern[[i]]$table),
-                                pred.class = rep(row.names(conMat_kern[[i]]$table), times=4),
-                                ref.clas = rep(colnames(conMat_kern[[i]]$table), each=4))
-}
+
+#### accuracy calculations ----
+
+## 256 ##
+
+#0 is other, 1 = tree, 2= building, 3 = pavement
+treeEx_256 <- na.omit(data.frame(prediction = extract(map50_256, treeValid),
+                         actual = rep(1, nrow(treeValid))))
+
+buildEx_256 <- na.omit(data.frame(prediction = extract(map50_256, buildValid),
+                                 actual = rep(2, nrow(buildValid))))
+paveEx_256 <- na.omit(data.frame(prediction = extract(map50_256, paveValid),
+                                 actual = rep(3, nrow(paveValid))))
+otherEx_256 <- na.omit(data.frame(prediction = extract(map50_256, otherValid),
+                                 actual = rep(0, nrow(otherValid))))
+
+data_comp_256 <- rbind(treeEx_256, buildEx_256, paveEx_256, otherEx_256)
+
+conf_256 <- confusionMatrix(as.factor(data_comp_256$prediction), as.factor(data_comp_256$actual))
 
 
-conFcalcDF_kern <- do.call("rbind",confDF_kern)
+conf_256$table
 
+conf_256$overall[1]
 
-# users accuracy
-tree_UA_kern <- sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "1" & conFcalcDF_kern$ref.clas == "1"])/sum(conFcalcDF_kern$pix[conFcalcDF_kern$ref.clas == "1"])
-build_UA_kern <- sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "2" & conFcalcDF_kern$ref.clas == "2"])/sum(conFcalcDF_kern$pix[conFcalcDF_kern$ref.clas == "2"])
-pave_UA_kern <- sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "3" & conFcalcDF_kern$ref.clas == "3"])/sum(conFcalcDF_kern$pix[conFcalcDF_kern$ref.clas == "3"])
+other_UA_256 <- conf_256$table[1,1]/sum(conf_256$table[,1])
+tree_UA_256 <-  conf_256$table[2,2]/sum(conf_256$table[,2])
+pave_UA_256 <-  conf_256$table[3,3]/sum(conf_256$table[,3])
+build_UA_256 <-  conf_256$table[4,4]/sum(conf_256$table[,4])
 
-# producers accuracy
-tree_PA_kern <- sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "1" & conFcalcDF_kern$ref.clas == "1"])/sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.clas == "1"])
-build_PA_kern <- sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "2" & conFcalcDF_kern$ref.clas == "2"])/sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.clas == "2"])
-pave_PA_kern <- sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "3" & conFcalcDF_kern$ref.clas == "3"])/sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.clas == "3"])
-
-#### confusion matrix 128 ---
-validClass <- list()
-predictCrop_128 <- list()
-predictClass_128 <- list()
-conMat_128 <- list()
-confDF_128 <- list()
-for(i in 1:20){
-  
-  validClass[[i]] <-  (treesMask[[i]]*1) + (buildMask[[i]]*2) + (paveMask[[i]]*3)
-  
-  predictCrop_128[[i]] <- crop(map50_128, treesMask[[i]])
-  
-  predictClass_128[[i]] <- resample(predictCrop_128[[i]], validClass[[i]], method="ngb")
-
-  conMat_128[[i]] <- confusionMatrix(as.factor(getValues(validClass[[i]])),as.factor(getValues(predictClass_128[[i]])))
-
-  confDF_128[[i]] <- data.frame(pix = as.vector(conMat_128[[i]]$table),
-                                pred.class = rep(row.names(conMat_128[[i]]$table), times=4),
-                                ref.clas = rep(colnames(conMat_128[[i]]$table), each=4))
-}
-
-conMat_128[[1]]$table
-conFcalcDF_128 <- do.call("rbind",confDF_128)
-
-
-test <- crop(map50_128, treesMask[[3]])
-
-# users accuracy
-tree_UA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "1" & conFcalcDF_128$ref.clas == "1"])/sum(conFcalcDF_128$pix[conFcalcDF_128$ref.clas == "1"])
-build_UA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "2" & conFcalcDF_128$ref.clas == "2"])/sum(conFcalcDF_128$pix[conFcalcDF_128$ref.clas == "2"])
-pave_UA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "3" & conFcalcDF_128$ref.clas == "3"])/sum(conFcalcDF_128$pix[conFcalcDF_128$ref.clas == "3"])
-
-# producers accuracy
-tree_PA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "1" & conFcalcDF_128$ref.clas == "1"])/sum(conFcalcDF_128$pix[conFcalcDF_128$pred.clas == "1"])
-build_PA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "2" & conFcalcDF_128$ref.clas == "2"])/sum(conFcalcDF_128$pix[conFcalcDF_128$pred.clas == "2"])
-pave_PA_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "3" & conFcalcDF_128$ref.clas == "3"])/sum(conFcalcDF_128$pix[conFcalcDF_128$pred.clas == "3"])
-
-
-#total accuracy
-
-total.acc_256 <- sum(conFcalcDF_256$pix[conFcalcDF_256$pred.class == "1" & conFcalcDF_256$ref.clas == "1"],
-                     conFcalcDF_256$pix[conFcalcDF_256$pred.class == "2" & conFcalcDF_256$ref.clas == "2"],
-                     conFcalcDF_256$pix[conFcalcDF_256$pred.class == "3" & conFcalcDF_256$ref.clas == "3"])/sum(conFcalcDF_256$pix)
-total.acc_kern <- sum(conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "1" & conFcalcDF_kern$ref.clas == "1"],
-                     conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "2" & conFcalcDF_kern$ref.clas == "2"],
-                     conFcalcDF_kern$pix[conFcalcDF_kern$pred.class == "3" & conFcalcDF_kern$ref.clas == "3"])/sum(conFcalcDF_kern$pix)
+other_PA_256 <- conf_256$table[1,1]/sum(conf_256$table[1,])
+tree_PA_256 <-  conf_256$table[2,2]/sum(conf_256$table[2,])
+pave_PA_256 <-  conf_256$table[3,3]/sum(conf_256$table[3,])
+build_PA_256 <-  conf_256$table[4,4]/sum(conf_256$table[4,])
 
 
 
-total.acc_128 <- sum(conFcalcDF_128$pix[conFcalcDF_128$pred.class == "1" & conFcalcDF_128$ref.clas == "1"],
-                 conFcalcDF_128$pix[conFcalcDF_128$pred.class == "2" & conFcalcDF_128$ref.clas == "2"],
-                 conFcalcDF_128$pix[conFcalcDF_128$pred.class == "3" & conFcalcDF_128$ref.clas == "3"])/sum(conFcalcDF_128$pix)
+## kernal ##
+
+#0 is other, 1 = tree, 2= building, 3 = pavement
+treeEx_kern <- na.omit(data.frame(prediction = extract(map50_kern, treeValid),
+                                 actual = rep(1, nrow(treeValid))))
+
+buildEx_kern <- na.omit(data.frame(prediction = extract(map50_kern, buildValid),
+                                  actual = rep(2, nrow(buildValid))))
+paveEx_kern <- na.omit(data.frame(prediction = extract(map50_kern, paveValid),
+                                 actual = rep(3, nrow(paveValid))))
+otherEx_kern <- na.omit(data.frame(prediction = extract(map50_kern, otherValid),
+                                  actual = rep(0, nrow(otherValid))))
+
+data_comp_kern <- rbind(treeEx_kern, buildEx_kern, paveEx_kern, otherEx_kern)
+
+conf_kern <- confusionMatrix(as.factor(data_comp_kern$prediction), as.factor(data_comp_kern$actual))
+
+
+conf_kern$table
+
+conf_kern$overall[1]
+
+other_UA_kern <- conf_kern$table[1,1]/sum(conf_kern$table[,1])
+tree_UA_kern <-  conf_kern$table[2,2]/sum(conf_kern$table[,2])
+pave_UA_kern <-  conf_kern$table[3,3]/sum(conf_kern$table[,3])
+build_UA_kern <-  conf_kern$table[4,4]/sum(conf_kern$table[,4])
+
+other_PA_kern <- conf_kern$table[1,1]/sum(conf_kern$table[1,])
+tree_PA_kern <-  conf_kern$table[2,2]/sum(conf_kern$table[2,])
+pave_PA_kern <-  conf_kern$table[3,3]/sum(conf_kern$table[3,])
+build_PA_kern <-  conf_kern$table[4,4]/sum(conf_kern$table[4,])
+
+## 128 ##
+
+#0 is other, 1 = tree, 2= building, 3 = pavement
+treeEx_128 <- na.omit(data.frame(prediction = extract(map50_128, treeValid),
+                                 actual = rep(1, nrow(treeValid))))
+
+buildEx_128 <- na.omit(data.frame(prediction = extract(map50_128, buildValid),
+                                  actual = rep(2, nrow(buildValid))))
+paveEx_128 <- na.omit(data.frame(prediction = extract(map50_128, paveValid),
+                                 actual = rep(3, nrow(paveValid))))
+otherEx_128 <- na.omit(data.frame(prediction = extract(map50_128, otherValid),
+                                  actual = rep(0, nrow(otherValid))))
+
+data_comp_128 <- rbind(treeEx_128, buildEx_128, paveEx_128, otherEx_128)
+
+conf_128 <- confusionMatrix(as.factor(data_comp_128$prediction), as.factor(data_comp_128$actual))
+
+
+conf_128$table
+
+conf_128$overall[1]
+
+other_UA_128 <- conf_128$table[1,1]/sum(conf_128$table[,1])
+tree_UA_128 <-  conf_128$table[2,2]/sum(conf_128$table[,2])
+pave_UA_128 <-  conf_128$table[3,3]/sum(conf_128$table[,3])
+build_UA_128 <-  conf_128$table[4,4]/sum(conf_128$table[,4])
+
+other_PA_128 <- conf_128$table[1,1]/sum(conf_128$table[1,])
+tree_PA_128 <-  conf_128$table[2,2]/sum(conf_128$table[2,])
+pave_PA_128 <-  conf_128$table[3,3]/sum(conf_128$table[3,])
+build_PA_128 <-  conf_128$table[4,4]/sum(conf_128$table[4,])
+
 
 #output table
 MetOut <- data.frame(class=rep(c("tree", "building","pavement"), each=3),
@@ -538,8 +527,10 @@ MetOut <- data.frame(class=rep(c("tree", "building","pavement"), each=3),
                       IOU=c(IOU_tree_256$totalPix, IOU_tree_128$totalPix,IOU_tree_kern$totalPix,
                            IOU_build_256$totalPix,IOU_build_128$totalPix,IOU_build_kern$totalPix, 
                            IOU_pave_256$totalPix,IOU_pave_128$totalPix, IOU_pave_kern$totalPix),
-                     total.Accuracy=(rep(c(total.acc_256, total.acc_128,total.acc_kern),times=3)))
+                     total.Accuracy=(rep(c(conf_256$overall[1], conf_128$overall[1],conf_kern$overall[1]),times=3)))
 
 
 write.table(MetOut, "E:/Google Drive/research/projects/utica/model_save/1950/all_maps/metric_comp.csv",
             sep=",", row.names=FALSE)
+
+
