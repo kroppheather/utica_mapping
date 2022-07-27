@@ -139,6 +139,14 @@ buildAll3 <- do.call(merge, buildImg3)
 
 
 
+ origImg3 <- list()
+ for(i in 1:Nimg3){
+  origImg3[[i]] <- stack(paste0(dirI3,"/predict_",i,".tif"))
+
+
+}
+
+origAll <- do.call(merge, origImg3)
 
 
 # Combine overlays -------------
@@ -253,9 +261,9 @@ buildCol1 <- rgb(0.53,0.17,0.09)
 
 #save raster
 
-writeRaster(uticaRes, "E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_256.tif", format="GTiff" )
+writeRaster(uticaClass, "E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_256.tif", format="GTiff" )
 
-
+writeRaster(uticaClass, "c:/Users/hkropp/Documents/utica17_256.tif", format="GTiff" )
 
 png("E:/Google Drive/research/projects/utica/model_save/2017/maps_256/utica_classification.png", width=8448,height=4864)
 

@@ -15,6 +15,18 @@ lc50 <- raster("E:/Google Drive/research/projects/utica/model_save/1950/all_maps
 plot(lc50)
 lc50p <- projectRaster(lc50, crs="+init=epsg:32618", method="ngb")
 
+
+
+lc17 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_256.tif")
+plot(lc17)
+lc17p <- projectRaster(lc17, crs="+init=epsg:32618", method="ngb")
+
+lc17c <- crop(lc17p, lc50p)
+
+plot(lc17c)
+
+lc17res <- resample(lc17c,lc50p, method="ngb")
+
 # directory
 dirI <- "E:/Google Drive/GIS/landsat/utica"
 
@@ -215,6 +227,13 @@ income_join2$area <- st_area(income_join2)
 income_join2$percTree50 <- (income_join2$area_tree_m2/income_join2$area)*100
 
 plot(income_join2["percTree50"])
+plot(income_join["Anom.C"])
+plot(income_join["estimate"])
+
+
+plot(income_join2$estimate, income_join2$percTree50, 
+     ylab="Percentage tree in 1950 (%)",
+     xlab="Median household income ($)", pch=19)
 
 plot(income_join2$estimate, income_join2$percTree50, 
      ylab="Percentage tree in 1950 (%)",
