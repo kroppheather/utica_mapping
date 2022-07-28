@@ -295,6 +295,16 @@ plot(final_tract$estimate, final_tract$change_perc_area,
      ylab="Change in % area of trees from 1950-2017",
      xlab="Median household income ($)", pch=19)
 
+totTree50 <- freq(tree50)
+totTree17 <- freq(tree17)
+
+totAreaDiff <- (totTree17[2,2]*res(tree17)[1]*res(tree17)[2]) - (totTree50[2,2]*res(tree50)[1]*res(tree50)[2])
+totAreaChange <- (totAreaDiff/sum(totTree17[,2]))*100
+totArea50 <-  (totTree50[2,2]*res(tree50)[1]*res(tree50)[2]/sum(totTree17[,2]))*100
+totArea17 <-  (totTree17[2,2]*res(tree17)[1]*res(tree17)[2]/sum(totTree17[,2]))*100
+
+totAreaPercChange <-  (totAreaDiff/(totTree50[2,2]*res(tree50)[1]*res(tree50)[2]))*100
+
 
 # total population B01003 
 
