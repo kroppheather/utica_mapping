@@ -188,6 +188,8 @@ ST_anomLC <- calc(ST_diffsLC, meanNA)
 
 inc_crop$Tract <- as.numeric(inc_crop$GEOID)
 
+
+
 incomeRast <- rasterize(inc_crop, ST_anomLC, field="Tract")
 
 incomeZonal <- zonal(ST_anomLC, incomeRast)
@@ -226,18 +228,73 @@ income_join2$area <- st_area(income_join2)
 
 income_join2$percTree50 <- (income_join2$area_tree_m2/income_join2$area)*100
 
-plot(income_join2["percTree50"])
+
+
+
+tree17 <- reclassify(lc17res, matrix(c(0,0,
+                                     1,1,
+                                     2,0,
+                                     3,0), byrow=TRUE, ncol=2))
+
+incomeTree17 <- rasterize(inc_crop, tree17, field="Tract")
+tree17_zone <- raster::zonal(tree17, incomeTree, fun="sum"  )
+tree17DF <- data.frame(Tract = tree17_zone[,1],
+                       area_tree17_m2 = tree17_zone[,2]*res(incomeTree17)[1]*res(incomeTree17)[2])
+
+income_join3 <- left_join(income_join2, tree17DF, by="Tract")
+
+income_join3$tree_diff <- income_join3$area_tree17_m2 - income_join3$area_tree_m2
+income_join3$tree_perc_change <- (income_join3$tree_diff/income_join3$area_tree_m2)*100
+income_join3$percTree17 <- (income_join3$area_tree17_m2/income_join3$area)*100
+income_join3$change_perc_area <- income_join3$percTree17 - income_join3$percTree50
+plot(tree17)
+
+
+
+plot(income_join3["percTree50"])
 plot(income_join["Anom.C"])
-plot(income_join["estimate"])
+plot(income_join3["estimate"])
+plot(income_join3["percTree17"])
+plot(income_join3["change_perc_area"])
 
 
-plot(income_join2$estimate, income_join2$percTree50, 
+
+lst_df <- data.frame(Tract=income_join$Tract,
+                     Anom.C = income_join$Anom.C)
+
+income_join4 <- left_join(income_join3, lst_df, by="Tract")
+income_join4$area_num <- as.numeric(income_join4$area)
+
+final_tract <- income_join4[income_join4$area_num > 70000, ]
+plot(final_tract["change_perc_area"])
+
+
+
+
+plot(final_tract$estimate, final_tract$percTree50, 
      ylab="Percentage tree in 1950 (%)",
      xlab="Median household income ($)", pch=19)
 
-plot(income_join2$estimate, income_join2$percTree50, 
-     ylab="Percentage tree in 1950 (%)",
+plot(final_tract$estimate, final_tract$percTree17, 
+     ylab="Percentage tree in 2017 (%)",
      xlab="Median household income ($)", pch=19)
+
+plot(final_tract$estimate, final_tract$Anom.C, 
+     ylab="Temperature Anomaly (C)",
+     xlab="Median household income ($)", pch=19)
+
+plot(final_tract$Anom.C, final_tract$percTree17, 
+     ylab="Percentage tree in 2017 (%)",
+     xlab="Temp anomaly (C)", pch=19)
+
+plot(final_tract$Anom.C, final_tract$change_perc_area, 
+     ylab="Change in % area of trees from 1950-2017",
+     xlab="Temp anomaly (C)", pch=19)
+
+plot(final_tract$estimate, final_tract$change_perc_area, 
+     ylab="Change in % area of trees from 1950-2017",
+     xlab="Median household income ($)", pch=19)
+
 
 # total population B01003 
 
