@@ -14,13 +14,13 @@ onc <- crmp[crmp$COUNTYFP == "065",]
 lc50 <- raster("E:/Google Drive/research/projects/utica/model_save/1950/all_maps/utica50s_128.tif")
 plot(lc50)
 lc50p <- projectRaster(lc50, crs="+init=epsg:32618", method="ngb")
-
+res(lc50p)
 
 
 lc17 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_256.tif")
 plot(lc17)
 lc17p <- projectRaster(lc17, crs="+init=epsg:32618", method="ngb")
-
+res(lc17p)
 lc17c <- crop(lc17p, lc50p)
 
 plot(lc17c)
@@ -251,11 +251,6 @@ plot(tree17)
 
 
 
-plot(income_join3["percTree50"])
-plot(income_join["Anom.C"])
-plot(income_join3["estimate"])
-plot(income_join3["percTree17"])
-plot(income_join3["change_perc_area"])
 
 
 
@@ -265,11 +260,16 @@ lst_df <- data.frame(Tract=income_join$Tract,
 income_join4 <- left_join(income_join3, lst_df, by="Tract")
 income_join4$area_num <- as.numeric(income_join4$area)
 
+#remove small segments of tracts clipped to the edge of the extent that will be area
+# anom due to clipping of the tract with incomplete representation
+
 final_tract <- income_join4[income_join4$area_num > 70000, ]
 plot(final_tract["change_perc_area"])
-
-
-
+plot(final_tract["percTree50"])
+plot(final_tract["Anom.C"])
+plot(final_tract["estimate"])
+plot(final_tract["percTree17"])
+plot(final_tract["change_perc_area"])
 
 plot(final_tract$estimate, final_tract$percTree50, 
      ylab="Percentage tree in 1950 (%)",
