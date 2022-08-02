@@ -265,17 +265,17 @@ writeRaster(uticaClass, "E:/Google Drive/research/projects/utica/model_save/2017
 
 writeRaster(uticaClass, "c:/Users/hkropp/Documents/utica17_256.tif", format="GTiff" )
 
-png("E:/Google Drive/research/projects/utica/model_save/2017/maps_256/utica_classification.png", width=8448,height=4864)
+png("E:/Google Drive/research/projects/utica/model_save/2017/maps_256/utica_classification.png", width=origAll@ncols,height=origAll@nrows)
 
-plotRGB(origAll3, axes=FALSE, legend=FALSE, box=FALSE, maxpixels= 8448*4864)
+plotRGB(origAll, axes=FALSE, legend=FALSE, box=FALSE, maxpixels=origAll@ncols*origAll@nrows)
 
-plot(uticaRes, breaks=c(-0.1,0.5,#breaks between other
+plot(uticaClass, breaks=c(-0.1,0.5,#breaks between other
                         1.5, # tree
                         2.5, # building
                         3.5 ), #pavement
-     col=c(NA, treeCol1,buildCol1, paveCol1),add=TRUE, legend=FALSE, box=FALSE, maxpixels=28508160)
+     col=c(NA, treeCol1,buildCol1, paveCol1),add=TRUE, legend=FALSE, box=FALSE, maxpixels=uticaClass@nrows*uticaClass@ncols)
 
 
 dev.off()
 
-
+plotRGB(origAll, axes=FALSE, legend=FALSE, box=FALSE)
