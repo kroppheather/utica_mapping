@@ -101,7 +101,7 @@ test <- imgV[1:128,1:128]
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 2
+trainNum <- 3
 
 imgN <- raster(paste0("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/1950/data_strat/image/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
