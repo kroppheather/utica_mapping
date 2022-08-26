@@ -2,21 +2,21 @@ library(raster)
 library(sf)
 library(mapview)
 
-dirP <- "E:/Google Drive/research/projects/utica/model_save/1980/prediction_256/image"
-dirI <- "E:/Google Drive/research/projects/utica/model_save/1980/img_tile_256/image"
+dirP <- "E:/Google Drive/research/projects/utica/model_save/2017/prediction_128/image"
+dirI <- "E:/Google Drive/research/projects/utica/model_save/2017/img_tile_128/image"
 
 
 
 treeImg <- list()
 
-Nimg <- 627
+Nimg <- 31720
 
 for(i in 1:Nimg){
   treeImg[[i]] <- raster(paste0(dirP,"/tree/tree_",i,".tif"))
   
   
 }
-
+#start 12:17 8/26
 treeAll <- do.call(merge, treeImg)
 
 
@@ -41,27 +41,27 @@ for(i in 1:Nimg){
 
 buildAll <- do.call(merge, buildImg)
 
-origImg <- list()
-for(i in 1:Nimg){
-  origImg[[i]] <- raster(paste0(dirI,"/predict_",i,".tif"))
+# origImg <- list()
+# for(i in 1:Nimg){
+#  origImg[[i]] <- raster(paste0(dirI,"/predict_",i,".tif"))
   
   
-}
+#}
 
-origAll <- do.call(merge, origImg)
+# origAll <- do.call(merge, origImg)
 
 
 
 # Offset 2 merge ------------------
 
 
-dirP2 <- "E:/Google Drive/research/projects/utica/model_save/1980/prediction_256/image_2"
-dirI2 <- "E:/Google Drive/research/projects/utica/model_save/1980/img_tile_256/image_2"
+dirP2 <- "E:/Google Drive/research/projects/utica/model_save/2017/prediction_256/image_2"
+dirI2 <- "E:/Google Drive/research/projects/utica/model_save/2017/img_tile_256/image_2"
 
 
 treeImg2 <- list()
 
-Nimg2 <- 627
+Nimg2 <- 7930
 
 for(i in 1:Nimg2){
   treeImg2[[i]] <- raster(paste0(dirP2,"/tree/tree_",i,".tif"))
@@ -93,28 +93,19 @@ for(i in 1:Nimg){
 
 buildAll2 <- do.call(merge, buildImg2)
 
-origImg2 <- list()
-for(i in 1:Nimg2){
-  origImg2[[i]] <- raster(paste0(dirI2,"/predict_",i,".tif"))
-  
-  
-}
-
-origAll2 <- do.call(merge, origImg2)
-
 
 
 
 # Offset 3 merge -----------------
 
 
-dirP3 <- "E:/Google Drive/research/projects/utica/model_save/1980/prediction_256/image_3"
-dirI3 <- "E:/Google Drive/research/projects/utica/model_save/1980/img_tile_256/image_3"
+dirP3 <- "E:/Google Drive/research/projects/utica/model_save/2017/prediction_256/image_3"
+dirI3 <- "E:/Google Drive/research/projects/utica/model_save/2017/img_tile_256/image_3"
 
 
 treeImg3 <- list()
 
-Nimg3 <- 576
+Nimg3 <- 7740
 
 for(i in 1:Nimg3){
   treeImg3[[i]] <- raster(paste0(dirP3,"/tree/tree_",i,".tif"))
@@ -138,7 +129,7 @@ paveAll3 <- do.call(merge, paveImg3)
 
 
 buildImg3 <- list()
-for(i in 1:Nimg){
+for(i in 1:Nimg3){
   buildImg3[[i]] <- raster(paste0(dirP3,"/building/building_",i,".tif"))
   
   
@@ -146,17 +137,10 @@ for(i in 1:Nimg){
 
 buildAll3 <- do.call(merge, buildImg3)
 
-origImg3 <- list()
-for(i in 1:Nimg3){
-  origImg3[[i]] <- raster(paste0(dirI3,"/predict_",i,".tif"))
-  
-  
-}
 
-origAll3 <- do.call(merge, origImg3)
 
-writeRaster(origAll3, "E:/Google Drive/research/projects/utica/utica80/utica80_crop.tif",
-            format="GTiff")
+
+
 
 # Combine overlays -------------
 
@@ -204,14 +188,14 @@ plot(paveLayer)
 
 treeMap <- calc(treeLayer,function(x){ifelse(x <= 0.15, 0, x)})
 buildMap <- calc(buildLayer,function(x){ifelse(x <= 0.15, 0, x)})
-paveMap <- calc(paveLayer,function(x){ifelse(x <= 0.15, 0, x)})
+paveMap <- calc(paveLayer,function(x){ifelse(x <= 0.5, 0, x)})
 
 
 # binary map of above
 
 treeMapB <- calc(treeLayer,function(x){ifelse(x <= 0.15, 0, 1)})
 buildMapB <- calc(buildLayer,function(x){ifelse(x <= 0.15, 0, 1)})
-paveMapB <- calc(paveLayer,function(x){ifelse(x <= 0.15, 0, 1)})
+paveMapB <- calc(paveLayer,function(x){ifelse(x <= 0.5, 0, 1)})
 
 binaryStack <- stack(treeMapB,buildMapB,paveMapB)
 
@@ -258,7 +242,7 @@ plot(uticaClass)
 uticaRes <- resample(uticaClass, origAll, method="ngb")
 
 
-plot(origAll, col=grey(1:100/100))
+plotRGB(origAll3)
 
 treeCol1 <- rgb(0.13,0.54,0.13,0.5)
 paveCol1 <- rgb(0.96,0.49,0,0.5)
@@ -268,21 +252,23 @@ treeCol1 <- rgb(0.13,0.54,0.13)
 paveCol1 <- rgb(0.96,0.49,0)
 buildCol1 <- rgb(0.53,0.17,0.09)
 
-png("E:/Google Drive/research/projects/utica/model_save/1980/maps_256/utica_classification.png", width=8448,height=4864)
+#save raster
+writeRaster(origAll, "E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_extent.tif", format="GTiff" )
+writeRaster(uticaClass, "E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_256.tif", format="GTiff" )
 
-plot(origAll, col=grey(1:100/100), axes=FALSE, legend=FALSE, box=FALSE, maxpixels= 8448*4864)
+writeRaster(uticaClass, "c:/Users/hkropp/Documents/utica17_256.tif", format="GTiff" )
 
-plot(uticaRes, breaks=c(-0.1,0.5,#breaks between other
+png("E:/Google Drive/research/projects/utica/model_save/2017/maps_256/utica_classification.png", width=origAll@ncols,height=origAll@nrows)
+
+plotRGB(origAll, axes=FALSE, legend=FALSE, box=FALSE, maxpixels=origAll@ncols*origAll@nrows)
+
+plot(uticaClass, breaks=c(-0.1,0.5,#breaks between other
                         1.5, # tree
                         2.5, # building
                         3.5 ), #pavement
-     col=c(NA, treeCol1,buildCol1, paveCol1),add=TRUE, legend=FALSE, box=FALSE, maxpixels=28508160)
+     col=c(NA, treeCol1,buildCol1, paveCol1),add=TRUE, legend=FALSE, box=FALSE, maxpixels=uticaClass@nrows*uticaClass@ncols)
 
 
 dev.off()
 
-#save raster
-
-writeRaster(uticaRes, "E:/Google Drive/research/projects/utica/model_save/1980/all_maps/utica80s_256.tif", format="GTiff" )
-
-
+plotRGB(origAll, axes=FALSE, legend=FALSE, box=FALSE)
