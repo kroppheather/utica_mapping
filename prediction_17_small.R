@@ -55,8 +55,8 @@ buildAll <- do.call(merge, buildImg)
 # Offset 2 merge ------------------
 
 
-dirP2 <- "E:/Google Drive/research/projects/utica/model_save/2017/prediction_256/image_2"
-dirI2 <- "E:/Google Drive/research/projects/utica/model_save/2017/img_tile_256/image_2"
+dirP2 <- "E:/Google Drive/research/projects/utica/model_save/2017/prediction_128/image_2"
+dirI2 <- "E:/Google Drive/research/projects/utica/model_save/2017/img_tile_128/image_2"
 
 
 treeImg2 <- list()
