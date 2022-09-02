@@ -19,7 +19,8 @@ for(i in 1:Nimg){
 #start 12:17 8/26
 treeAll <- do.call(merge, treeImg)
 
-
+writeRaster(treeAll, "E:/Google Drive/research/projects/utica/model_save/2017/save_128/tree_1.tif",
+            format="GTiff")
 
 paveImg <- list()
 
@@ -30,7 +31,8 @@ for(i in 1:Nimg){
 }
 
 paveAll <- do.call(merge, paveImg)
-
+writeRaster(paveAll, "E:/Google Drive/research/projects/utica/model_save/2017/save_128/pave_1.tif",
+            format="GTiff")
 
 buildImg <- list()
 for(i in 1:Nimg){
@@ -40,6 +42,9 @@ for(i in 1:Nimg){
 }
 
 buildAll <- do.call(merge, buildImg)
+
+writeRaster(buildAll, "E:/Google Drive/research/projects/utica/model_save/2017/save_128/build_1.tif",
+            format="GTiff")
 
 # origImg <- list()
 # for(i in 1:Nimg){
