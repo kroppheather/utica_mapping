@@ -201,16 +201,16 @@ plot(paveLayer)
 
 # remove noise below set threshold
 
-treeMap <- calc(treeLayer,function(x){ifelse(x <= 0.15, 0, x)})
-buildMap <- calc(buildLayer,function(x){ifelse(x <= 0.15, 0, x)})
-paveMap <- calc(paveLayer,function(x){ifelse(x <= 0.5, 0, x)})
+treeMap <- calc(treeLayer,function(x){ifelse(x <= 0.45, 0, x)})
+buildMap <- calc(buildLayer,function(x){ifelse(x <= 0.65, 0, x)})
+paveMap <- calc(paveLayer,function(x){ifelse(x <= 0.2, 0, x)})
 
 
 # binary map of above
 
-treeMapB <- calc(treeLayer,function(x){ifelse(x <= 0.15, 0, 1)})
-buildMapB <- calc(buildLayer,function(x){ifelse(x <= 0.15, 0, 1)})
-paveMapB <- calc(paveLayer,function(x){ifelse(x <= 0.5, 0, 1)})
+treeMapB <- calc(treeLayer,function(x){ifelse(x <= 0.45, 0, 1)})
+buildMapB <- calc(buildLayer,function(x){ifelse(x <= 0.65, 0, 1)})
+paveMapB <- calc(paveLayer,function(x){ifelse(x <= 0.2, 0, 1)})
 
 binaryStack <- stack(treeMapB,buildMapB,paveMapB)
 
