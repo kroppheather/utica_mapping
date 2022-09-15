@@ -2,158 +2,45 @@ library(raster)
 library(sf)
 library(mapview)
 
-dirP <- "E:/Google Drive/research/projects/utica/model_save/2017/prediction_128/image"
-dirI <- "E:/Google Drive/research/projects/utica/model_save/2017/img_tile_128/image"
 
-
-
-treeImg <- list()
-
-Nimg <- 31720
-
-for(i in 1:Nimg){
-  treeImg[[i]] <- raster(paste0(dirP,"/tree/tree_",i,".tif"))
-  
-  
-}
 #start 12:17 8/26
-treeAll <- do.call(merge, treeImg)
 
-writeRaster(treeAll, "E:/Google Drive/research/projects/utica/model_save/2017/save_128/tree_1.tif",
-            format="GTiff")
 
-paveImg <- list()
+treeAll <- raster( "E:/Google Drive/research/projects/utica/model_save/2017/save_128/tree_1.tif")
 
-for(i in 1:Nimg){
-  paveImg[[i]] <- raster(paste0(dirP,"/pavement/pavement_",i,".tif"))
-  
-  
-}
+paveAll <- raster( "E:/Google Drive/research/projects/utica/model_save/2017/save_128/pave_1.tif")
 
-paveAll <- do.call(merge, paveImg)
-writeRaster(paveAll, "E:/Google Drive/research/projects/utica/model_save/2017/save_128/pave_1.tif",
-            format="GTiff")
 
-buildImg <- list()
-for(i in 1:Nimg){
-  buildImg[[i]] <- raster(paste0(dirP,"/building/building_",i,".tif"))
-  
-  
-}
 
-buildAll <- do.call(merge, buildImg)
 
-writeRaster(buildAll, "E:/Google Drive/research/projects/utica/model_save/2017/save_128/build_1.tif",
-            format="GTiff")
-
-# origImg <- list()
-# for(i in 1:Nimg){
-#  origImg[[i]] <- raster(paste0(dirI,"/predict_",i,".tif"))
-  
-  
-#}
-
-# origAll <- do.call(merge, origImg)
-
+buildAll <- raster( "E:/Google Drive/research/projects/utica/model_save/2017/save_128/build_1.tif")
 
 
 # Offset 2 merge ------------------
 
 
-dirP2 <- "E:/Google Drive/research/projects/utica/model_save/2017/prediction_128/image_2"
-dirI2 <- "E:/Google Drive/research/projects/utica/model_save/2017/img_tile_128/image_2"
+treeAll2 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_128/tree_2.tif")
+
+paveAll2 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_128/pave_2.tif")
 
 
-treeImg2 <- list()
-
-Nimg2 <- 31720
-
-for(i in 1:Nimg2){
-  treeImg2[[i]] <- raster(paste0(dirP2,"/tree/tree_",i,".tif"))
-  
-  
-}
-
-treeAll2 <- do.call(merge, treeImg2)
-
-writeRaster(treeAll2, "E:/Google Drive/research/projects/utica/model_save/2017/save_128/tree_2.tif",
-            format="GTiff")
-
-
-paveImg2 <- list()
-
-for(i in 1:Nimg2){
-  paveImg2[[i]] <- raster(paste0(dirP2,"/pavement/pavement_",i,".tif"))
-  
-  
-}
-
-paveAll2 <- do.call(merge, paveImg2)
-writeRaster(paveAll2, "E:/Google Drive/research/projects/utica/model_save/2017/save_128/pave_2.tif",
-            format="GTiff")
-
-buildImg2 <- list()
-for(i in 1:Nimg){
-  buildImg2[[i]] <- raster(paste0(dirP2,"/building/building_",i,".tif"))
-  
-  
-}
-
-buildAll2 <- do.call(merge, buildImg2)
-
-writeRaster(buildAll2, "E:/Google Drive/research/projects/utica/model_save/2017/save_128/build_2.tif",
-            format="GTiff")
+buildAll2 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_128/build_2.tif")
 
 
 # Offset 3 merge -----------------
 
 
-dirP3 <- "E:/Google Drive/research/projects/utica/model_save/2017/prediction_128/image_3"
-dirI3 <- "E:/Google Drive/research/projects/utica/model_save/2017/img_tile_128/image_3"
-
-
-treeImg3 <- list()
-
-Nimg3 <- 30960
-
-for(i in 1:Nimg3){
-  treeImg3[[i]] <- raster(paste0(dirP3,"/tree/tree_",i,".tif"))
-  
-  
-}
-
-treeAll3 <- do.call(merge, treeImg3)
-
-writeRaster(treeAll3, "E:/Google Drive/research/projects/utica/model_save/2017/save_128/tree_3.tif",
-            format="GTiff")
-
-paveImg3 <- list()
-
-for(i in 1:Nimg3){
-  paveImg3[[i]] <- raster(paste0(dirP3,"/pavement/pavement_",i,".tif"))
-  
-  
-}
-
-paveAll3 <- do.call(merge, paveImg3)
-
-
-writeRaster(paveAll3, "E:/Google Drive/research/projects/utica/model_save/2017/save_128/pave_3.tif",
-            format="GTiff")
-
-buildImg3 <- list()
-for(i in 1:Nimg3){
-  buildImg3[[i]] <- raster(paste0(dirP3,"/building/building_",i,".tif"))
-  
-  
-}
-
-buildAll3 <- do.call(merge, buildImg3)
+treeAll3 <- raster( "E:/Google Drive/research/projects/utica/model_save/2017/save_128/tree_3.tif")
 
 
 
-writeRaster(buildAll3, "E:/Google Drive/research/projects/utica/model_save/2017/save_128/build_3.tif",
-            format="GTiff")
+
+paveAll3 <- raster( "E:/Google Drive/research/projects/utica/model_save/2017/save_128/pave_3.tif")
+
+
+
+
+buildAll3 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_128/build_3.tif")
 
 
 
