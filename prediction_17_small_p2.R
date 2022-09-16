@@ -5,6 +5,8 @@ library(mapview)
 
 #start 12:17 8/26
 
+origAll <- raster("E:/Google Drive/research/projects/utica/utica17/utica2017_crop.tif")
+
 
 treeAll <- raster( "E:/Google Drive/research/projects/utica/model_save/2017/save_128/tree_1.tif")
 
