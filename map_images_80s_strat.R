@@ -115,7 +115,7 @@ dfSubA <- do.call( "rbind", dfSub)
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 1
+trainNum <- 2
 
 imgN <- raster(paste0(dirO, "/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
@@ -130,13 +130,7 @@ trainDgc@nrows
 trainDgc@ncols
 plot(trainDgc)
 
-#check
-trainNum <- 1
-imCheck <- raster(paste0(dirM,"/u_train_reproject/wgs_train_",trainNum,".tif"))
-plot(imCheck)
-range(imCheck)
-imgN@ncols
-imgN@nrows
+
 imgN@crs
 
 # use zoom 18-21
