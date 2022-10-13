@@ -127,6 +127,18 @@ ST_anom <- calc(ST_diffs, meanNA)
 
 plot(ST_anom)
 
+# a few sites that look to be outliers. Apply a quantile filter
+ST_quant <- quantile(getValues(ST_anom), prob=seq(0,1,by=0.01), na.rm=TRUE)
+
+quant_filter <- function(x){
+  ifelse(x <= ST_quant[2] | x>= ST_quant[99], NA, x)
+}
+
+STfilter <- calc(ST_anom, quant_filter)
+plot(STfilter)
+
+writeRaster(STfilter, "E:/Google Drive/GIS_teaching/ENVST110_F22/temp_anom_c.tif",
+            format="GTiff")
 
 treeCol1 <- rgb(0.13,0.54,0.13)
 paveCol1 <- rgb(0.96,0.49,0)
