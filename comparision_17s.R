@@ -22,23 +22,14 @@ map17_128 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/all
 r17s <- stack("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_extent.tif")
 plotRGB(r17s)
 # read in validation points from entire map
-treeValid <- st_read("E:/Google Drive/research/projects/utica/model_save/1950/valid_pt/valid_50_tree.shp")
+treeValid <- st_read("E:/Google Drive/research/projects/utica/model_save/2017/valid_pts/valid_17_tree.shp")
 
-buildValid <- st_read("E:/Google Drive/research/projects/utica/model_save/1950/valid_pt/valid_50_build.shp")
+buildValid <- st_read("E:/Google Drive/research/projects/utica/model_save/2017/valid_pts/valid_17_build.shp")
 
-paveValid <- st_read("E:/Google Drive/research/projects/utica/model_save/1950/valid_pt/valid_50_pave.shp")
+paveValid <- st_read("E:/Google Drive/research/projects/utica/model_save/2017/valid_pts/valid_17_pave.shp")
 
-otherValid <- st_read("E:/Google Drive/research/projects/utica/model_save/1950/valid_pt/valid_50_other_all.shp")
+otherValid <- st_read("E:/Google Drive/research/projects/utica/model_save/2017/valid_pts/valid_17_other.shp")
 
-
-#look at a few areas near the city center to start
-
-
-Ucenter2 <- extent(-8382000,-8373500,
-                   5324000,5329000)
-#start with working with a small area in the center of
-#utica 
-u50a <- crop(r50s,Ucenter2)
 
 
 ###### 1950s comparison map----
@@ -47,11 +38,11 @@ treeCol1 <- rgb(0.13,0.54,0.13)
 paveCol1 <- "grey30"
 buildCol1 <- "tomato4"
 
-png("E:/Google Drive/research/projects/utica/model_save/1950/all_maps/maps/comp_50.png", width=15000,height=11000)
+png("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/maps/comp_17.png", height=15616*2,width=33280*2)
 
-par(mfrow=c(2,2))
+par(mfrow=c(1,2))
 
-plot(map50_256, axes=FALSE, legend=FALSE, box=FALSE, 
+plot(map17_256, axes=FALSE, legend=FALSE, box=FALSE, 
      breaks=c(-0.1,0.5,#breaks between other
               1.5, # tree
               2.5, # building
@@ -60,16 +51,7 @@ plot(map50_256, axes=FALSE, legend=FALSE, box=FALSE,
      col=c(NA, treeCol1,buildCol1, paveCol1))
 mtext("Training n=60: 256 x 256", side=3, cex=20, line=-50)
 
-plot(map50_kern, axes=FALSE, legend=FALSE, box=FALSE,
-     breaks=c(-0.1,0.5,#breaks between other
-              1.5, # tree
-              2.5, # building
-              3.5 ), #pavement
-     col=c(NA, treeCol1,buildCol1, paveCol1),
-    maxpixels=7424*3840
-     )
-mtext("Kernal size = 5", side=3, cex=20, line=-50)
-plot(map50_128, axes=FALSE, legend=FALSE, box=FALSE, 
+plot(map17_128, axes=FALSE, legend=FALSE, box=FALSE, 
      breaks=c(-0.1,0.5,#breaks between other
               1.5, # tree
               2.5, # building
@@ -79,88 +61,82 @@ plot(map50_128, axes=FALSE, legend=FALSE, box=FALSE,
      )
 mtext("Training n=120: 128 x 128", side=3, cex=20, line=-30)
 
-plot(u50a, col=gray(1:100/100), axes=FALSE, legend=FALSE, box=FALSE, 
-     maxpixels=7424*3840
-     )
-mtext("Original", side=3, cex=20, line=-30)
-dev.off()
+plotRGB(r17s)
 
+plot(0,0, axes=FALSE,  xla= " ", ylab= " ", col="white")
+
+dev.off()
 
 ###### 1950s evaluation----
 #directory for orig img
-dirI <- "E:/Google Drive/research/projects/utica/model_save/1950/data_256/crop_valid"
+dirI <- "E:/Google Drive/research/projects/utica/model_save/2017/data/valid_out"
 
 nValid <- 20
+
+img17 <- list()
+
+for(i in 1:nValid){
+  img17[[i]] <- raster(paste0("E:/Google Drive/research/projects/utica/model_save/2017/data/valid/images/valid_",i,".tif"))
+}
 # masks
 
 treesMask <- list()
 for(i in 1:nValid){
-  treesMask[[i]] <- raster(paste0(dirI,"/tree/tree_mask_",i,".tif"))
+  treesMask[[i]] <- raster(paste0(dirI,"/trees/tree_mask_",i,".tif"))
 }
+
+
 
 buildMask <- list()
 for(i in 1:nValid){
-  buildMask[[i]] <- raster(paste0(dirI,"/building/building_mask_",i,".tif"))
+  buildMask[[i]] <- raster(paste0(dirI,"/building/build_mask_",i,".tif"))
 }
 
 paveMask <- list()
 for(i in 1:nValid){
-  paveMask[[i]] <- raster(paste0(dirI,"/pavement/pavement_mask_",i,".tif"))
-}
-
-img50 <- list()
-
-for(i in 1:nValid){
-  img50[[i]] <- raster(paste0(dirI,"/image/image_",i,".tif"))
+  paveMask[[i]] <- raster(paste0(dirI,"/pavement/pave_mask_",i,".tif"))
 }
 
 
 
 
-trees_256 <- reclassify(map50_256, matrix(c(0,0,
+
+
+trees_256 <- reclassify(map17_256, matrix(c(0,0,
                                           1,1,
                                           2,0,
                                           3,0), ncol=2, byrow=TRUE))
 
-trees_128 <- reclassify(map50_128, matrix(c(0,0,
-                                            1,1,
-                                            2,0,
-                                            3,0), ncol=2, byrow=TRUE))
-
-trees_kern <- reclassify(map50_kern, matrix(c(0,0,
+trees_128 <- reclassify(map17_128, matrix(c(0,0,
                                             1,1,
                                             2,0,
                                             3,0), ncol=2, byrow=TRUE))
 
 
-build_256 <- reclassify(map50_256, matrix(c(0,0,
+
+
+build_256 <- reclassify(map17_256, matrix(c(0,0,
                                             1,0,
                                             2,1,
                                             3,0), ncol=2, byrow=TRUE))
 
-build_128 <- reclassify(map50_128, matrix(c(0,0,
-                                            1,0,
-                                            2,1,
-                                            3,0), ncol=2, byrow=TRUE))
-build_kern <- reclassify(map50_kern, matrix(c(0,0,
+build_128 <- reclassify(map17_128, matrix(c(0,0,
                                             1,0,
                                             2,1,
                                             3,0), ncol=2, byrow=TRUE))
 
-pave_256 <- reclassify(map50_256, matrix(c(0,0,
+
+pave_256 <- reclassify(map17_256, matrix(c(0,0,
                                             1,0,
                                             2,0,
                                             3,1), ncol=2, byrow=TRUE))
 
-pave_128 <- reclassify(map50_128, matrix(c(0,0,
+pave_128 <- reclassify(map17_128, matrix(c(0,0,
                                            1,0,
                                            2,0,
                                            3,1), ncol=2, byrow=TRUE))
 
-pave_kern <- reclassify(map50_kern, matrix(c(0,0,
-                                           1,0,
-                                           2,0,
-                                           3,1), ncol=2, byrow=TRUE))
+
 
 
 ##### IOU calc kern ----
