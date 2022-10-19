@@ -40,7 +40,7 @@ buildCol1 <- "tomato4"
 
 png("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/maps/comp_17.png", height=15616,width=33280)
 
-par(mfrow=c(1,2))
+par(mfrow=c(2,2))
 
 plot(map17_256, axes=FALSE, legend=FALSE, box=FALSE, 
      breaks=c(-0.1,0.5,#breaks between other
@@ -61,7 +61,7 @@ plot(map17_128, axes=FALSE, legend=FALSE, box=FALSE,
      )
 mtext("Training n=120: 128 x 128", side=3, cex=20, line=-30)
 
-plotRGB(r17s)
+plotRGB(r17s,maxpixels=33280*15616)
 
 plot(0,0, axes=FALSE,  xla= " ", ylab= " ", col="white")
 
