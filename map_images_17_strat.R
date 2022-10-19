@@ -111,26 +111,26 @@ samplesy2 <- sample(1:(u17a@nrows-257), nSamp2)[81]
 
 
 # save data, commented out since does not need to run every time
-
-cropT <- list()
-
-for(i in 1:40){
-  
-  cropT[[i]] <-  crop(u17a, extent(u17a, dfSubA$rowID[i], 
-                  dfSubA$rowID[i] +255, 
-                  dfSubA$colID[i], 
-                  dfSubA$colID[i]+255))
-
-}
- for(i in 1:40){
-  
-   
-   writeRaster(cropT[[i]], 
-             paste0("e:/Google Drive/research/projects/utica/model_save/2017/data_strat/images/train_",i,".tif"),
-             format="GTiff" ,overwrite=TRUE)
-  
- 
- }
+# 
+# cropT <- list()
+# 
+# for(i in 1:40){
+#   
+#   cropT[[i]] <-  crop(u17a, extent(u17a, dfSubA$rowID[i], 
+#                   dfSubA$rowID[i] +255, 
+#                   dfSubA$colID[i], 
+#                   dfSubA$colID[i]+255))
+# 
+# }
+#  for(i in 1:40){
+#   
+#    
+#    writeRaster(cropT[[i]], 
+#              paste0("e:/Google Drive/research/projects/utica/model_save/2017/data_strat/images/train_",i,".tif"),
+#              format="GTiff" ,overwrite=TRUE)
+#   
+#  
+#  }
 
 
 # save data, commented out since does not need to run every time
@@ -179,7 +179,7 @@ for(i in 1:40){
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 37
+trainNum <- 1
 
 imgN <- stack(paste0(dirO[dirN], "/train_",trainNum,".tif"))
 plotRGB(imgN)
