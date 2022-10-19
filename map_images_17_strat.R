@@ -5,12 +5,12 @@ library(mapedit)
 
 dirN <- 2
 #directory of training images
-dirO <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/2017/data/train/images",
+dirO <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/2017/data_strat/images",
           "e:/Google Drive/research/projects/utica/model_save/2017/data_strat/images")
 
 
 #directory for masks
-dirM <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/2017/data/train/mask",
+dirM <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/2017/data_strat/mask",
           "e:/Google Drive/research/projects/utica/model_save/2017/data_strat/mask")
 
 #### read in data and visualize ----
@@ -179,7 +179,7 @@ for(i in 1:40){
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 60
+trainNum <- 37
 
 imgN <- stack(paste0(dirO[dirN], "/train_",trainNum,".tif"))
 plotRGB(imgN)
