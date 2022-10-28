@@ -6,9 +6,9 @@ library(dplyr)
 
 
 # directory 
-dirP <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_128/valid"
+dirP <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_strat/valid"
 #directory for orig img
-dirI <- "E:/Google Drive/research/projects/utica/model_save/1950/data_128/crop_valid"
+dirI <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_strat/crop_valid"
 
 # number of validation images
 nValid <- 20
