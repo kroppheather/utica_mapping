@@ -6,7 +6,7 @@ library(mapview)
 # Image merge ---------
 
 dirP <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_strat/image"
-dirI <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_strat/image"
+dirI <- "E:/Google Drive/research/projects/utica/model_save/1950/prediction_128/image"
 
 
 treeImg <- list()
