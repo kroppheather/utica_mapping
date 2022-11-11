@@ -80,6 +80,8 @@ for(i in 1:length(unique(polyDF$LocID))){
 
 dfSubA <- do.call( "rbind", dfSub)
 
+
+
 #### subset raster for training ----
 
 
@@ -122,6 +124,14 @@ samplesy2 <- sample(1:(u17a@nrows-257), nSamp2)[81]
 #                   dfSubA$colID[i]+255))
 # 
 # }
+
+   cropTfix <-  crop(u17a, extent(u17a, dfSubA$rowID[36]-255, 
+                  dfSubA$rowID[36] , 
+                   dfSubA$colID[36], 
+                  dfSubA$colID[36]+255))
+   
+   viewRGB(cropTfix)
+
 #  for(i in 1:40){
 #   
 #    
@@ -131,6 +141,11 @@ samplesy2 <- sample(1:(u17a@nrows-257), nSamp2)[81]
 #   
 #  
 #  }
+   
+   
+   writeRaster(cropTfix, 
+             paste0("e:/Google Drive/research/projects/utica/model_save/2017/data_strat/images/train_36.tif"),
+                 format="GTiff" ,overwrite=TRUE)
 
 
 # save data, commented out since does not need to run every time
