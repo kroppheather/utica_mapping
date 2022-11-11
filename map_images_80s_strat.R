@@ -115,7 +115,7 @@ dfSubA <- do.call( "rbind", dfSub)
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 18
+trainNum <- 19
 
 imgN <- raster(paste0(dirO, "/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
