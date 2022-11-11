@@ -125,10 +125,10 @@ samplesy2 <- sample(1:(u17a@nrows-257), nSamp2)[81]
 # 
 # }
 
-   cropTfix <-  crop(u17a, extent(u17a, dfSubA$rowID[36]-255, 
-                  dfSubA$rowID[36] , 
-                   dfSubA$colID[36], 
-                  dfSubA$colID[36]+255))
+   cropTfix <-  crop(u17a, extent(u17a, dfSubA$rowID[40]-255, 
+                  dfSubA$rowID[40] , 
+                   dfSubA$colID[40], 
+                  dfSubA$colID[40]+255))
    
    viewRGB(cropTfix)
 
@@ -143,9 +143,9 @@ samplesy2 <- sample(1:(u17a@nrows-257), nSamp2)[81]
 #  }
    
    
-   writeRaster(cropTfix, 
-             paste0("e:/Google Drive/research/projects/utica/model_save/2017/data_strat/images/train_36.tif"),
-                 format="GTiff" ,overwrite=TRUE)
+#   writeRaster(cropTfix, 
+#             paste0("e:/Google Drive/research/projects/utica/model_save/2017/data_strat/images/train_40.tif"),
+ #                format="GTiff" ,overwrite=TRUE)
 
 
 # save data, commented out since does not need to run every time
@@ -194,7 +194,7 @@ samplesy2 <- sample(1:(u17a@nrows-257), nSamp2)[81]
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 40
+trainNum <- 36
 
 imgN <- stack(paste0(dirO[dirN], "/train_",trainNum,".tif"))
 plotRGB(imgN)
