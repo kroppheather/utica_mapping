@@ -251,10 +251,10 @@ paveCol1 <- rgb(0.96,0.49,0)
 buildCol1 <- rgb(0.53,0.17,0.09)
 
 #save raster
-writeRaster(origAll, "E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_extent.tif", format="GTiff" )
-writeRaster(uticaClass, "E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_256.tif", format="GTiff" )
 
-writeRaster(uticaClass, "c:/Users/hkropp/Documents/utica17_256.tif", format="GTiff" )
+writeRaster(uticaClass, "E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_strat.tif", format="GTiff" )
+
+writeRaster(uticaClass, "c:/Users/hkropp/Documents/utica17_strat.tif", format="GTiff" )
 
 png("E:/Google Drive/research/projects/utica/model_save/2017/maps_256/utica_classification.png", width=origAll@ncols,height=origAll@nrows)
 
