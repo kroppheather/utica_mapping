@@ -255,17 +255,6 @@ treeCol1 <- rgb(0.13,0.54,0.13)
 paveCol1 <- rgb(0.96,0.49,0)
 buildCol1 <- rgb(0.53,0.17,0.09)
 
-png("E:/Google Drive/research/projects/utica/model_save/1950/prediction_128/maps/utica_classification.png", width=7424,height=3840)
-
-plot(origAll, col=grey(1:100/100), axes=FALSE, legend=FALSE, box=FALSE, maxpixels= 28508160)
-
-plot(uticaRes, breaks=c(-0.1,0.5,#breaks between other
-                          1.5, # tree
-                          2.5, # building
-                          3.5 ), #pavement
-     col=c(NA, treeCol1,buildCol1, paveCol1),add=TRUE, legend=FALSE, box=FALSE, maxpixels=28508160)
 
 
-dev.off()
-
-writeRaster(uticaRes, "E:/Google Drive/research/projects/utica/model_save/1950/all_maps/utica50s_strat.tif", format="GTiff" )
+writeRaster(uticaRes, "E:/Google Drive/research/projects/utica/model_save/1950/all_maps/utica50s_strat2.tif", format="GTiff" )

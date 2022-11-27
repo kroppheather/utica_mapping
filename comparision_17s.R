@@ -122,7 +122,10 @@ trees_128 <- reclassify(map17_128, matrix(c(0,0,
                                             2,0,
                                             3,0), ncol=2, byrow=TRUE))
 
-
+trees_strat <- reclassify(map17_strat, matrix(c(0,0,
+                                            1,1,
+                                            2,0,
+                                            3,0), ncol=2, byrow=TRUE))
 
 
 build_256 <- reclassify(map17_256, matrix(c(0,0,
@@ -131,6 +134,11 @@ build_256 <- reclassify(map17_256, matrix(c(0,0,
                                             3,0), ncol=2, byrow=TRUE))
 
 build_128 <- reclassify(map17_128, matrix(c(0,0,
+                                            1,0,
+                                            2,1,
+                                            3,0), ncol=2, byrow=TRUE))
+
+build_strat <- reclassify(map17_strat, matrix(c(0,0,
                                             1,0,
                                             2,1,
                                             3,0), ncol=2, byrow=TRUE))
@@ -146,7 +154,10 @@ pave_128 <- reclassify(map17_128, matrix(c(0,0,
                                            2,0,
                                            3,1), ncol=2, byrow=TRUE))
 
-
+pave_strat <- reclassify(map17_strat, matrix(c(0,0,
+                                           1,0,
+                                           2,0,
+                                           3,1), ncol=2, byrow=TRUE))
 
 ##### IOU calc 256 ----
 
