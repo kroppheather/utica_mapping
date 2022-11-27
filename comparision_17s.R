@@ -17,7 +17,7 @@ library(dplyr)
 # read in final maps
 map17_256 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_256.tif")
 map17_128 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_128.tif")
-
+map17_strat <- raster("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_strat.tif")
 # original
 r17s <- stack("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_extent.tif")
 plotRGB(r17s)
@@ -61,9 +61,19 @@ plot(map17_128, axes=FALSE, legend=FALSE, box=FALSE,
      )
 mtext("Training n=120: 128 x 128", side=3, cex=20, line=-30)
 
+plot(map17_strat, axes=FALSE, legend=FALSE, box=FALSE, 
+     breaks=c(-0.1,0.5,#breaks between other
+              1.5, # tree
+              2.5, # building
+              3.5 ), #pavement
+     col=c(NA, treeCol1,buildCol1, paveCol1),
+     maxpixels=33280*15616
+)
+mtext("Training n=100: 256 x 256 with stratified samples", side=3, cex=20, line=-30)
+
 plotRGB(r17s,maxpixels=33280*15616)
 
-plot(0,0, axes=FALSE,  xla= " ", ylab= " ", col="white")
+
 
 dev.off()
 
