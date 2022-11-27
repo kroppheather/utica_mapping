@@ -19,6 +19,8 @@ map50_256 <- raster("E:/Google Drive/research/projects/utica/model_save/1950/all
 map50_kern <- raster("E:/Google Drive/research/projects/utica/model_save/1950/all_maps/utica50s_kernal.tif")
 map50_128 <- raster("E:/Google Drive/research/projects/utica/model_save/1950/all_maps/utica50s_128.tif")
 map50_strat <- raster("E:/Google Drive/research/projects/utica/model_save/1950/all_maps/utica50s_strat.tif")
+map50_strat2 <- raster("E:/Google Drive/research/projects/utica/model_save/1950/all_maps/utica50s_strat2.tif")
+# original
 # original
 r50s <- raster("e:/Google Drive/research/projects/utica/A550500171317_ref.tif")
 
@@ -138,6 +140,11 @@ trees_strat <- reclassify(map50_strat, matrix(c(0,0,
                                               2,0,
                                               3,0), ncol=2, byrow=TRUE))
 
+trees_strat2 <- reclassify(map50_strat, matrix(c(0,0,
+                                                1,1,
+                                                2,0,
+                                                3,0), ncol=2, byrow=TRUE))
+
 
 build_256 <- reclassify(map50_256, matrix(c(0,0,
                                             1,0,
@@ -158,6 +165,11 @@ build_strat <- reclassify(map50_strat, matrix(c(0,0,
                                               2,1,
                                               3,0), ncol=2, byrow=TRUE))
 
+build_strat2 <- reclassify(map50_strat, matrix(c(0,0,
+                                                1,0,
+                                                2,1,
+                                                3,0), ncol=2, byrow=TRUE))
+
 pave_256 <- reclassify(map50_256, matrix(c(0,0,
                                             1,0,
                                             2,0,
@@ -177,6 +189,11 @@ pave_strat <- reclassify(map50_strat, matrix(c(0,0,
                                              1,0,
                                              2,0,
                                              3,1), ncol=2, byrow=TRUE))
+
+pave_strat2 <- reclassify(map50_strat, matrix(c(0,0,
+                                               1,0,
+                                               2,0,
+                                               3,1), ncol=2, byrow=TRUE))
 ##### IOU calc kern ----
 treesCrop_kern <- list()
 treesResamp_kern <- list()
@@ -508,6 +525,89 @@ IOU_pave_strat <- totalPavePix_strat[3,2]/(totalPavePix_strat[2,2]+totalPavePix_
 
 
 
+##### IOU calc strat2 ----
+
+treesCrop_strat2 <- list()
+treesResamp_strat2 <- list()
+buildCrop_strat2 <- list()
+buildResamp_strat2 <- list()
+paveCrop_strat2 <- list()
+paveResamp_strat2 <- list()
+
+for(i in 1:nValid){
+  treesCrop_strat2[[i]] <- crop(trees_strat2, treesMask[[i]])
+  treesResamp_strat2[[i]] <- resample(treesCrop_strat2[[i]], treesMask[[i]], method="ngb")
+  buildCrop_strat2[[i]] <- crop(build_strat2, buildMask[[i]])
+  buildResamp_strat2[[i]] <- resample(buildCrop_strat2[[i]], buildMask[[i]], method="ngb")
+  paveCrop_strat2[[i]] <- crop(pave_strat2, paveMask[[i]])
+  paveResamp_strat2[[i]] <- resample(paveCrop_strat2[[i]], paveMask[[i]], method="ngb")
+  
+}
+
+
+
+
+
+
+treeOverlap_strat2 <- list()
+buildOverlap_strat2 <- list()
+paveOverlap_strat2 <- list()
+
+for(i in 1:nValid){
+  treeOverlap_strat2[[i]] <- treesResamp_strat2[[i]] + treesMask[[i]]
+  buildOverlap_strat2[[i]] <- buildResamp_strat2[[i]] + buildMask[[i]]
+  paveOverlap_strat2[[i]] <- paveResamp_strat2[[i]] + paveMask[[i]]
+  
+}
+#IOU
+treeCalc_strat2 <- list()
+buildCalc_strat2 <- list()
+paveCalc_strat2 <- list()
+for(i in 1:nValid){
+  treeCalc_strat2[[i]] <- freq(treeOverlap_strat2[[i]])
+  buildCalc_strat2[[i]] <- freq(buildOverlap_strat2[[i]])
+  paveCalc_strat2[[i]] <- freq(paveOverlap_strat2[[i]])
+  
+}
+
+
+
+treeSum_strat2 <- do.call("rbind", treeCalc_strat2)
+colnames(treeSum_strat2) <- c("overlapID","pix")
+treeSum_strat2 <- data.frame(treeSum_strat2)
+
+buildSum_strat2 <- do.call("rbind", buildCalc_strat2)
+colnames(buildSum_strat2) <- c("overlapID","pix")
+buildSum_strat2 <- data.frame(buildSum_strat2)
+
+paveSum_strat2 <- do.call("rbind", paveCalc_strat2)
+colnames(paveSum_strat2) <- c("overlapID","pix")
+paveSum_strat2 <- data.frame(paveSum_strat2)
+
+# some masks on edge of offset image produced that changed original extent
+# need to remove NA
+
+
+totalTreePix_strat2 <- na.omit(treeSum_strat2) %>%
+  group_by(overlapID) %>%
+  summarize(totalPix = sum(pix))
+
+totalBuildPix_strat2 <- na.omit(buildSum_strat2) %>%
+  group_by(overlapID) %>%
+  summarize(totalPix = sum(pix))
+
+totalPavePix_strat2 <- na.omit(paveSum_strat2) %>%
+  group_by(overlapID) %>%
+  summarize(totalPix = sum(pix))
+
+
+
+IOU_tree_strat2 <- totalTreePix_strat2[3,2]/(totalTreePix_strat2[2,2]+totalTreePix_strat2[3,2])
+IOU_build_strat2 <- totalBuildPix_strat2[3,2]/(totalBuildPix_strat2[2,2]+totalBuildPix_strat2[3,2])
+IOU_pave_strat2 <- totalPavePix_strat2[3,2]/(totalPavePix_strat2[2,2]+totalPavePix_strat2[3,2])
+
+
+
 #### accuracy calculations ----
 
 ## 256 ##
@@ -610,18 +710,52 @@ build_PA_128 <-  conf_128$table[4,4]/sum(conf_128$table[4,])
 
 
 
+## strat2 ##
+
+#0 is other, 1 = tree, 2= building, 3 = pavement
+treeEx_strat2 <- na.omit(data.frame(prediction = extract(map50_strat2, treeValid),
+                                 actual = rep(1, nrow(treeValid))))
+
+buildEx_strat2 <- na.omit(data.frame(prediction = extract(map50_strat2, buildValid),
+                                  actual = rep(2, nrow(buildValid))))
+paveEx_strat2 <- na.omit(data.frame(prediction = extract(map50_strat2, paveValid),
+                                 actual = rep(3, nrow(paveValid))))
+otherEx_strat2 <- na.omit(data.frame(prediction = extract(map50_strat2, otherValid),
+                                  actual = rep(0, nrow(otherValid))))
+
+data_comp_strat2 <- rbind(treeEx_strat2, buildEx_strat2, paveEx_strat2, otherEx_strat2)
+
+conf_strat2 <- confusionMatrix(as.factor(data_comp_strat2$prediction), as.factor(data_comp_strat2$actual))
+
+
+conf_strat2$table
+
+conf_strat2$overall[1]
+
+other_UA_strat2 <- conf_strat2$table[1,1]/sum(conf_strat2$table[,1])
+tree_UA_strat2 <-  conf_strat2$table[2,2]/sum(conf_strat2$table[,2])
+pave_UA_strat2 <-  conf_strat2$table[3,3]/sum(conf_strat2$table[,3])
+build_UA_strat2 <-  conf_strat2$table[4,4]/sum(conf_strat2$table[,4])
+
+other_PA_strat2 <- conf_strat2$table[1,1]/sum(conf_strat2$table[1,])
+tree_PA_strat2 <-  conf_strat2$table[2,2]/sum(conf_strat2$table[2,])
+pave_PA_strat2 <-  conf_strat2$table[3,3]/sum(conf_strat2$table[3,])
+build_PA_strat2 <-  conf_strat2$table[4,4]/sum(conf_strat2$table[4,])
+
+
+
 ## strat ##
 
 #0 is other, 1 = tree, 2= building, 3 = pavement
 treeEx_strat <- na.omit(data.frame(prediction = extract(map50_strat, treeValid),
-                                 actual = rep(1, nrow(treeValid))))
+                                   actual = rep(1, nrow(treeValid))))
 
 buildEx_strat <- na.omit(data.frame(prediction = extract(map50_strat, buildValid),
-                                  actual = rep(2, nrow(buildValid))))
+                                    actual = rep(2, nrow(buildValid))))
 paveEx_strat <- na.omit(data.frame(prediction = extract(map50_strat, paveValid),
-                                 actual = rep(3, nrow(paveValid))))
+                                   actual = rep(3, nrow(paveValid))))
 otherEx_strat <- na.omit(data.frame(prediction = extract(map50_strat, otherValid),
-                                  actual = rep(0, nrow(otherValid))))
+                                    actual = rep(0, nrow(otherValid))))
 
 data_comp_strat <- rbind(treeEx_strat, buildEx_strat, paveEx_strat, otherEx_strat)
 
@@ -643,19 +777,20 @@ pave_PA_strat <-  conf_strat$table[3,3]/sum(conf_strat$table[3,])
 build_PA_strat <-  conf_strat$table[4,4]/sum(conf_strat$table[4,])
 
 
+
 #output table
-MetOut <- data.frame(class=rep(c("tree", "building","pavement"), each=4),
-                     model=rep(c("256","128","kernal","strat"), times=3),
-                     users.Accuracy=c(tree_UA_256,tree_UA_128,tree_UA_kern,tree_UA_strat,
-                                      build_UA_256,build_UA_128,build_UA_kern,build_UA_strat,
-                                      pave_UA_256,pave_UA_128,pave_UA_kern,pave_UA_strat),
-                     producers.Accuracy = c(tree_PA_256,tree_PA_128,tree_PA_kern,tree_PA_strat,
-                                            build_PA_256,build_PA_128,build_PA_kern,build_PA_strat,
-                                            pave_PA_256,pave_PA_128,pave_PA_kern,pave_PA_strat),
-                      IOU=c(IOU_tree_256$totalPix, IOU_tree_128$totalPix,IOU_tree_kern$totalPix,IOU_tree_strat$totalPix,
-                           IOU_build_256$totalPix,IOU_build_128$totalPix,IOU_build_kern$totalPix, IOU_build_strat$totalPix,
-                           IOU_pave_256$totalPix,IOU_pave_128$totalPix, IOU_pave_kern$totalPix, IOU_pave_strat$totalPix),
-                     total.Accuracy=(rep(c(conf_256$overall[1], conf_128$overall[1],conf_kern$overall[1],conf_strat$overall[1]),times=3)))
+MetOut <- data.frame(class=rep(c("tree", "building","pavement"), each=5),
+                     model=rep(c("256","128","kernal","strat","strat2"), times=3),
+                     users.Accuracy=c(tree_UA_256,tree_UA_128,tree_UA_kern,tree_UA_strat,tree_UA_strat2,
+                                      build_UA_256,build_UA_128,build_UA_kern,build_UA_strat,build_UA_strat2,
+                                      pave_UA_256,pave_UA_128,pave_UA_kern,pave_UA_strat,pave_UA_strat2),
+                     producers.Accuracy = c(tree_PA_256,tree_PA_128,tree_PA_kern,tree_PA_strat,tree_PA_strat2,
+                                            build_PA_256,build_PA_128,build_PA_kern,build_PA_strat,build_PA_strat2,
+                                            pave_PA_256,pave_PA_128,pave_PA_kern,pave_PA_strat,pave_PA_strat2),
+                      IOU=c(IOU_tree_256$totalPix, IOU_tree_128$totalPix,IOU_tree_kern$totalPix,IOU_tree_strat$totalPix,IOU_tree_strat2$totalPix,
+                           IOU_build_256$totalPix,IOU_build_128$totalPix,IOU_build_kern$totalPix, IOU_build_strat$totalPix,IOU_build_strat2$totalPix,
+                           IOU_pave_256$totalPix,IOU_pave_128$totalPix, IOU_pave_kern$totalPix, IOU_pave_strat$totalPix, IOU_pave_strat2$totalPix),
+                     total.Accuracy=(rep(c(conf_256$overall[1], conf_128$overall[1],conf_kern$overall[1],conf_strat$overall[1],conf_strat2$overall[1]),times=3)))
 
 
 write.table(MetOut, "E:/Google Drive/research/projects/utica/model_save/1950/all_maps/metric_comp.csv",
