@@ -233,16 +233,6 @@ uticaClass <- treeClass+buildClass2+paveClass2
 
 plot(uticaClass)
 
-origImg <- list()
-for(i in 1:Nimg){
-  origImg[[i]] <- raster(paste0(dirI,"/predict_",i,".tif"))
-  
-  
-}
-
-origAll <- do.call(merge, origImg)
-
-uticaRes <- resample(uticaClass, origAll, method="ngb")
 
 
 plot(origAll, col=grey(1:100/100))
@@ -257,4 +247,4 @@ buildCol1 <- rgb(0.53,0.17,0.09)
 
 
 
-writeRaster(uticaRes, "E:/Google Drive/research/projects/utica/model_save/1950/all_maps/utica50s_strat2.tif", format="GTiff" )
+writeRaster(uticaClass, "E:/Google Drive/research/projects/utica/model_save/1950/all_maps/utica50s_strat2.tif", format="GTiff" )
