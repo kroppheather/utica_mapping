@@ -194,6 +194,9 @@ pave_strat2 <- reclassify(map50_strat, matrix(c(0,0,
                                                1,0,
                                                2,0,
                                                3,1), ncol=2, byrow=TRUE))
+
+
+plot(pave_strat2)
 ##### IOU calc kern ----
 treesCrop_kern <- list()
 treesResamp_kern <- list()
@@ -461,9 +464,29 @@ for(i in 1:nValid){
   
 }
 
+img50[[15]]
+treesMask[[15]]
+treesResamp_strat[[15]]
+treesResamp_128[[15]]
+
+plot(img50[[10]], col=grey(1:100/100), legend=FALSE)
 
 
+plot(trees_strat2, breaks=c(-0.1,0.5,1.1),
+     col=c(NA, rgb(17/255,157/255,164/255, 200/255)), add=TRUE, legend=FALSE)
 
+plot(treesMask[[10]], breaks=c(-0.1,0.5,1.1),
+     col=c(NA, rgb(17/255,157/255,164/255, 200/255)), add=TRUE, legend=FALSE)
+
+plot(treesResamp_strat[[10]], breaks=c(-0.1,0.5,1.1),
+     col=c(NA, rgb(174/255,236/255,239/255,100/255)), add=TRUE, legend=FALSE)
+
+
+plot(treesResamp_128[[10]], breaks=c(-0.1,0.5,1.1),
+     col=c(NA, rgb(217/255,108/255,6/255,100/255)), add=TRUE, legend=FALSE) 
+
+plot( treesCrop_strat[[10]], breaks=c(-0.1,0.5,1.1),
+      col=c(NA, rgb(217/255,108/255,6/255,100/255)), add=TRUE, legend=FALSE)
 
 
 treeOverlap_strat <- list()
