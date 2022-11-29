@@ -53,7 +53,7 @@ dirM <- "E:/Google Drive/research/projects/utica/model_save/1950/IOU_valid/masks
 
 
 #give training image number
-trainNum <- 14
+trainNum <- 15
 
 imgN <- raster(paste0(dirO[dirN], "/valid_",trainNum,".tif"))
 plot(imgN, col=gray(1:100/100))
