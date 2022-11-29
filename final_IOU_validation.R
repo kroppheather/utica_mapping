@@ -22,14 +22,14 @@ image17 <- stack("E:/Google Drive/research/projects/utica/utica17/u2017_crop.tif
 image17
 
 
-nSamp <- 25
+nSamp <- 20
 set.seed(1032)
 samplesx <- sample(1:(image57@ncols-257), nSamp)
 set.seed(120)
 samplesy <- sample(1:(image57@nrows-257), nSamp)
 
 
- for(i in 1:25){
+ for(i in 1:20){
    
    
    writeRaster(crop(image57, extent(image57, samplesy[i], 
@@ -53,7 +53,7 @@ dirM <- "E:/Google Drive/research/projects/utica/model_save/1950/IOU_valid/masks
 
 
 #give training image number
-trainNum <- 11
+trainNum <- 12
 
 imgN <- raster(paste0(dirO[dirN], "/valid_",trainNum,".tif"))
 plot(imgN, col=gray(1:100/100))
