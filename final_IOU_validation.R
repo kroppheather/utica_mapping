@@ -155,7 +155,7 @@ dirM <- "E:/Google Drive/research/projects/utica/model_save/2017/IOU_valid/masks
 
 
 #give training image number
-trainNum <- 2
+trainNum <- 3
 
 imgN <- stack(paste0(dirO[dirN], "/valid_",trainNum,".tif"))
 plotRGB(imgN)
@@ -210,7 +210,7 @@ pave <- drawFeatures(viewRGB(imgN, quantiles=c(0,1))+
                        mapview(buildings, col.regions="tomato"))
 
 paveMask <- rasterize(pave,imgN, field=1, background=0)
-
+# paveMask <- paveMask -1
 plot(paveMask)
 
 
