@@ -53,7 +53,7 @@ dirM <- "E:/Google Drive/research/projects/utica/model_save/1950/IOU_valid/masks
 
 
 #give training image number
-trainNum <- 1
+trainNum <- 3
 
 imgN <- raster(paste0(dirO[dirN], "/valid_",trainNum,".tif"))
 plot(imgN, col=gray(1:100/100))
@@ -90,7 +90,8 @@ buildings <- drawFeatures(mapview(imgN, col=grey(1:100/100))+
                             mapview(trees, col.regions="seagreen"))
 
 buildingMask <- rasterize(buildings,imgN, field=1, background=0)
-
+# for images with no features trace whole image then run this code
+# buildingMask <- buildingMask -1
 plot(buildingMask)
 
 
@@ -108,8 +109,9 @@ pave <- drawFeatures(mapview(imgN, col=grey(1:100/100))+
                        mapview(buildings, col.regions="tomato"))
 
 paveMask <- rasterize(pave,imgN, field=1, background=0)
-
+# paveMask <- paveMask -1
 plot(paveMask)
+
 
 
 writeRaster(paveMask, paste0(dirM[dirN],"/pavement/pavement_mask_",trainNum,".tif"),
