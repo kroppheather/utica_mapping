@@ -53,7 +53,7 @@ dirM <- "E:/Google Drive/research/projects/utica/model_save/1950/IOU_valid/masks
 
 
 #give training image number
-trainNum <- 13
+trainNum <- 14
 
 imgN <- raster(paste0(dirO[dirN], "/valid_",trainNum,".tif"))
 plot(imgN, col=gray(1:100/100))
@@ -74,7 +74,7 @@ imgN@nrows
 trees <- drawFeatures(mapview(imgN, col=grey(1:100/100)))
 
 treeMask <- rasterize(trees,imgN, field=1, background=0)
-
+# treeMask <- treeMask -1
 plot(treeMask)
 
 treeMask@ncols
