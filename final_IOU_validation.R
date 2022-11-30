@@ -155,7 +155,7 @@ dirM <- "E:/Google Drive/research/projects/utica/model_save/2017/IOU_valid/masks
 
 
 #give training image number
-trainNum <- 14
+trainNum <- 15
 
 imgN <- stack(paste0(dirO[dirN], "/valid_",trainNum,".tif"))
 plotRGB(imgN)
