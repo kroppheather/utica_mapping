@@ -19,7 +19,7 @@ map17_256 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/all
 map17_128 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_128.tif")
 map17_strat <- raster("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_strat.tif")
 # original
-r17s <- stack("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_extent.tif")
+r17s <- stack("E:/Google Drive/research/projects/utica/utica17/u2017_crop.tif")
 plotRGB(r17s)
 # read in validation points from entire map
 treeValid <- st_read("E:/Google Drive/research/projects/utica/model_save/2017/valid_pts/valid_17_tree.shp")
@@ -32,7 +32,7 @@ otherValid <- st_read("E:/Google Drive/research/projects/utica/model_save/2017/v
 
 
 
-###### 1950s comparison map----
+######  comparison map----
 
 treeCol1 <- rgb(0.13,0.54,0.13)
 paveCol1 <- "grey30"
@@ -77,16 +77,16 @@ plotRGB(r17s,maxpixels=33280*15616)
 
 dev.off()
 
-###### 1950s evaluation----
+######  evaluation----
 #directory for orig img
-dirI <- "E:/Google Drive/research/projects/utica/model_save/2017/data/valid_out"
+dirI <- "E:/Google Drive/research/projects/utica/model_save/2017/IOU_valid/masks"
 
 nValid <- 20
 
 img17 <- list()
 
 for(i in 1:nValid){
-  img17[[i]] <- raster(paste0("E:/Google Drive/research/projects/utica/model_save/2017/data/valid/images/valid_",i,".tif"))
+  img17[[i]] <- raster(paste0("E:/Google Drive/research/projects/utica/model_save/2017/IOU_valid/images/valid_",i,".tif"))
 }
 # masks
 
@@ -99,12 +99,12 @@ for(i in 1:nValid){
 
 buildMask <- list()
 for(i in 1:nValid){
-  buildMask[[i]] <- raster(paste0(dirI,"/building/build_mask_",i,".tif"))
+  buildMask[[i]] <- raster(paste0(dirI,"/building/building_mask_",i,".tif"))
 }
 
 paveMask <- list()
 for(i in 1:nValid){
-  paveMask[[i]] <- raster(paste0(dirI,"/pavement/pave_mask_",i,".tif"))
+  paveMask[[i]] <- raster(paste0(dirI,"/pavement/pavement_mask_",i,".tif"))
 }
 
 
@@ -177,7 +177,6 @@ for(i in 1:nValid){
   paveResamp_256[[i]] <- resample(paveCrop_256[[i]], paveMask[[i]], method="ngb")
   
 }
-
 
 
 
@@ -344,7 +343,14 @@ for(i in 1:nValid){
   
 }
 
+imgN <- 20
+plot(img17[[imgN]], col=gray(1:100/100))
 
+plot(treesMask[[imgN]],breaks=c(-0.1,0.5,1.1),
+     col=c(NA, rgb(17/255,157/255,164/255, 200/255)), add=TRUE, legend=FALSE)
+
+plot(treesResamp_strat[[imgN]], breaks=c(-0.1,0.5,1.1),
+     col=c(NA,  rgb(174/255,250/255,239/255,100/255)), add=TRUE, legend=FALSE)
 
 
 
