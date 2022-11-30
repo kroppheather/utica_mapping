@@ -5,10 +5,10 @@ library(mapedit)
 
 
 #directory of training images
-dirO <- c(#"/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/1980/img_tile_128"
+dirO <- c(
   "e:/Google Drive/research/projects/utica/model_save/1980/data_128/train/img")
 #directory for masks
-dirM <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/80s_mask")
+dirM <- c( "e:/Google Drive/research/projects/utica/model_save/1980/data_128/train/mask")
 
 dirMV <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/mask_80s_valid")
 
@@ -93,15 +93,15 @@ samplesy5 <- sample(1:(u80a@nrows-257), nSamp5)[81:120]
 #### Step 1: read in image   ##
 
 #give training image number
-trainNum <- 1
+trainNum <- 29
 
-imgN <- raster(paste0(dirO, "/80s_train/train_",trainNum,".tif"))
+imgN <- raster(paste0(dirO, "/train_",trainNum,".tif"))
 plot(imgN, col=grey(1:100/100))
 
 #reproject to WGS 84 for mapedit
 trainDgc <- projectRaster(imgN, crs="+init=epsg:4326")
 
-writeRaster(trainDgc, paste0(dirM,"/reproj_test/wgs_train_",trainNum,".tif"),
+writeRaster(trainDgc, paste0(dirM,"/u_train_reproject/wgs_train_",trainNum,".tif"),
             format="GTiff")
 
 writeRaster(trainDgc, paste0(dirM,"/u_train_reproject/wgs_train_",trainNum,".tif"),
@@ -178,7 +178,7 @@ writeRaster(paveMask, paste0(dirM,"/pavement/pavement_mask_",trainNum,".tif"),
 #### Step 1: read in image   ##
 
 #give valid image number
-validNum <- 1
+validNum <- 29
 
 imgN <- raster(paste0(dirO, "/80s_valid/valid_",validNum,".tif"))
 plot(imgN, col=grey(1:100/100))
