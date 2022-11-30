@@ -6,7 +6,7 @@ library(mapedit)
 
 #directory of training images
 dirO <- c(#"/Volumes/GoogleDrive/My Drive/research/projects/utica/model_save/1980/img_tile_128"
-  "e:/Google Drive/research/projects/utica/model_save/1980/img_tile_128")
+  "e:/Google Drive/research/projects/utica/model_save/1980/data_128/train/img")
 #directory for masks
 dirM <- c("/Volumes/GoogleDrive/My Drive/research/projects/utica/80s_mask")
 
