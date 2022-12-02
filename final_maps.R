@@ -85,42 +85,169 @@ lc50p
 lc2017s <-  raster("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_strat.tif")
 
 lc2017sp <- projectRaster(lc2017s, crs="+init=epsg:32116", method="ngb")
-writeRaster(lc17sp, "E:/Google Drive/research/projects/utica/maps_save/lc_2017.tif",
+plot(lc2017sp)
+lc2017sp
+writeRaster(lc2017sp, "E:/Google Drive/research/projects/utica/maps_save/lc_2017.tif",
             format="GTiff")
 
+# read
+
 
 # pull out just trees
-trees57 <- reclassify(lc1957, rcl=matrix(c(0,NA,
-                              1,1,
-                              2,NA,
-                              3,NA), ncol=2, byrow=TRUE))
-# pull out just trees
-trees57s <- reclassify(lc1957s, rcl=matrix(c(0,NA,
+
+trees57s <- reclassify(lc50sp, rcl=matrix(c(0,NA,
                                            1,1,
                                            2,NA,
                                            3,NA), ncol=2, byrow=TRUE))
 
 
+build57s <- reclassify(lc50sp, rcl=matrix(c(0,NA,
+                                              1,NA,
+                                              2,1,
+                                              3,NA), ncol=2, byrow=TRUE))
+
+pave57s <- reclassify(lc50sp, rcl=matrix(c(0,NA,
+                                              1,NA,
+                                              2,NA,
+                                              3,1), ncol=2, byrow=TRUE))
 plot(trees57s)
+plot(build57s)
+plot(pave57s)
 
 
-trees17 <- reclassify(lc2017, rcl=matrix(c(0,NA,
+trees17s <- reclassify(lc2017sp, rcl=matrix(c(0,NA,
                                          1,1,
                                          2,NA,
                                          3,NA), ncol=2, byrow=TRUE))
+build17s <- reclassify(lc2017sp, rcl=matrix(c(0,NA,
+                                              1,NA,
+                                              2,1,
+                                              3,NA), ncol=2, byrow=TRUE))
+pave17s <- reclassify(lc2017sp, rcl=matrix(c(0,NA,
+                                              1,NA,
+                                              2,NA,
+                                              3,1), ncol=2, byrow=TRUE))
+plot(trees17s)
+plot(build17s)
+plot(pave17s)
 
-trees17s <- reclassify(lc2017s, rcl=matrix(c(0,NA,
-                                           1,1,
-                                           2,NA,
-                                           3,NA), ncol=2, byrow=TRUE))
 
-plot(trees17)
-
-
-# writeRaster(trees57s, "E:/Google Drive/research/projects/utica/model_save/1950/all_maps/Utrees57_strat2.tif",
+writeRaster(trees17s,"E:/Google Drive/research/projects/utica/maps_save/trees17.tif",
+            format="GTiff")
+writeRaster(build17s,"E:/Google Drive/research/projects/utica/maps_save/build17.tif",
+            format="GTiff")
+writeRaster(pave17s,"E:/Google Drive/research/projects/utica/maps_save/pave17.tif",
             format="GTiff")
 
-writeRaster(trees17, "E:/Google Drive/research/projects/utica/model_save/2017/all_maps/Utrees17_256.tif",
+
+
+
+writeRaster(trees57s,"E:/Google Drive/research/projects/utica/maps_save/trees57.tif",
             format="GTiff")
-writeRaster(trees17s, "E:/Google Drive/research/projects/utica/model_save/2017/all_maps/Utrees17_strat.tif",
+writeRaster(build57s,"E:/Google Drive/research/projects/utica/maps_save/build57.tif",
+            format="GTiff")
+writeRaster(pave57s,"E:/Google Drive/research/projects/utica/maps_save/pave57.tif",
+            format="GTiff")
+
+
+### Land surface temperature
+
+
+# directory
+dirI <- "E:/Google Drive/GIS/landsat/utica"
+
+dirs <- list.dirs(dirI, recursive=FALSE)
+# get files in each directory
+# can't stack since mix of L09 and L08
+# landsat between 2015 -2022 mid May - Sept 
+# with low cloud cover in the utica area
+Lfiles <- list()
+STraster <- list()
+STQAraster <- list()
+QAraster <- list()
+
+for(i in 1:length(dirs)){
+  Lfiles[[i]] <- list.files(dirs[i])
+  STraster[[i]] <- raster(paste0(dirs[i], "/",Lfiles[[i]][grep("ST_B10.TIF", Lfiles[[i]])]))
+  STQAraster[[i]] <- raster(paste0(dirs[i], "/",Lfiles[[i]][grep("ST_QA.TIF", Lfiles[[i]])]))
+  QAraster[[i]] <- raster(paste0(dirs[i], "/",Lfiles[[i]][grep("QA_PIXEL.TIF", Lfiles[[i]])]))  
+}
+
+
+
+
+# take the clear value from the QA pixel to remove clouds
+
+cloudf <- function(x){
+  ifelse(x == 21824, 1,0)
+}
+
+QAf <- list()
+STM <- list()
+STQM <- list()
+for(i in 1:length(dirs)){
+  QAf[[i]] <- calc(QAraster[[i]],cloudf)
+  STM[[i]] <- mask(STraster[[i]], QAf[[i]], maskvalue=0)
+  STQM[[i]] <- mask(STQAraster[[i]], QAf[[i]], maskvalue=0)
+}
+
+
+
+# mask rasters by oneida county
+STK <- list()
+STQA <- list()
+for(i in 1:length(dirs)){
+  STK[[i]] <- crop(STM[[i]],extent(472500, 484000, 4768000, 4775000 ))
+  STQA[[i]] <- crop(STQM[[i]],extent(472500, 484000, 4768000, 4775000 ))
+}
+
+
+
+# DN conversion
+ST_C <- list()
+ST_QA <- list()
+ST_calc <- list()
+
+for(i in 1:length(dirs)){
+  ST_calc[[i]] <- (0.00341802*STK[[i]]) + 149
+  ST_QA[[i]] <- (0.01*STQA[[i]]) 
+  ST_C[[i]] <-  ST_calc[[i]]-273.15
+}
+
+
+
+#average all cells
+plot(ST_calc[[2]])
+
+# resample since L08 and L09 are present
+ST_resamp <- list(ST_C[[1]])
+
+for(i in 2:length(dirs)){
+  ST_resamp[[i]] <- resample(ST_C[[i]], ST_C[[1]])
+}
+
+
+
+# resample since L08 and L09 are present
+STQA_resamp <- list(ST_QA[[1]])
+
+for(i in 2:length(dirs)){
+  STQA_resamp[[i]] <- resample(ST_QA[[i]], ST_QA[[1]])
+}
+
+ST_st <- stack(ST_resamp)
+
+STQA_st <- stack(STQA_resamp)
+# IF the uncertainty is greater than or equal to 3 degrees remove
+QAfunction <- function(x){
+  ifelse(x >=3, 0, 1)
+}
+
+STQA_calc <- calc(STQA_st, QAfunction)
+
+ST_qc <- mask(ST_st, STQA_calc , maskvalue=0)
+plot(ST_qc)
+
+
+writeRaster(ST_qc,"E:/Google Drive/research/projects/utica/maps_save/dailyTemp.tif",
             format="GTiff")
