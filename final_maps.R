@@ -75,15 +75,18 @@ lc1957s <- raster("E:/Google Drive/research/projects/utica/model_save/1950/all_m
 
 lc50sp <- projectRaster(lc1957s, crs="+init=epsg:32116", method="ngb")
 
+writeRaster(lc50sp, "E:/Google Drive/research/projects/utica/maps_save/lc_1957.tif",
+            format="GTiff")
 
 plot(lc50sp)
 lc50sp
 lc50p
+
 lc2017s <-  raster("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_strat.tif")
-plot(lc1957)
-plot(lc2017)
 
 lc2017sp <- projectRaster(lc2017s, crs="+init=epsg:32116", method="ngb")
+writeRaster(lc17sp, "E:/Google Drive/research/projects/utica/maps_save/lc_2017.tif",
+            format="GTiff")
 
 
 # pull out just trees
