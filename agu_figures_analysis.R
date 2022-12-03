@@ -3,6 +3,8 @@ library(sf)
 library(dplyr)
 
 
+dirI <- "E:/Google Drive/research/projects/utica/maps_save"
+
 # read in land cover
 
 
