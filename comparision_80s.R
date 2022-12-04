@@ -20,7 +20,7 @@ map50_kern <- raster("E:/Google Drive/research/projects/utica/model_save/1980/al
 map50_128 <- raster("E:/Google Drive/research/projects/utica/model_save/1980/all_maps/utica80s_128.tif")
 map50_strat <- raster("E:/Google Drive/research/projects/utica/model_save/1980/all_maps/utica80s_strat.tif")
 
-
+plot(map50_strat)
 r80s <- raster("E:/Google Drive/research/projects/utica/utica80/utica80_10086.tif")
 r80s@crs
 plot(r80s, col=gray(1:100/100))

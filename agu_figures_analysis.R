@@ -65,25 +65,7 @@ lc57RS <- resample(lc57,lc17Crop, method="ngb" )
 plot(lc57RS)
 plot(lc17Crop)
 
-pave1 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_128/pave_1.tif")
 
-plot(pave1)
-
-pave2 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_128/pave_2.tif")
-
-plot(pave2)
-
-pave3 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_128/pave_3.tif")
-
-plot(pave3)
-
-tree3 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_128/tree_3.tif")
-
-plot(tree3)
-
-build3 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_128/build_3.tif")
-
-plot(build3)
 #######################################
 ##### Land cover  -----
 #0=other, 1=tree,2=build,3=pavement
@@ -276,7 +258,9 @@ dev.off()
 
 
 # patterns with census data
-
+renterCrop <- st_crop(renter,lc17Crop)
+plot(renterCrop)
+lc17Crop
 
 # crop census data to 2017
 
