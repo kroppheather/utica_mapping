@@ -51,7 +51,7 @@ plot(income_house["estimate"])
 income_houseSP <- st_transform(income_house,32116 )
 
 
-rental_infoSP <- st_transform(income_house,32116 )
+rental_infoSP <- st_transform(rental_info,32116 )
 
 
 raceSP <- st_transform(race,32116 )

@@ -258,25 +258,76 @@ dev.off()
 
 
 # patterns with census data
-renterCrop <- st_crop(renter,lc17Crop)
-plot(renterCrop)
-lc17Crop
 
 # crop census data to 2017
+renterCrop <- st_crop(renter,lc17Crop)
+plot(renterCrop)
 
-# 
+renterCrop$area <- as.numeric(st_area(renterCrop))
+renterSub <- renterCrop[renterCrop$area > 200000,]
 
-# land cover change by tract
+plot(renterSub["RentP"])
+renterSub$Tract <- as.character(renterSub$GEOID)
+renterSub$TractID <- seq(1,nrow(renterSub))
 
-# 2017 land cover by tract
+renterRast <- rasterize(renterSub,lc17Crop,field="TractID")
 
-# temperature vs 2017 tree cover
+treeRenter <- raster::zonal(trees17R,renterRast,fun="sum" )
+
+renterSub$TreePixels <- treeRenter[,2]
+
+renterSub$tree.area.m2 <- renterSub$TreePixels * res(lc17Crop)[1]*res(lc17Crop)[2]
+renterSub$tree.area.km2 <- renterSub$tree.area.m2*1e-6
+renterSub$area.km2 <- renterSub$area*1e-6
+
+renterSub$treePerc <- (renterSub$tree.area.km2/renterSub$area.km2)*100
+
+plot(renterSub["treePerc"])
+
+plot(renterSub$RentP, renterSub$treePerc, pch=19)
+
+
 
 # 2017 tree cover vs income
 
-# 2017 tree cover vs renting
+incomeCrop <- st_crop(income,lc17Crop)
+plot(incomeCrop)
 
-# 2017 tree cover vs race
+incomeCrop$area <- as.numeric(st_area(incomeCrop))
+incomeSub <- incomeCrop[incomeCrop$area > 200000,]
 
-# land cover change patterns
+plot(incomeSub["med_income"])
+incomeSub$Tract <- as.character(incomeSub$GEOID)
+incomeSub$TractID <- seq(1,nrow(incomeSub))
+
+
+incomeRast <- rasterize(incomeSub,lc17Crop,field="TractID")
+
+treeIncome <- raster::zonal(trees17R,incomeRast,fun="sum" )
+
+incomeSub$TreePixels <- treeIncome[,2]
+
+incomeSub$tree.area.m2 <- incomeSub$TreePixels * res(lc17Crop)[1]*res(lc17Crop)[2]
+incomeSub$tree.area.km2 <- incomeSub$tree.area.m2*1e-6
+incomeSub$area.km2 <- incomeSub$area*1e-6
+
+incomeSub$treePerc <- (incomeSub$tree.area.km2/incomeSub$area.km2)*100
+
+plot(incomeSub["treePerc"])
+
+plot(incomeSub$med_income, incomeSub$treePerc, pch=19)
+
+
+
+# land cover change by tract
+tempCRS <- resample(Temp_Anom, lc17Crop)
+
+incomeTemp <- rasterize(incomeSub,lc17Crop,field="TractID")
+
+
+# temperature vs 2017 tree cover
+
+# barplot of percent tree cover in tract by year
+
+
 

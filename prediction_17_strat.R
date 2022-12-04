@@ -41,6 +41,12 @@ for(i in 1:Nimg){
 
 buildAll <- do.call(merge, buildImg)
 
+writeRaster(treeAll, "E:/Google Drive/research/projects/utica/model_save/2017/save_strat/tree_1.tif",
+            format="Gtiff")
+writeRaster(paveAll, "E:/Google Drive/research/projects/utica/model_save/2017/save_strat/pave_1.tif",
+            format="Gtiff")
+writeRaster(buildAll, "E:/Google Drive/research/projects/utica/model_save/2017/save_strat/build_1.tif",
+            format="Gtiff")
 # origImg <- list()
 # for(i in 1:Nimg){
 #  origImg[[i]] <- raster(paste0(dirI,"/predict_",i,".tif"))

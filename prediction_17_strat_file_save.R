@@ -93,7 +93,12 @@ for(i in 1:Nimg){
 buildAll2 <- do.call(merge, buildImg2)
 
 
-
+writeRaster(treeAll2, "E:/Google Drive/research/projects/utica/model_save/2017/save_strat/tree_2.tif",
+            format="Gtiff")
+writeRaster(paveAll2, "E:/Google Drive/research/projects/utica/model_save/2017/save_strat/pave_2.tif",
+            format="Gtiff")
+writeRaster(buildAll2, "E:/Google Drive/research/projects/utica/model_save/2017/save_strat/build_2.tif",
+            format="Gtiff")
 
 # Offset 3 merge -----------------
 
