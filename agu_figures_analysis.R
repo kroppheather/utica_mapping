@@ -8,7 +8,7 @@ library(tmap)
 
 
 dirI <- "E:/Google Drive/research/projects/utica/maps_save"
-
+saveDir <- "E:/Google Drive/research/projects/utica/AGU_figures"
 # read in land cover
 lc57 <- raster(paste0(dirI,"/lc_1957.tif"))
 lc17 <- raster(paste0(dirI,"/lc_2017.tif"))
@@ -90,30 +90,38 @@ treeComp <- function(x,y){
 
 }
 
-is.na(test[1])
 
-test <- getValues(trees57R)
-
-test2 <- getValues(trees17R)
-
-test3 <- treeComp(test,test2)
-
-dfCheck <- data.frame(test,test2,test3)
-
-dfCheck[1:15,]
-
-plot(trees57R)
-plot(trees17R)
 
 treeChange <- overlay(trees57R, trees17R, fun=treeComp)
 plot(treeChange)
-#714C87
+
+treeChange@nrows/treeChange@ncols
+6*0.6
+png(paste0(saveDir,"/tree_change_map.png"), width=10, height=7,
+    units="in", res=300 )
+par(mai=c(0.5,0.5,0.5,0.5))
 plot(treeChange,breaks=c(0,1.5,2.5,3.5,4.5),
-            col=c("#176611","#9D769A","#9BC101", "grey85"),
-     axes=FALSE, box=FALSE)
+     col=c("#176611","#9D769A","#9BC101", "grey85"),
+      legend=FALSE, ylim=c(342400,347000), axes=FALSE,  box=FALSE,
+     maxpixels=(treeChange@nrows * treeChange@ncols)/3)#down sample still
+
+legend(355000,347000,
+       c("Tree","Loss", "Gain","Other"),
+       fill=c("#176611","#9D769A","#9BC101", "grey85"),
+       bty="n",horiz=TRUE, cex=1.5)
+
+arrows(355000,342500,356000,342500, code=0, lwd=2)
+arrows(355000,342500,355000,342600, code=0, lwd=2)
+arrows(355500,342500,355500,342600, code=0, lwd=2)
+arrows(356000,342500,356000,342600, code=0, lwd=2)
+text(356000,342700,"1 km", cex=1)
+text(355500,342700,"0.5 km", cex=1)
+text(355000,342700,"0 km", cex=1)
+dev.off()
+
+freq(treeChange)
 
 
-# land cover change
 
 
 
