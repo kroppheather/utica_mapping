@@ -107,9 +107,12 @@ plot(trees17R)
 
 treeChange <- overlay(trees57R, trees17R, fun=treeComp)
 plot(treeChange)
+#714C87
+plot(treeChange,breaks=c(0,1.5,2.5,3.5,4.5),
+            col=c("#176611","#9D769A","#9BC101", "grey85"),
+     axes=FALSE, box=FALSE)
 
-tm_shape(treeChange)+
-  tm_raster(breaks=c(0,1.5,2.5,3.5))
+
 # land cover change
 
 
