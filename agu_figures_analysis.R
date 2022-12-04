@@ -65,10 +65,137 @@ lc57RS <- resample(lc57,lc17Crop, method="ngb" )
 plot(lc57RS)
 plot(lc17Crop)
 
-#######################################
-##### L -----
+pave1 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_128/pave_1.tif")
 
-# land cover viz
+plot(pave1)
+
+pave2 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_128/pave_2.tif")
+
+plot(pave2)
+
+pave3 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_128/pave_3.tif")
+
+plot(pave3)
+
+tree3 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_128/tree_3.tif")
+
+plot(tree3)
+
+build3 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_128/build_3.tif")
+
+plot(build3)
+#######################################
+##### Land cover  -----
+#0=other, 1=tree,2=build,3=pavement
+colsClass <- c("#545453","#187E4C","#E77002","grey90")
+
+## 1957 ##
+png(paste0(saveDir,"/cover_1957.png"), width=10, height=7,
+    units="in", res=300 )
+par(mai=c(0.5,0.5,0.5,0.5))
+plot(lc57, breaks=c(-0.5,0.5,1.5,2.5,3.5),col=colsClass,
+  legend=FALSE, ylim=c(342400,347000), axes=FALSE,  box=FALSE,
+  maxpixels=(lc57@nrows * lc57@ncols))
+
+legend(355000,347000,
+       c("Other","Tree","Building","Pavement"),
+       fill=colsClass,
+       bty="n",horiz=TRUE, cex=1.5)
+
+arrows(355000,342500,356000,342500, code=0, lwd=2)
+arrows(355000,342500,355000,342600, code=0, lwd=2)
+arrows(355500,342500,355500,342600, code=0, lwd=2)
+arrows(356000,342500,356000,342600, code=0, lwd=2)
+text(356000,342700,"1 km", cex=1)
+text(355500,342700,"0.5 km", cex=1)
+text(355000,342700,"0 km", cex=1)
+
+dev.off()
+
+
+l57count <- freq(lc57)
+
+area57DF <- data.frame(l57count)
+
+area57DF$area.m2 <- area57DF$count * res(lc57)[1]*res(lc57)[2]
+area57DF$area.km2 <- area57DF$area.m2*1e-6
+
+
+png(paste0(saveDir,"/land area 1957.png"), width=5, height=5,
+    units="in", res=300 )
+
+plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,16),
+     xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
+     type="n")
+for(i in 1:4){
+  polygon(c(i-0.25,i-0.25,i+0.25,i+0.25),
+          c(0,area57DF$area.km2[i],area57DF$area.km2[i],0),
+          col=colsClass[i])
+  
+}
+
+axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=1)
+axis(2, seq(0,16, by=4), las=2, cex.axis=1.25)
+mtext("Tree cover change status", side=1, line=3, cex=1.5 )
+mtext(expression(paste("Area (km)"^"2")), side=2, line=2, cex=1.5 )
+dev.off()
+
+
+lc17Crop
+
+png(paste0(saveDir,"/cover_2017.png"), width=10, height=7,
+    units="in", res=300 )
+par(mai=c(0.5,0.5,0.5,0.5))
+plot(lc17Crop, breaks=c(-0.5,0.5,1.5,2.5,3.5),col=colsClass,
+     legend=FALSE, ylim=c(342400,347000), axes=FALSE,  box=FALSE,
+     maxpixels=(lc57@nrows * lc57@ncols)/3)
+
+legend(355000,347000,
+       c("Other","Tree","Building","Pavement"),
+       fill=colsClass,
+       bty="n",horiz=TRUE, cex=1.5)
+
+arrows(355000,342500,356000,342500, code=0, lwd=2)
+arrows(355000,342500,355000,342600, code=0, lwd=2)
+arrows(355500,342500,355500,342600, code=0, lwd=2)
+arrows(356000,342500,356000,342600, code=0, lwd=2)
+text(356000,342700,"1 km", cex=1)
+text(355500,342700,"0.5 km", cex=1)
+text(355000,342700,"0 km", cex=1)
+
+dev.off()
+
+
+l17count <- freq(lc17Crop)
+
+area17DF <- data.frame(l17count)
+
+area17DF$area.m2 <- area17DF$count * res(lc17Crop)[1]*res(lc17Crop)[2]
+area17DF$area.km2 <- area17DF$area.m2*1e-6
+
+
+png(paste0(saveDir,"/land area 2017.png"), width=5, height=5,
+    units="in", res=300 )
+
+plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,16),
+     xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
+     type="n")
+for(i in 1:4){
+  polygon(c(i-0.25,i-0.25,i+0.25,i+0.25),
+          c(0,area17DF$area.km2[i],area17DF$area.km2[i],0),
+          col=colsClass[i])
+  
+}
+
+axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=1)
+axis(2, seq(0,16, by=4), las=2, cex.axis=1.25)
+mtext("Tree cover change status", side=1, line=3, cex=1.5 )
+mtext(expression(paste("Area (km)"^"2")), side=2, line=2, cex=1.5 )
+dev.off()
+
+#######################################
+##### Land cover change -----
+
 
 help(overlay)
 
@@ -119,13 +246,41 @@ text(355500,342700,"0.5 km", cex=1)
 text(355000,342700,"0 km", cex=1)
 dev.off()
 
-freq(treeChange)
+Tchange <- freq(treeChange)
 
+TchangeDF <- data.frame(Tchange)
 
+TchangeDF$area.m2 <- TchangeDF$count * res(treeChange)[1]*res(treeChange)[2]
+TchangeDF$area.km2 <- TchangeDF$area.m2*1e-6
+cols <- c("#176611","#9D769A","#9BC101", "grey85")
+
+png(paste0(saveDir,"/tree_change_comp.png"), width=5, height=5,
+    units="in", res=300 )
+
+plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,16),
+     xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
+     type="n")
+for(i in 1:4){
+  polygon(c(i-0.25,i-0.25,i+0.25,i+0.25),
+          c(0,TchangeDF$area.km2[i],TchangeDF$area.km2[i],0),
+          col=cols[i])
+  
+}
+
+axis(1, seq(0,5),labels=c("","tree","loss","gain","other",""), cex.axis=1.25)
+axis(2, seq(0,16, by=4), las=2, cex.axis=1.25)
+mtext("Tree cover change status", side=1, line=3, cex=1.5 )
+mtext(expression(paste("Area (km)"^"2")), side=2, line=2, cex=1.5 )
+dev.off()
 
 
 
 # patterns with census data
+
+
+# crop census data to 2017
+
+# 
 
 # land cover change by tract
 
