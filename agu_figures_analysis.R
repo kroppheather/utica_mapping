@@ -11,8 +11,11 @@ dirI <- "E:/Google Drive/research/projects/utica/maps_save"
 saveDir <- "E:/Google Drive/research/projects/utica/AGU_figures"
 # read in land cover
 lc57 <- raster(paste0(dirI,"/lc_1957.tif"))
-lc17 <- raster(paste0(dirI,"/lc_2017.tif"))
+lc17p <- raster(paste0(dirI,"/utica17_strat_fix.tif"))
 
+lc17 <- projectRaster(lc17p, crs="+init=epsg:32116", method="ngb")
+writeRaster(lc17, "E:/Google Drive/research/projects/utica/maps_save/lc_2017_fix.tif",
+            format="GTiff")
 # read in temperature
 tempC <- stack(paste0(dirI, "/dailyTemp.tif"))
 
@@ -403,7 +406,11 @@ arrows(3,q17[1],3,q17[5], lwd=3, col=rgb(0.23,0.37,0.8), code=0)
 
 points(x2,censusAll$treePerc, pch=19, col=rgb(0.23,0.37,0.8))
 
+axis(2, seq(0,50, by=10), las=2)
+axis(1, c(1,3), labels=c("1957","2017"))
 
-arrows(x1,censusAll$tree57Perc,x2,censusAll$treePerc, code=0)
+
+arrows(x1,censusAll$tree57Perc,x2,censusAll$treePerc, code=0,
+       col=rgb(0.23,0.37,0.8,.3), lty=2)
 
 
