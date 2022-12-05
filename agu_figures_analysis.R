@@ -16,6 +16,8 @@ lc17p <- raster(paste0(dirI,"/utica17_strat_fix.tif"))
 lc17 <- projectRaster(lc17p, crs="+init=epsg:32116", method="ngb")
 writeRaster(lc17, "E:/Google Drive/research/projects/utica/maps_save/lc_2017_fix.tif",
             format="GTiff")
+
+
 # read in temperature
 tempC <- stack(paste0(dirI, "/dailyTemp.tif"))
 
@@ -193,6 +195,9 @@ trees17R <- reclassify(lc17Crop, rcl=matrix(c(0,0,
                                               1,1,
                                               2,0,
                                               3,0), ncol=2, byrow=TRUE))
+
+writeRaster(trees17R, "E:/Google Drive/research/projects/utica/maps_save/trees_2017_fix.tif",
+            format="GTiff")
 
 treeComp <- function(x,y){
   ifelse(x == 1 & y == 1,1, # always tree cover
