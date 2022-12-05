@@ -284,7 +284,7 @@ renterSub$treePerc <- (renterSub$tree.area.km2/renterSub$area.km2)*100
 
 plot(renterSub["treePerc"])
 
-plot(renterSub$RentP, renterSub$treePerc, pch=19)
+plot(renterSub$RentP, renterSub$treePerc, pch=19, ylim=c(0,35))
 
 
 
@@ -315,19 +315,95 @@ incomeSub$treePerc <- (incomeSub$tree.area.km2/incomeSub$area.km2)*100
 
 plot(incomeSub["treePerc"])
 
-plot(incomeSub$med_income, incomeSub$treePerc, pch=19)
+plot(incomeSub$med_income, incomeSub$treePerc, pch=19, ylim=c(0,35))
 
 
 
 # land cover change by tract
 tempCRS <- resample(Temp_Anom, lc17Crop)
 
-incomeTemp <- rasterize(incomeSub,lc17Crop,field="TractID")
+tempIncome <- raster::zonal(tempCRS,incomeRast,fun="mean" )
+tempIncome
 
+incomeSub$tempC <- tempIncome[,2]
+
+plot(incomeSub$treePerc,incomeSub$tempC)
+plot(incomeSub$med_income,incomeSub$tempC)
+
+
+raceCrop <- st_crop(race,lc17Crop)
+plot(raceCrop)
+
+raceCrop$area <- as.numeric(st_area(raceCrop))
+raceSub <- raceCrop[raceCrop$area > 200000,]
+plot(raceSub)
+
+
+censusAll <- cbind(incomeSub[,c(1,3,6,7,8,9,10,11,12,13,14)],
+                   renterSub[,c(13)],
+                   raceSub[,c(3:14)])
+censusAll$blackPerc <- (censusAll$black/censusAll$total)*100
+censusAll$asianPerc <- (censusAll$Asian/censusAll$total)*100
+
+plot(censusAll$asianPerc, censusAll$treePerc)
+plot(censusAll$blackPerc, censusAll$treePerc)
+
+
+
+
+tree57Income <- raster::zonal(trees57R,incomeRast,fun="sum" )
+
+tree57.area.m2 <- tree57Income[,2] * res(trees57R)[1]*res(trees57R)[2]
+tree57.area.km2 <- tree57.area.m2*1e-6
+
+
+tree57Perc <- (tree57.area.km2/censusAll$area.km2)*100
+
+censusAll$tree57Perc <- tree57Perc
+
+censusAll$areaDiff <-  censusAll$treePerc - censusAll$tree57Perc
+
+plot(censusAll$treePerc,censusAll$tempC)
+plot(censusAll$med_income,censusAll$areaDiff)
+plot(censusAll$areaDiff,censusAll$tempC)
 
 # temperature vs 2017 tree cover
 
 # barplot of percent tree cover in tract by year
 
+q57 <- quantile(censusAll$tree57Perc, probs=c(0,.25,.5,.75,1))
+
+q17 <- quantile(censusAll$treePerc, probs=c(0,.25,.5,.75,1))
+
+set.seed(12)
+x1 <- rep(1,nrow(censusAll))+rnorm(nrow(censusAll),0,0.25)
+set.seed(14)
+x2 <- rep(3,nrow(censusAll))+rnorm(nrow(censusAll),0,0.25)
+
+# 1957
+plot(c(0,1),c(0,1), xlim=c(0,5),ylim=c(0,50),
+    xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
+    type="n")
+
+polygon(c(0.5,0.5,1.5,1.5),
+        c(q57[2],q57[4],q57[4],q57[2]), col=rgb(0.23,0.37,0.8,.7),
+        border=rgb(0.23,0.37,0.8))
+arrows(0.5,q57[3],1.5,q57[3], lwd=3, col=rgb(0.23,0.37,0.8), code=0)
+arrows(1,q57[1],1,q57[5], lwd=3, col=rgb(0.23,0.37,0.8), code=0)
+
+points(x1,censusAll$tree57Perc, pch=19, col=rgb(0.23,0.37,0.8))
+
+# 1957
+
+polygon(c(2.5,2.5,3.5,3.5),
+        c(q17[2],q17[4],q17[4],q17[2]), col=rgb(0.23,0.37,0.8,.7),
+        border=rgb(0.23,0.37,0.8))
+arrows(2.5,q17[3],3.5,q17[3], lwd=3, col=rgb(0.23,0.37,0.8), code=0)
+arrows(3,q17[1],3,q17[5], lwd=3, col=rgb(0.23,0.37,0.8), code=0)
+
+points(x2,censusAll$treePerc, pch=19, col=rgb(0.23,0.37,0.8))
+
+
+arrows(x1,censusAll$tree57Perc,x2,censusAll$treePerc, code=0)
 
 

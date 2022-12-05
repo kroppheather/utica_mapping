@@ -42,11 +42,24 @@ for(i in 1:Nimg){
 buildAll <- do.call(merge, buildImg)
 
 writeRaster(treeAll, "E:/Google Drive/research/projects/utica/model_save/2017/save_strat/tree_1.tif",
-            format="Gtiff")
+            format="GTiff")
 writeRaster(paveAll, "E:/Google Drive/research/projects/utica/model_save/2017/save_strat/pave_1.tif",
-            format="Gtiff")
+            format="GTiff")
 writeRaster(buildAll, "E:/Google Drive/research/projects/utica/model_save/2017/save_strat/build_1.tif",
-            format="Gtiff")
+            format="GTiff")
+
+
+paveAll2 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_strat/pave_2.tif")
+
+treeAll2 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_strat/tree_2.tif")
+buildAll2 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/save_strat/build_2.tif")
+
+plot(treeAll)
+plot(buildAll)
+plot(buildAll2)
+plot(treeAll2)
+plot(paveAll2)
+plot(paveAll)
 # origImg <- list()
 # for(i in 1:Nimg){
 #  origImg[[i]] <- raster(paste0(dirI,"/predict_",i,".tif"))
@@ -61,42 +74,42 @@ writeRaster(buildAll, "E:/Google Drive/research/projects/utica/model_save/2017/s
 # Offset 2 merge ------------------
 
 
-dirP2 <- "E:/Google Drive/research/projects/utica/model_save/2017/prediction_strat/image_2"
+#dirP2 <- "E:/Google Drive/research/projects/utica/model_save/2017/prediction_strat/image_2"
 
 
-treeImg2 <- list()
+#treeImg2 <- list()
 
-Nimg2 <- 7930
+#Nimg2 <- 7930
 
-for(i in 1:Nimg2){
-  treeImg2[[i]] <- raster(paste0(dirP2,"/tree/tree_",i,".tif"))
+#for(i in 1:Nimg2){
+#  treeImg2[[i]] <- raster(paste0(dirP2,"/tree/tree_",i,".tif"))
   
   
-}
+#}
 
-treeAll2 <- do.call(merge, treeImg2)
+#treeAll2 <- do.call(merge, treeImg2)
 
 
 
-paveImg2 <- list()
+#paveImg2 <- list()
 
-for(i in 1:Nimg2){
-  paveImg2[[i]] <- raster(paste0(dirP2,"/pavement/pavement_",i,".tif"))
+#for(i in 1:Nimg2){
+#  paveImg2[[i]] <- raster(paste0(dirP2,"/pavement/pavement_",i,".tif"))
   
   
-}
+#}
 
-paveAll2 <- do.call(merge, paveImg2)
+#paveAll2 <- do.call(merge, paveImg2)
 
 
-buildImg2 <- list()
-for(i in 1:Nimg){
-  buildImg2[[i]] <- raster(paste0(dirP2,"/building/building_",i,".tif"))
+#buildImg2 <- list()
+#for(i in 1:Nimg){
+#  buildImg2[[i]] <- raster(paste0(dirP2,"/building/building_",i,".tif"))
   
   
-}
+#}
 
-buildAll2 <- do.call(merge, buildImg2)
+#buildAll2 <- do.call(merge, buildImg2)
 
 
 
@@ -104,42 +117,42 @@ buildAll2 <- do.call(merge, buildImg2)
 # Offset 3 merge -----------------
 
 
-dirP3 <- "E:/Google Drive/research/projects/utica/model_save/2017/prediction_strat/image_3"
+#dirP3 <- "E:/Google Drive/research/projects/utica/model_save/2017/prediction_strat/image_3"
 
 
-treeImg3 <- list()
+#treeImg3 <- list()
 
-Nimg3 <- 7740
+#Nimg3 <- 7740
 
-for(i in 1:Nimg3){
-  treeImg3[[i]] <- raster(paste0(dirP3,"/tree/tree_",i,".tif"))
+#for(i in 1:Nimg3){
+#  treeImg3[[i]] <- raster(paste0(dirP3,"/tree/tree_",i,".tif"))
   
   
-}
+#}
 
-treeAll3 <- do.call(merge, treeImg3)
+#treeAll3 <- do.call(merge, treeImg3)
 
 
 
-paveImg3 <- list()
+#paveImg3 <- list()
 
-for(i in 1:Nimg3){
-  paveImg3[[i]] <- raster(paste0(dirP3,"/pavement/pavement_",i,".tif"))
+##for(i in 1:Nimg3){
+#  paveImg3[[i]] <- raster(paste0(dirP3,"/pavement/pavement_",i,".tif"))
   
   
-}
+#}
 
-paveAll3 <- do.call(merge, paveImg3)
+#paveAll3 <- do.call(merge, paveImg3)
 
 
-buildImg3 <- list()
-for(i in 1:Nimg3){
-  buildImg3[[i]] <- raster(paste0(dirP3,"/building/building_",i,".tif"))
+#buildImg3 <- list()
+#for(i in 1:Nimg3){
+#  buildImg3[[i]] <- raster(paste0(dirP3,"/building/building_",i,".tif"))
   
   
-}
+#}
 
-buildAll3 <- do.call(merge, buildImg3)
+#buildAll3 <- do.call(merge, buildImg3)
 
 
 
@@ -156,10 +169,10 @@ buildAll3 <- do.call(merge, buildImg3)
 
 #resample to original
 treeAll2rs <- resample(treeAll2, treeAll)
-treeAll3rs <- resample(treeAll3, treeAll)
+#treeAll3rs <- resample(treeAll3, treeAll)
 
 
-treeCombine <- stack(treeAll, treeAll2rs, treeAll3rs)
+treeCombine <- stack(treeAll, treeAll2rs) #, treeAll3rs)
 
 # get maximum prob
 treeLayer <- calc(treeCombine, function(x){max(x, na.rm=TRUE)})
@@ -170,9 +183,9 @@ plot(treeLayer)
 
 #resample to original
 buildAll2rs <- resample(buildAll2, buildAll)
-buildAll3rs <- resample(buildAll3, buildAll)
+#buildAll3rs <- resample(buildAll3, buildAll)
 
-buildCombine <- stack(buildAll,buildAll2rs,buildAll3rs)
+buildCombine <- stack(buildAll,buildAll2rs) #,buildAll3rs)
 buildLayer <- calc(buildCombine, function(x){max(x, na.rm=TRUE)})
 plot(buildLayer)
 

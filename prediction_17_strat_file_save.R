@@ -84,21 +84,21 @@ paveAll2 <- do.call(merge, paveImg2)
 
 
 buildImg2 <- list()
-for(i in 1:Nimg){
+for(i in 1:Nimg2){
   buildImg2[[i]] <- raster(paste0(dirP2,"/building/building_",i,".tif"))
   
   
 }
 
 buildAll2 <- do.call(merge, buildImg2)
-
+plot(paveAll2)
 
 writeRaster(treeAll2, "E:/Google Drive/research/projects/utica/model_save/2017/save_strat/tree_2.tif",
-            format="Gtiff")
+            format="GTiff")
 writeRaster(paveAll2, "E:/Google Drive/research/projects/utica/model_save/2017/save_strat/pave_2.tif",
-            format="Gtiff")
+            format="GTiff")
 writeRaster(buildAll2, "E:/Google Drive/research/projects/utica/model_save/2017/save_strat/build_2.tif",
-            format="Gtiff")
+            format="GTiff")
 
 # Offset 3 merge -----------------
 
