@@ -379,38 +379,45 @@ q57 <- quantile(censusAll$tree57Perc, probs=c(0,.25,.5,.75,1))
 q17 <- quantile(censusAll$treePerc, probs=c(0,.25,.5,.75,1))
 
 set.seed(12)
-x1 <- rep(1,nrow(censusAll))+rnorm(nrow(censusAll),0,0.25)
+x1 <- rep(2,nrow(censusAll))+rnorm(nrow(censusAll),0,0.25)
 set.seed(14)
-x2 <- rep(3,nrow(censusAll))+rnorm(nrow(censusAll),0,0.25)
+x2 <- rep(4.75,nrow(censusAll))+rnorm(nrow(censusAll),0,0.25)
+
+colpts <- rgb(84/255,84/255,83/255,0.5)
+collines <- rgb(84/255,84/255,83/255,0.5)
+fillbox <- rgb(84/255,84/255,83/255,0.75)
+colbox <- rgb(84/255,84/255,83/255,1)
 
 # 1957
-plot(c(0,1),c(0,1), xlim=c(0,5),ylim=c(0,50),
+par(mai=c(1,1,1,1))
+plot(c(0,1),c(0,1), xlim=c(0,8),ylim=c(0,50),
     xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
     type="n")
 
 polygon(c(0.5,0.5,1.5,1.5),
-        c(q57[2],q57[4],q57[4],q57[2]), col=rgb(0.23,0.37,0.8,.7),
-        border=rgb(0.23,0.37,0.8))
-arrows(0.5,q57[3],1.5,q57[3], lwd=3, col=rgb(0.23,0.37,0.8), code=0)
-arrows(1,q57[1],1,q57[5], lwd=3, col=rgb(0.23,0.37,0.8), code=0)
+        c(q57[2],q57[4],q57[4],q57[2]), col=fillbox,
+        border=colbox)
+arrows(0.5,q57[3],1.5,q57[3], lwd=3, col=colbox, code=0)
+arrows(1,q57[1],1,q57[5], lwd=2, col=colbox, code=0)
 
-points(x1,censusAll$tree57Perc, pch=19, col=rgb(0.23,0.37,0.8))
+points(x1,censusAll$tree57Perc, pch=19, col=colpts)
 
 # 1957
 
-polygon(c(2.5,2.5,3.5,3.5),
-        c(q17[2],q17[4],q17[4],q17[2]), col=rgb(0.23,0.37,0.8,.7),
-        border=rgb(0.23,0.37,0.8))
-arrows(2.5,q17[3],3.5,q17[3], lwd=3, col=rgb(0.23,0.37,0.8), code=0)
-arrows(3,q17[1],3,q17[5], lwd=3, col=rgb(0.23,0.37,0.8), code=0)
+polygon(c(5.5,5.5,6.5,6.5),
+        c(q17[2],q17[4],q17[4],q17[2]), col=fillbox,
+        border=colbox)
+arrows(5.5,q17[3],6.5,q17[3], lwd=3, col=colbox, code=0)
+arrows(6,q17[1],6,q17[5], lwd=2, col=colbox, code=0)
 
-points(x2,censusAll$treePerc, pch=19, col=rgb(0.23,0.37,0.8))
+points(x2,censusAll$treePerc, pch=19, col=colpts)
 
 axis(2, seq(0,50, by=10), las=2)
-axis(1, c(1,3), labels=c("1957","2017"))
-
+axis(1, c(-1,1.5,5.5,10), labels=c("", "1957","2017", ""))
+mtext("Percentage of tract covered by trees (%)", side=2, line=3)
+mtext("Year", side=1, line=3)
 
 arrows(x1,censusAll$tree57Perc,x2,censusAll$treePerc, code=0,
-       col=rgb(0.23,0.37,0.8,.3), lty=2)
+       col=collines, lty=2)
 
 
