@@ -17,8 +17,9 @@ library(dplyr)
 # read in final maps
 map17_256 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_256.tif")
 map17_128 <- raster("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_128.tif")
-map17_strat <- raster("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_strat.tif")
+map17_strat <- raster("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_strat_fix.tif")
 # original
+plot(map17_strat)
 r17s <- stack("E:/Google Drive/research/projects/utica/utica17/u2017_crop.tif")
 plotRGB(r17s)
 # read in validation points from entire map
@@ -32,50 +33,6 @@ otherValid <- st_read("E:/Google Drive/research/projects/utica/model_save/2017/v
 
 
 
-######  comparison map----
-
-treeCol1 <- rgb(0.13,0.54,0.13)
-paveCol1 <- "grey30"
-buildCol1 <- "tomato4"
-
-png("E:/Google Drive/research/projects/utica/model_save/2017/all_maps/maps/comp_17.png", height=15616,width=33280)
-
-par(mfrow=c(2,2))
-
-plot(map17_256, axes=FALSE, legend=FALSE, box=FALSE, 
-     breaks=c(-0.1,0.5,#breaks between other
-              1.5, # tree
-              2.5, # building
-              3.5), #pavement
-     maxpixels=33280*15616 ,
-     col=c(NA, treeCol1,buildCol1, paveCol1))
-mtext("Training n=60: 256 x 256", side=3, cex=20, line=-50)
-
-plot(map17_128, axes=FALSE, legend=FALSE, box=FALSE, 
-     breaks=c(-0.1,0.5,#breaks between other
-              1.5, # tree
-              2.5, # building
-              3.5 ), #pavement
-     col=c(NA, treeCol1,buildCol1, paveCol1),
-     maxpixels=33280*15616
-     )
-mtext("Training n=120: 128 x 128", side=3, cex=20, line=-30)
-
-plot(map17_strat, axes=FALSE, legend=FALSE, box=FALSE, 
-     breaks=c(-0.1,0.5,#breaks between other
-              1.5, # tree
-              2.5, # building
-              3.5 ), #pavement
-     col=c(NA, treeCol1,buildCol1, paveCol1),
-     maxpixels=33280*15616
-)
-mtext("Training n=100: 256 x 256 with stratified samples", side=3, cex=20, line=-30)
-
-plotRGB(r17s,maxpixels=33280*15616)
-
-
-
-dev.off()
 
 ######  evaluation----
 #directory for orig img

@@ -256,10 +256,7 @@ uticaClass <- treeClass+buildClass2+paveClass2
 
 plot(uticaClass)
 
-uticaRes <- resample(uticaClass, origAll, method="ngb")
 
-
-plotRGB(origAll3)
 
 treeCol1 <- rgb(0.13,0.54,0.13,0.5)
 paveCol1 <- rgb(0.96,0.49,0,0.5)
@@ -271,21 +268,7 @@ buildCol1 <- rgb(0.53,0.17,0.09)
 
 #save raster
 
-writeRaster(uticaClass, "E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_strat.tif", format="GTiff" )
+writeRaster(uticaClass, "E:/Google Drive/research/projects/utica/model_save/2017/all_maps/utica17_strat_fix.tif", format="GTiff" )
 
-writeRaster(uticaClass, "c:/Users/hkropp/Documents/utica17_strat.tif", format="GTiff" )
+writeRaster(uticaClass, "c:/Users/hkropp/Documents/utica17_strat_fix.tif", format="GTiff" )
 
-png("E:/Google Drive/research/projects/utica/model_save/2017/maps_256/utica_classification.png", width=origAll@ncols,height=origAll@nrows)
-
-plotRGB(origAll, axes=FALSE, legend=FALSE, box=FALSE, maxpixels=origAll@ncols*origAll@nrows)
-
-plot(uticaClass, breaks=c(-0.1,0.5,#breaks between other
-                        1.5, # tree
-                        2.5, # building
-                        3.5 ), #pavement
-     col=c(NA, treeCol1,buildCol1, paveCol1),add=TRUE, legend=FALSE, box=FALSE, maxpixels=uticaClass@nrows*uticaClass@ncols)
-
-
-dev.off()
-
-plotRGB(origAll, axes=FALSE, legend=FALSE, box=FALSE)
