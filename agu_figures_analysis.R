@@ -123,7 +123,7 @@ for(i in 1:4){
 
 axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=1)
 axis(2, seq(0,16, by=4), las=2, cex.axis=1.25)
-mtext("Tree cover change status", side=1, line=3, cex=1.5 )
+mtext("Land cover type", side=1, line=3, cex=1.5 )
 mtext(expression(paste("Area (km)"^"2")), side=2, line=2, cex=1.5 )
 dev.off()
 
@@ -176,7 +176,7 @@ for(i in 1:4){
 
 axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=1)
 axis(2, seq(0,16, by=4), las=2, cex.axis=1.25)
-mtext("Tree cover change status", side=1, line=3, cex=1.5 )
+mtext("Land cover type", side=1, line=3, cex=1.5 )
 mtext(expression(paste("Area (km)"^"2")), side=2, line=2, cex=1.5 )
 dev.off()
 
@@ -196,8 +196,8 @@ trees17R <- reclassify(lc17Crop, rcl=matrix(c(0,0,
                                               2,0,
                                               3,0), ncol=2, byrow=TRUE))
 
-writeRaster(trees17R, "E:/Google Drive/research/projects/utica/maps_save/trees_2017_fix.tif",
-            format="GTiff")
+#writeRaster(trees17R, "E:/Google Drive/research/projects/utica/maps_save/trees_2017_fix.tif",
+#            format="GTiff")
 
 treeComp <- function(x,y){
   ifelse(x == 1 & y == 1,1, # always tree cover
@@ -389,10 +389,13 @@ set.seed(14)
 x2 <- rep(4.75,nrow(censusAll))+rnorm(nrow(censusAll),0,0.25)
 
 colpts <- rgb(84/255,84/255,83/255,0.5)
-collines <- rgb(84/255,84/255,83/255,0.5)
+collines <- rgb(84/255,84/255,83/255,0.75)
 fillbox <- rgb(84/255,84/255,83/255,0.75)
 colbox <- rgb(84/255,84/255,83/255,1)
 
+
+png(paste0(saveDir,"/tree_cover_tract.png"), width=8, height=5,
+    units="in", res=300 )
 # 1957
 par(mai=c(1,1,1,1))
 plot(c(0,1),c(0,1), xlim=c(0,8),ylim=c(0,50),
@@ -417,12 +420,79 @@ arrows(6,q17[1],6,q17[5], lwd=2, col=colbox, code=0)
 
 points(x2,censusAll$treePerc, pch=19, col=colpts)
 
-axis(2, seq(0,50, by=10), las=2)
-axis(1, c(-1,1.5,5.5,10), labels=c("", "1957","2017", ""))
-mtext("Percentage of tract covered by trees (%)", side=2, line=3)
-mtext("Year", side=1, line=3)
+axis(2, seq(0,50, by=10), las=2, cex.axis=1.5)
+axis(1, c(-1,1.5,5.5,10), labels=c("", "1957","2017", ""), cex.axis=1.5)
+mtext("Percentage of tract covered by trees (%)", side=2, line=3, cex=1.5)
+mtext("Year", side=1, line=3, cex=1.5)
 
 arrows(x1,censusAll$tree57Perc,x2,censusAll$treePerc, code=0,
        col=collines, lty=2)
+
+dev.off()
+
+
+colbox <- rgb(84/255,84/255,83/255,0.8)
+
+png(paste0(saveDir,"/tree_cover_tract.png"), width=6, height=6,
+    units="in", res=300 )
+# 1957
+par(mai=c(1,1,1,1))
+plot(c(0,1),c(0,1), xlim=c(0,50),ylim=c(-8,8),
+     xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
+     type="n")
+
+points(censusAll$treePerc,censusAll$tempC, pch=19, col=colbox, cex=1.5)
+
+axis(1, seq(0,50, by=10), cex.axis=1.5)
+axis(2, seq(-8,8, by=2), cex.axis=1.5, las=2)
+mtext("Percentage of tract covered by trees", side=1, line=2.5, cex=1.5)
+mtext("in 2017 (%)", side=1, line=4, cex=1.5)
+mtext(expression(paste("Temperature anomaly (",degree,"C)")),side=2, line=3, cex=1.5)
+
+
+dev.off()
+
+
+colbox <- rgb(84/255,84/255,83/255,0.8)
+
+png(paste0(saveDir,"/tree_cover_diff_temp.png"), width=6, height=6,
+    units="in", res=300 )
+# 1957
+par(mai=c(1,1,1,1))
+plot(c(0,1),c(0,1), xlim=c(-30,15),ylim=c(-6,7),
+     xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
+     type="n")
+
+points(censusAll$areaDiff,censusAll$tempC, pch=19, col=colbox, cex=1.5)
+
+axis(1, seq(-30,20, by=10), cex.axis=1.5)
+axis(2, seq(-8,8, by=2), cex.axis=1.5, las=2)
+mtext("Difference in percentage of tract ", side=1, line=2.5, cex=1.5)
+mtext("covered by trees from 2017 to 1957 (%)", side=1, line=4, cex=1.5)
+mtext(expression(paste("Temperature anomaly (",degree,"C)")),side=2, line=3, cex=1.5)
+
+
+dev.off()
+
+png(paste0(saveDir,"/renters.png"), width=10, height=8,
+    units="in", res=300 )
+# 1957
+par(mai=c(2,2,2,2))
+plot(c(0,1),c(0,1), xlim=c(0,90),ylim=c(0,50),
+     xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
+     type="n")
+
+points(censusAll$RentP,censusAll$treePerc, pch=19, col=colbox, cex=1.5)
+
+axis(2, seq(0,50, by=10), cex.axis=1.5, las=2)
+axis(1, seq(0,100, by=10), cex.axis=1.5)
+mtext("Percentage of tract covered by trees", side=2, line=4, cex=1.5)
+mtext("in 2017 (%)", side=2, line=2.5, cex=1.5)
+mtext("Percent of houses occupied by renters",side=1, line=3, cex=1.5)
+
+
+dev.off()
+
+plot(censusAll$RentP,censusAll$treePerc)
 
 
