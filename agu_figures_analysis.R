@@ -459,13 +459,13 @@ png(paste0(saveDir,"/tree_cover_diff_temp.png"), width=6, height=6,
     units="in", res=300 )
 # 1957
 par(mai=c(1,1,1,1))
-plot(c(0,1),c(0,1), xlim=c(-30,15),ylim=c(-6,7),
+plot(c(0,1),c(0,1), xlim=c(-30,30),ylim=c(-6,7),
      xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
      type="n")
 
 points(censusAll$areaDiff,censusAll$tempC, pch=19, col=colbox, cex=1.5)
 
-axis(1, seq(-30,20, by=10), cex.axis=1.5)
+axis(1, seq(-30,30, by=10), cex.axis=1.5)
 axis(2, seq(-8,8, by=2), cex.axis=1.5, las=2)
 mtext("Difference in percentage of tract ", side=1, line=2.5, cex=1.5)
 mtext("covered by trees from 2017 to 1957 (%)", side=1, line=4, cex=1.5)
