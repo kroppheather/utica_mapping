@@ -498,5 +498,16 @@ plot(censusAll$RentP,censusAll$treePerc)
 
 # read in tree cover data for comp
 
+lst_tree <- raster("E:/Google Drive/GIS/landsat_tree/CNY/p015r030_TC_2015.tif")
+plot(lst_tree)
+
+lst_tree <- projectRaster(lst_tree, crs="+init=epsg:32116")
 
 
+lst_treeCrop <- crop(lst_tree, lc57)
+
+lst_treeRS <- resample(lst_tree,lc17Crop )
+plot(lst_treeRS)
+treeIncome <- raster::zonal(trees17R,incomeRast,fun="mean" )
+
+censusAll
