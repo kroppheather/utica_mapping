@@ -16,7 +16,7 @@ lc17p <- raster(paste0(dirI,"/utica17_strat_fix.tif"))
 lc17 <- projectRaster(lc17p, crs="+init=epsg:32116", method="ngb")
 writeRaster(lc17, "E:/Google Drive/research/projects/utica/maps_save/lc_2017_fix.tif",
             format="GTiff")
-
+lc17 <- raster("E:/Google Drive/research/projects/utica/maps_save/lc_2017_fix.tif")
 
 # read in temperature
 tempC <- stack(paste0(dirI, "/dailyTemp.tif"))
@@ -494,5 +494,9 @@ mtext("Percent of houses occupied by renters",side=1, line=3, cex=1.5)
 dev.off()
 
 plot(censusAll$RentP,censusAll$treePerc)
+
+
+# read in tree cover data for comp
+
 
 
