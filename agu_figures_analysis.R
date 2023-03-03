@@ -347,7 +347,7 @@ raceSub <- raceCrop[raceCrop$area > 200000,]
 plot(raceSub)
 
 
-censusAll <- cbind(incomeSub[,c(1,3,6,7,8,9,10,11,12,13,14)],
+censusAll <- cbind(incomeSub[,c(1,3,6,7,8,9,10,11,12,13)],
                    renterSub[,c(13)],
                    raceSub[,c(3:14)])
 censusAll$blackPerc <- (censusAll$black/censusAll$total)*100
@@ -508,6 +508,9 @@ lst_treeCrop <- crop(lst_tree, lc57)
 
 lst_treeRS <- resample(lst_tree,lc17Crop )
 plot(lst_treeRS)
-treeIncome <- raster::zonal(trees17R,incomeRast,fun="mean" )
+treelstIncome <- raster::zonal(lst_treeRS,incomeRast,fun="mean" )
 
-censusAll
+censusAll$treesLST <- treelstIncome[,2]
+
+plot(censusAll$treePerc, censusAll$treesLST, xlim=c(0,50),ylim=c(0,50))
+
