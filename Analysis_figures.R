@@ -16,5 +16,8 @@ library(dplyr)
 # 1957: utica stratified sampling 256 x 256
 # census shape files from the ACS 2020
 # average summer land surface temperature from landsat collection 2 level 2
+dirI <- "E:/Google Drive/research/projects/utica/maps_final"
 
-lc1957 <- 
+lc1957 <- rast(paste0(dirI,"/lc_1957.tif"))
+lc1987 <- rast(paste0(dirI,"/lc_1987.tif"))
+lc2017 <- rast(paste0(dirI,"/lc_2017.tif"))
