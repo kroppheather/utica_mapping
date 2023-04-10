@@ -17,12 +17,19 @@ library(dplyr)
 # census shape files from the ACS 2020
 # average summer land surface temperature from landsat collection 2 level 2
 dirI <- "E:/Google Drive/research/projects/utica/maps_final"
-
+# read in land cover predictions
 lc1957 <- rast(paste0(dirI,"/lc_1957.tif"))
 lc1987 <- rast(paste0(dirI,"/lc_1987.tif"))
 lc2017 <- rast(paste0(dirI,"/lc_2017.tif"))
+
+# read in validation data points
 
 valid57build <- vect("E:/Google Drive/research/projects/utica/model_save/1950/valid_pt_2000/valid_50_build.shp")
 valid57pave <- vect("E:/Google Drive/research/projects/utica/model_save/1950/valid_pt_2000/valid_50_pave.shp")
 valid57other <- vect("E:/Google Drive/research/projects/utica/model_save/1950/valid_pt_2000/valid_50_other.shp")
 valid57tree <- vect("E:/Google Drive/research/projects/utica/model_save/1950/valid_pt_2000/valid_50_tree.shp")
+
+valid87build <- vect("E:/Google Drive/research/projects/utica/model_save/1980/valid_pt_2000/valid_80_building.shp")
+valid87pave <- vect("E:/Google Drive/research/projects/utica/model_save/1980/valid_pt_2000/valid_80_pave.shp")
+valid87other <- vect("E:/Google Drive/research/projects/utica/model_save/1980/valid_pt_2000/valid_80_other.shp")
+valid87tree <- vect("E:/Google Drive/research/projects/utica/model_save/1980/valid_pt_2000/valid_80_tree.shp")
