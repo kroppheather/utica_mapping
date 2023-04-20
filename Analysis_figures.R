@@ -14,13 +14,15 @@ library(dplyr)
 # 1957: utica stratified sampling (fixed from overlay error in prediction file), 128 x128
 # 1987: utica stratified sampling 128 x 128
 # 1957: utica stratified sampling 256 x 256
-# census shape files from the ACS 2020
-# average summer land surface temperature from landsat collection 2 level 2
+
 dirI <- "E:/Google Drive/research/projects/utica/maps_final"
 # read in land cover predictions
 lc1957 <- rast(paste0(dirI,"/lc_1957.tif"))
 lc1987 <- rast(paste0(dirI,"/lc_1987.tif"))
 lc2017 <- rast(paste0(dirI,"/lc_2017.tif"))
+
+# census shape files from the ACS 2020
+# average summer land surface temperature from landsat collection 2 level 2
 
 # read in validation data points
 
@@ -41,4 +43,13 @@ valid17build <- vect("E:/Google Drive/research/projects/utica/model_save/2017/va
 valid17pave <- vect("E:/Google Drive/research/projects/utica/model_save/2017/valid_pt_2000/valid_17_pave.shp")
 valid17other <- vect("E:/Google Drive/research/projects/utica/model_save/2017/valid_pt_2000/valid_17_other.shp")
 valid17tree <- vect("E:/Google Drive/research/projects/utica/model_save/2017/valid_pt_2000/valid_17_tree.shp")
+
+
+#### extract validation data and set up accuracy measures ----
+
+build17extract <- extract(lc2017,project(valid17build,lc2017))
+build17extract$actual <- rep() 
+
+
+
 
