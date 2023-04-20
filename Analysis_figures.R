@@ -8,9 +8,11 @@
 library(terra)
 library(sf)
 library(dplyr)
+library(caret)
 
 ##### read in data -----
 #in final maps folder:
+# other will be zero, trees =1, buildings =2, pavement =3
 # 1957: utica stratified sampling (fixed from overlay error in prediction file), 128 x128
 # 1987: utica stratified sampling 128 x 128
 # 1957: utica stratified sampling 256 x 256
@@ -47,9 +49,26 @@ valid17tree <- vect("E:/Google Drive/research/projects/utica/model_save/2017/val
 
 #### extract validation data and set up accuracy measures ----
 
+other17extract <- extract(lc2017,project(valid17other,lc2017))
+other17extract$actual <- rep(0,nrow(other17extract)) 
+
+tree17extract <- extract(lc2017,project(valid17tree,lc2017))
+tree17extract$actual <- rep(1,nrow(tree17extract)) 
+
 build17extract <- extract(lc2017,project(valid17build,lc2017))
-build17extract$actual <- rep() 
+build17extract$actual <- rep(2,nrow(build17extract)) 
 
+pave17extract <- extract(lc2017,project(valid17pave,lc2017))
+pave17extract$actual <- rep(3,nrow(pave17extract)) 
 
+valid17m <- na.omit(rbind(other17extract,tree17extract,build17extract,pave17extract))
 
+conf_17 <- confusionMatrix(as.factor(valid17m$lc_2017),as.factor(valid17m$actual))
+conf_17$table
+conf_17$overall
 
+other_UA_17 <- conf_17$table[1,1]/sum(conf_17$table[,1])
+other_PA_17 <- conf_17$table[1,1]/sum(conf_17$table[1,])
+
+tree_UA_17 <-  conf_17$table[2,2]/sum(conf_17$table[,2])
+tree_PA_17 <-  conf_17$table[2,2]/sum(conf_17$table[2,])
