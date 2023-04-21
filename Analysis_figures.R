@@ -115,12 +115,40 @@ valid57m <- na.omit(rbind(other57extract,tree57extract,build57extract,pave57extr
 conf_57 <- confusionMatrix(as.factor(valid57m$lc_1957),as.factor(valid57m$actual))
 
 
-conf_57$table
-conf_57$overall
 
-other_UA_57 <- conf_57$table[1,1]/sum(conf_57$table[,1])
-other_PA_57 <- conf_57$table[1,1]/sum(conf_57$table[1,])
+# set up accuracy tables
+overallacc <- data.frame(year=c(1957,1987,2017),
+                         accuracy=c(conf_57$overall[1],conf_87$overall[1],conf_17$overall[1]))
 
-tree_UA_57 <-  conf_57$table[2,2]/sum(conf_57$table[,2])
-tree_PA_57 <-  conf_57$table[2,2]/sum(conf_57$table[2,])
+confusion_all <- list(conf_57$table,conf_87$table,conf_17$table)
+
+accuracy_table <- data.frame(year = rep(c(1957,1987,2017),each=4),
+                             type = rep(c("other","tree","building","pavement"),times=3),
+                             users = c(conf_57$table[1,1]/sum(conf_57$table[1,]),
+                                 conf_57$table[2,2]/sum(conf_57$table[2,]),
+                                 conf_57$table[3,3]/sum(conf_57$table[3,]),
+                                 conf_57$table[4,4]/sum(conf_57$table[4,]),
+                                 conf_87$table[1,1]/sum(conf_87$table[1,]),
+                                 conf_87$table[2,2]/sum(conf_87$table[2,]),
+                                 conf_87$table[3,3]/sum(conf_87$table[3,]),
+                                 conf_87$table[4,4]/sum(conf_87$table[4,]),
+                                 conf_17$table[1,1]/sum(conf_17$table[1,]),
+                                 conf_17$table[2,2]/sum(conf_17$table[2,]),
+                                 conf_17$table[3,3]/sum(conf_17$table[3,]),
+                                 conf_17$table[4,4]/sum(conf_17$table[4,]))*100,
+                             producers = c(conf_57$table[1,1]/sum(conf_57$table[,1]),
+                                          conf_57$table[2,2]/sum(conf_57$table[,2]),
+                                          conf_57$table[3,3]/sum(conf_57$table[,3]),
+                                          conf_57$table[4,4]/sum(conf_57$table[,4]),
+                                          conf_87$table[1,1]/sum(conf_87$table[,1]),
+                                          conf_87$table[2,2]/sum(conf_87$table[,2]),
+                                          conf_87$table[3,3]/sum(conf_87$table[,3]),
+                                          conf_87$table[4,4]/sum(conf_87$table[,4]),
+                                          conf_17$table[1,1]/sum(conf_17$table[,1]),
+                                          conf_17$table[2,2]/sum(conf_17$table[,2]),
+                                          conf_17$table[3,3]/sum(conf_17$table[,3]),
+                                          conf_17$table[4,4]/sum(conf_17$table[,4]))*100) 
+
+accuracy_table$omission_err <- 100 - accuracy_table$producers
+accuracy_table$commission_err <- 100 - accuracy_table$users
 
