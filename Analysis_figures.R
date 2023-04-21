@@ -49,6 +49,8 @@ valid17tree <- vect("E:/Google Drive/research/projects/utica/model_save/2017/val
 
 #### extract validation data and set up accuracy measures ----
 
+
+### 2017
 other17extract <- extract(lc2017,project(valid17other,lc2017))
 other17extract$actual <- rep(0,nrow(other17extract)) 
 
@@ -64,11 +66,61 @@ pave17extract$actual <- rep(3,nrow(pave17extract))
 valid17m <- na.omit(rbind(other17extract,tree17extract,build17extract,pave17extract))
 
 conf_17 <- confusionMatrix(as.factor(valid17m$lc_2017),as.factor(valid17m$actual))
-conf_17$table
-conf_17$overall
 
-other_UA_17 <- conf_17$table[1,1]/sum(conf_17$table[,1])
-other_PA_17 <- conf_17$table[1,1]/sum(conf_17$table[1,])
+## 1987
 
-tree_UA_17 <-  conf_17$table[2,2]/sum(conf_17$table[,2])
-tree_PA_17 <-  conf_17$table[2,2]/sum(conf_17$table[2,])
+other87extract <- extract(lc1987,project(valid87other,lc1987))
+other87extract$actual <- rep(0,nrow(other87extract)) 
+
+tree87extract <- extract(lc1987,project(valid87tree,lc1987))
+tree87extract$actual <- rep(1,nrow(tree87extract)) 
+
+build87extract <- extract(lc1987,project(valid87build,lc1987))
+build87extract$actual <- rep(2,nrow(build87extract)) 
+
+pave87extract <- extract(lc1987,project(valid87pave,lc1987))
+pave87extract$actual <- rep(3,nrow(pave87extract)) 
+
+valid87m <- na.omit(rbind(other87extract,tree87extract,build87extract,pave87extract))
+
+conf_87 <- confusionMatrix(as.factor(valid87m$lc_1987),as.factor(valid87m$actual))
+
+
+conf_87$table
+conf_87$overall
+
+other_UA_87 <- conf_87$table[1,1]/sum(conf_87$table[,1])
+other_PA_87 <- conf_87$table[1,1]/sum(conf_87$table[1,])
+
+tree_UA_87 <-  conf_87$table[2,2]/sum(conf_87$table[,2])
+tree_PA_87 <-  conf_87$table[2,2]/sum(conf_87$table[2,])
+
+
+## 1957
+
+other57extract <- extract(lc1957,project(valid57other,lc1957))
+other57extract$actual <- rep(0,nrow(other57extract)) 
+
+tree57extract <- extract(lc1957,project(valid57tree,lc1957))
+tree57extract$actual <- rep(1,nrow(tree57extract)) 
+
+build57extract <- extract(lc1957,project(valid57build,lc1957))
+build57extract$actual <- rep(2,nrow(build57extract)) 
+
+pave57extract <- extract(lc1957,project(valid57pave,lc1957))
+pave57extract$actual <- rep(3,nrow(pave57extract)) 
+
+valid57m <- na.omit(rbind(other57extract,tree57extract,build57extract,pave57extract))
+
+conf_57 <- confusionMatrix(as.factor(valid57m$lc_1957),as.factor(valid57m$actual))
+
+
+conf_57$table
+conf_57$overall
+
+other_UA_57 <- conf_57$table[1,1]/sum(conf_57$table[,1])
+other_PA_57 <- conf_57$table[1,1]/sum(conf_57$table[1,])
+
+tree_UA_57 <-  conf_57$table[2,2]/sum(conf_57$table[,2])
+tree_PA_57 <-  conf_57$table[2,2]/sum(conf_57$table[2,])
+
