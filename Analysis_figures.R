@@ -10,7 +10,12 @@ library(sf)
 library(dplyr)
 library(caret)
 
+##### saving directory ----
+dirSave <- "E:/Google Drive/research/projects/utica/manuscript/figures"
+
 ##### read in data -----
+
+
 #in final maps folder:
 # other will be zero, trees =1, buildings =2, pavement =3
 # 1957: utica stratified sampling (fixed from overlay error in prediction file), 128 x128
@@ -124,7 +129,7 @@ confusion_all <- list(conf_57$table,conf_87$table,conf_17$table)
 
 accuracy_table <- data.frame(year = rep(c(1957,1987,2017),each=4),
                              type = rep(c("other","tree","building","pavement"),times=3),
-                             users = c(conf_57$table[1,1]/sum(conf_57$table[1,]),
+                             users = round(c(conf_57$table[1,1]/sum(conf_57$table[1,]),
                                  conf_57$table[2,2]/sum(conf_57$table[2,]),
                                  conf_57$table[3,3]/sum(conf_57$table[3,]),
                                  conf_57$table[4,4]/sum(conf_57$table[4,]),
@@ -135,8 +140,8 @@ accuracy_table <- data.frame(year = rep(c(1957,1987,2017),each=4),
                                  conf_17$table[1,1]/sum(conf_17$table[1,]),
                                  conf_17$table[2,2]/sum(conf_17$table[2,]),
                                  conf_17$table[3,3]/sum(conf_17$table[3,]),
-                                 conf_17$table[4,4]/sum(conf_17$table[4,]))*100,
-                             producers = c(conf_57$table[1,1]/sum(conf_57$table[,1]),
+                                 conf_17$table[4,4]/sum(conf_17$table[4,]))*100,1),
+                             producers = round(c(conf_57$table[1,1]/sum(conf_57$table[,1]),
                                           conf_57$table[2,2]/sum(conf_57$table[,2]),
                                           conf_57$table[3,3]/sum(conf_57$table[,3]),
                                           conf_57$table[4,4]/sum(conf_57$table[,4]),
@@ -147,8 +152,18 @@ accuracy_table <- data.frame(year = rep(c(1957,1987,2017),each=4),
                                           conf_17$table[1,1]/sum(conf_17$table[,1]),
                                           conf_17$table[2,2]/sum(conf_17$table[,2]),
                                           conf_17$table[3,3]/sum(conf_17$table[,3]),
-                                          conf_17$table[4,4]/sum(conf_17$table[,4]))*100) 
+                                          conf_17$table[4,4]/sum(conf_17$table[,4]))*100,1)) 
 
 accuracy_table$omission_err <- 100 - accuracy_table$producers
 accuracy_table$commission_err <- 100 - accuracy_table$users
 
+
+#### save validation tables ----
+
+write.table(round(overallacc,2), paste0(dirSave, "/overall_accuracy.csv"), sep=",", row.names=FALSE)
+
+write.table(confusion_all[[1]], paste0(dirSave, "/confusion_1957.csv"), sep=",", row.names=FALSE)
+write.table(confusion_all[[2]], paste0(dirSave, "/confusion_1987.csv"), sep=",", row.names=FALSE)
+write.table(confusion_all[[3]], paste0(dirSave, "/confusion_2017.csv"), sep=",", row.names=FALSE)
+
+write.table(accuracy_table, paste0(dirSave, "/accuracy_table.csv"), sep=",", row.names=FALSE)
