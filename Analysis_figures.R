@@ -28,6 +28,10 @@ lc1957 <- rast(paste0(dirI,"/lc_1957.tif"))
 lc1987 <- rast(paste0(dirI,"/lc_1987.tif"))
 lc2017 <- rast(paste0(dirI,"/lc_2017.tif"))
 
+# lc1987 is still in WGS84 project to state plane
+
+lc1987 <- project(lc1987,lc2017)
+
 # census shape files from the ACS 2020
 # average summer land surface temperature from landsat collection 2 level 2
 
@@ -158,7 +162,7 @@ accuracy_table$omission_err <- 100 - accuracy_table$producers
 accuracy_table$commission_err <- 100 - accuracy_table$users
 
 
-#### save validation tables ----
+##### save validation tables ----
 
 write.table(round(overallacc,2), paste0(dirSave, "/overall_accuracy.csv"), sep=",", row.names=FALSE)
 
@@ -167,3 +171,10 @@ write.table(confusion_all[[2]], paste0(dirSave, "/confusion_1987.csv"), sep=",",
 write.table(confusion_all[[3]], paste0(dirSave, "/confusion_2017.csv"), sep=",", row.names=FALSE)
 
 write.table(accuracy_table, paste0(dirSave, "/accuracy_table.csv"), sep=",", row.names=FALSE)
+
+
+##### organize land cover data for maps ---
+plot(lc2017, xlim=c(351000,362000))
+plot(lc1957,add=TRUE)
+plot(lc1987, add=TRUE, col="blue")
+crs(lc2017)
