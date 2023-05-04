@@ -30,7 +30,7 @@ lc2017 <- rast(paste0(dirI,"/lc_2017.tif"))
 
 # lc1987 is still in WGS84 project to state plane
 
-lc1987 <- project(lc1987,crs(lc2017), method="near")
+lc1987 <- project(lc1987,"+init=epsg:32116", method="near")
 
 # census shape files from the ACS 2020
 # average summer land surface temperature from landsat collection 2 level 2
@@ -178,7 +178,8 @@ plot(lc2017, xlim=c(351000,362000))
 plot(lc1957,add=TRUE)
 plot(lc1987, add=TRUE)
 
-
-
+ext(lc1957)
+ext(lc1987)
+ext(lc2017)
 
 
