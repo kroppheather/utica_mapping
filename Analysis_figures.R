@@ -123,7 +123,7 @@ valid57m <- na.omit(rbind(other57extract,tree57extract,build57extract,pave57extr
 
 conf_57 <- confusionMatrix(as.factor(valid57m$lc_1957),as.factor(valid57m$actual))
 
-
+##### Table 1. Accuracy metrics ----
 
 # set up accuracy tables
 overallacc <- data.frame(year=c(1957,1987,2017),
@@ -173,7 +173,9 @@ write.table(confusion_all[[3]], paste0(dirSave, "/confusion_2017.csv"), sep=",",
 write.table(accuracy_table, paste0(dirSave, "/accuracy_table.csv"), sep=",", row.names=FALSE)
 
 
-##### organize land cover data for maps ---
+##### Figure 1. Landcover comparision ----
+
+##### organize land cover data for maps 
 plot(lc2017, xlim=c(351000,362000))
 plot(lc1957,add=TRUE)
 plot(lc1987, add=TRUE)
@@ -181,5 +183,44 @@ plot(lc1987, add=TRUE)
 ext(lc1957)
 ext(lc1987)
 ext(lc2017)
+
+#compare area that overlaps in all images (accounts for angle of some images with missing data)
+overlapExt <- ext(356825,360870, 342870,346415)
+lc2017_crop <- crop(lc2017,overlapExt, snap="near")
+lc1987_crop <- crop(lc1987,overlapExt, snap="near")
+lc1957_crop <- crop(lc1957,overlapExt, snap="near")
+
+# count areas
+
+
+l57count <- freq(lc1957_crop)
+
+area57DF <- data.frame(l57count)
+
+area57DF$area.m2 <- area57DF$count * res(lc1957_crop)[1]*res(lc1957_crop)[2]
+area57DF$area.km2 <- area57DF$area.m2*1e-6
+
+
+l87count <- freq(lc1987_crop)
+
+area87DF <- data.frame(l87count)
+
+area87DF$area.m2 <- area87DF$count * res(lc1987_crop)[1]*res(lc1987_crop)[2]
+area87DF$area.km2 <- area87DF$area.m2*1e-6
+
+
+l17count <- freq(lc2017_crop)
+
+area17DF <- data.frame(l17count)
+
+area17DF$area.m2 <- area17DF$count * res(lc2017_crop)[1]*res(lc2017_crop)[2]
+area17DF$area.km2 <- area17DF$area.m2*1e-6
+
+# set up mapping variables
+
+#0=other, 1=tree,2=build,3=pavement
+colsClass <- c("#545453","#187E4C","#E77002","grey90")
+
+
 
 
