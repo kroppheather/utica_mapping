@@ -220,7 +220,69 @@ area17DF$area.km2 <- area17DF$area.m2*1e-6
 
 #0=other, 1=tree,2=build,3=pavement
 colsClass <- c("#545453","#187E4C","#E77002","grey90")
+# plot dim
+wd <- 2.5
+hd <- 2.5
 
 
+png(paste0(saveDir, "/cover_panel.png"), width=7.5, height=5, units="in", res=300)
+layout(matrix(seq(1,6),ncol=3), width=wd,height=hd)
+# 1957
+par(mai=c(0,0,0,0))
+plot(lc1957_crop, breaks=c(-0.5,0.5,1.5,2.5,3.5),col=colsClass,
+     legend=FALSE,  axes=FALSE,
+     maxcell=ncell(lc1957_crop))
+
+arrows(357000,342500,358000,342500, code=0, lwd=2)
+arrows(357000,342500,357000,342600, code=0, lwd=2)
+arrows(357500,342500,357500,342600, code=0, lwd=2)
+arrows(358000,342500,358000,342600, code=0, lwd=2)
+text(357000,342700,"1 km", cex=1)
+text(357500,342700,"0.5 km", cex=1)
+text(358000,342700,"0 km", cex=1)
+
+par(mai=c(0.5,0.5,0.5,0.5))
+
+plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,10),
+     xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
+     type="n")
+for(i in 1:4){
+  polygon(c(i-0.25,i-0.25,i+0.25,i+0.25),
+          c(0,area57DF$area.km2[i],area57DF$area.km2[i],0),
+          col=colsClass[i])
+  
+}
+
+axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=1)
+axis(2, seq(0,16, by=4), las=2, cex.axis=1.25)
+mtext("Land cover type", side=1, line=3, cex=1.5 )
+mtext(expression(paste("Area (km)"^"2")), side=2, line=2, cex=1.5 )
+
+
+# 1987
+par(mai=c(0,0,0,0))
+plot(lc1987_crop, breaks=c(-0.5,0.5,1.5,2.5,3.5),col=colsClass,
+     legend=FALSE,  axes=FALSE,
+     maxcell=ncell(lc1987_crop))
+
+par(mai=c(0.5,0.5,0.5,0.5))
+
+plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,10),
+     xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
+     type="n")
+
+par(mai=c(0,0,0,0))
+
+plot(lc2017_crop, breaks=c(-0.5,0.5,1.5,2.5,3.5),col=colsClass,
+     legend=FALSE, axes=FALSE,
+     maxcell=ncell(lc2017_crop))
+
+par(mai=c(0.5,0.5,0.5,0.5))
+
+plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,10),
+     xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
+     type="n")
+
+dev.off()
 
 
