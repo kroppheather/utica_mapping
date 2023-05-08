@@ -259,7 +259,7 @@ axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=
 axis(2, seq(0,16, by=4), las=2, cex.axis=1.25)
 mtext("Land cover type", side=1, line=3, cex=1.5 )
 mtext(expression(paste("Area (km)"^"2")), side=2, line=2, cex=1.5 )
-
+box(which="plot")
 
 # 1987
 par(mai=c(0,0,0,0))
