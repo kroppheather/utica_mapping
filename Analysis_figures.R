@@ -224,66 +224,117 @@ colsClass <- c("#545453","#187E4C","#E77002","grey90")
 wd <- 2.5
 hd1 <- 2.5
 hd2 <- 1
+# arrow line width for scale bar
+awd <- 1
+# text size for scale bar
+sce <- 1
+#axis size for area plot
+cap <- 1
+# axis label size for area plot
+lax <- 1
 
 
-png(paste0(dirSave, "/cover_panel.png"), width=7.5, height=5, units="in", res=300)
+png(paste0(dirSave, "/cover_panel.png"), width=8.5, height=4.5, units="in", res=300)
 layout(matrix(seq(1,6),ncol=3), width=lcm(rep(wd*2.54,3)),height=lcm(c(hd1,hd2)*2.54))
 # 1957
-par(mai=c(0,0,0,0))
+par(mai=c(0.01,0.01,0.01,0.01))
+
 plot(lc1957_crop, breaks=c(-0.5,0.5,1.5,2.5,3.5),col=colsClass,
-     legend=FALSE,  axes=FALSE)
-     #maxcell=ncell(lc1957_crop))
-box(which="plot")
+     legend=FALSE,  axes=FALSE, mar=NA,
+     maxcell=ncell(lc1957_crop))
 
-arrows(357000,342500,358000,342500, code=0, lwd=2)
-arrows(357000,342500,357000,342600, code=0, lwd=2)
-arrows(357500,342500,357500,342600, code=0, lwd=2)
-arrows(358000,342500,358000,342600, code=0, lwd=2)
-text(357000,342700,"1 km", cex=1)
-text(357500,342700,"0.5 km", cex=1)
-text(358000,342700,"0 km", cex=1)
+arrows(357000,342850,358000,342850, code=0, lwd=awd)
+arrows(357000,342800,357000,342850, code=0, lwd=awd)
+arrows(357500,342800,357500,342850, code=0, lwd=awd)
+arrows(358000,342800,358000,342850, code=0, lwd=awd)
+text(357000,342700,"0", cex=sce)
+text(357500,342700,"0.5", cex=sce)
+text(358000,342700,"1 km", cex=sce)
 
-par(mai=c(0.25,0.25,0,0.25))
+par(mai=c(0.01,0.01,0.01,0.01))
 
-plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,10),
+plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,8),
      xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
      type="n")
 for(i in 1:4){
   polygon(c(i-0.25,i-0.25,i+0.25,i+0.25),
           c(0,area57DF$area.km2[i],area57DF$area.km2[i],0),
-          col=colsClass[i])
+          col=colsClass[i], border=NA)
   
 }
 
-axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=1)
-axis(2, seq(0,16, by=4), las=2, cex.axis=1.25)
-mtext("Land cover type", side=1, line=3, cex=1.5 )
-mtext(expression(paste("Area (km)"^"2")), side=2, line=2, cex=1.5 )
-box(which="plot")
+
+
+axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=cap)
+axis(2, seq(0,8, by=2), las=2, cex.axis= cap)
+mtext("Land cover type", side=1, line=2.5, cex=lax )
+mtext(expression(paste("Area (km"^"2",")")), side=2, line=1.5, cex=lax )
+
 
 # 1987
-par(mai=c(0,0,0,0))
+par(mai=c(0.01,0.01,0.01,0.01))
+
 plot(lc1987_crop, breaks=c(-0.5,0.5,1.5,2.5,3.5),col=colsClass,
-     legend=FALSE,  axes=FALSE)
-    # maxcell=ncell(lc1987_crop))
+     legend=FALSE,  axes=FALSE, mar=NA,
+     maxcell=ncell(lc1987_crop))
+arrows(357000,342850,358000,342850, code=0, lwd=awd)
+arrows(357000,342800,357000,342850, code=0, lwd=awd)
+arrows(357500,342800,357500,342850, code=0, lwd=awd)
+arrows(358000,342800,358000,342850, code=0, lwd=awd)
+text(357000,342700,"0", cex=sce)
+text(357500,342700,"0.5", cex=sce)
+text(358000,342700,"1 km", cex=sce)
 
-par(mai=c(0,0,0,0))
+par(mai=c(0.01,0.01,0.01,0.01))
 
-plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,10),
+plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,8),
      xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
      type="n")
+for(i in 1:4){
+  polygon(c(i-0.25,i-0.25,i+0.25,i+0.25),
+          c(0,area87DF$area.km2[i],area87DF$area.km2[i],0),
+          col=colsClass[i], border=NA)
+  
+}
+polygon(c(2-0.25,2-0.25,2+0.25,2+0.25),
+        c(0,8,8,0), col=rgb(.9,.9,.9,.1), border=NA)
 
-par(mai=c(0,0,0,0))
+axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=cap)
+mtext("Land cover type", side=1, line=2.5, cex=lax )
+
+
+# 2017
+
+par(mai=c(0.01,0.01,0.01,0.01))
+
 
 plot(lc2017_crop, breaks=c(-0.5,0.5,1.5,2.5,3.5),col=colsClass,
-     legend=FALSE, axes=FALSE)
-    # maxcell=ncell(lc2017_crop))
+    legend=FALSE, axes=FALSE, mar=NA,
+     maxcell=ncell(lc2017_crop))
+arrows(357000,342850,358000,342850, code=0, lwd=awd)
+arrows(357000,342800,357000,342850, code=0, lwd=awd)
+arrows(357500,342800,357500,342850, code=0, lwd=awd)
+arrows(358000,342800,358000,342850, code=0, lwd=awd)
+text(357000,342700,"0", cex=sce)
+text(357500,342700,"0.5", cex=sce)
+text(358000,342700,"1 km", cex=sce)
 
-par(mai=c(0,0,0,0))
+par(mai=c(0.01,0.01,0.01,0.01))
 
-plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,10),
+plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,8),
      xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
      type="n")
+for(i in 1:4){
+  polygon(c(i-0.25,i-0.25,i+0.25,i+0.25),
+          c(0,area17DF$area.km2[i],area17DF$area.km2[i],0),
+          col=colsClass[i], border=NA)
+  
+}
+
+axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=cap)
+
+mtext("Land cover type", side=1, line=2.5, cex=lax )
+
 
 dev.off()
 
