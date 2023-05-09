@@ -339,3 +339,34 @@ mtext("Land cover type", side=1, line=2.5, cex=lax )
 dev.off()
 
 
+#### Tree change calculation ----
+
+lc1957rs <- resample(lc1957_crop, lc2017_crop)
+
+trees57R <- classify(lc1957rs, rcl=matrix(c(0,0,
+                                            1,1,
+                                            2,0,
+                                            3,0), ncol=2, byrow=TRUE))
+
+trees17R <- classify(lc2017_crop, rcl=matrix(c(0,0,
+                                              1,1,
+                                              2,0,
+                                              3,0), ncol=2, byrow=TRUE))
+
+
+
+treeComp <- function(x,y){
+  ifelse(x == 1 & y == 1,1, # always tree cover
+         ifelse(x == 1 & y == 0, 2, # loss tree cover
+                ifelse(x == 0 & y == 1, 3, # gain
+                       ifelse(x == 0 & y == 0,4,0)))) # always other
+  
+}
+
+
+# need to find terra replacement for overlay
+treeChange <- treeComp(trees57R, trees17R)
+plot(treeChange)
+
+
+
