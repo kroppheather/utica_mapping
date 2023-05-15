@@ -341,7 +341,7 @@ dev.off()
 
 #### Tree change calculation ----
 
-lc1957rs <- resample(lc1957_crop, lc2017_crop)
+lc1957rs <- resample(lc1957_crop, lc2017_crop, method="near")
 
 trees57R <- classify(lc1957rs, rcl=matrix(c(0,0,
                                             1,1,
@@ -365,8 +365,11 @@ treeComp <- function(x,y){
 
 
 # need to find terra replacement for overlay
-treeChange <- treeComp(trees57R, trees17R)
+treeChange <- lapp(c(x=trees57R, y=trees17R),treeComp)  
 plot(treeChange)
+
+plot(trees57R)
+plot(trees17R)
 
 
 
