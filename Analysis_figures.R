@@ -219,7 +219,7 @@ area17DF$area.km2 <- area17DF$area.m2*1e-6
 # set up mapping variables
 
 #0=other, 1=tree,2=build,3=pavement
-colsClass <- c("#545453","#187E4C","#E77002","grey90")
+colsClass <- c("#545453","#E1C10A","#E77002","#e5e5e5")
 # plot dim
 wd <- 2.5
 hd1 <- 2.5
@@ -366,10 +366,65 @@ treeComp <- function(x,y){
 
 # need to find terra replacement for overlay
 treeChange <- lapp(c(x=trees57R, y=trees17R),treeComp)  
-plot(treeChange)
-
-plot(trees57R)
-plot(trees17R)
 
 
+
+Tchange <- freq(treeChange)
+
+TchangeDF <- data.frame(Tchange)
+
+TchangeDF$area.m2 <- TchangeDF$count * res(treeChange)[1]*res(treeChange)[2]
+TchangeDF$area.km2 <- TchangeDF$area.m2*1e-6
+
+
+
+# plot parameters
+# arrow line width for scale bar
+awd <- 1
+# text size for scale bar
+sce <- 1
+cols <- c("#176611","#9D769A","#9BC101", "grey85")
+wd <- 6
+hd <- 6
+
+png(paste0(dirSave,"/tree_change_map.png"), width=12, height=6,
+    units="in", res=300 )
+
+layout(matrix(seq(1,2),ncol=2), width=lcm(rep(wd*2.54,2)),height=lcm(c(hd)*2.54))
+par(mai=c(0,0,0,0))
+plot(treeChange,breaks=c(0,1.5,2.5,3.5,4.5),
+     col=cols,
+     legend=FALSE, ylim=c(342400,347000), axes=FALSE)
+    # maxpixels=(treeChange@nrows * treeChange@ncols)/3)#down sample still
+
+legend(357000,347000,
+       c("Tree","Loss", "Gain","Other"),
+       fill=cols,border=NA,
+       bty="n",horiz=TRUE, cex=1)
+
+
+arrows(357000,342850,358000,342850, code=0, lwd=awd)
+arrows(357000,342800,357000,342850, code=0, lwd=awd)
+arrows(357500,342800,357500,342850, code=0, lwd=awd)
+arrows(358000,342800,358000,342850, code=0, lwd=awd)
+text(357000,342700,"0", cex=sce)
+text(357500,342700,"0.5", cex=sce)
+text(358000,342700,"1 km", cex=sce)
+
+par(mai=c(1,1,1,1))
+plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,11),
+     xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
+     type="n")
+for(i in 1:4){
+  polygon(c(i-0.25,i-0.25,i+0.25,i+0.25),
+          c(0,TchangeDF$area.km2[i],TchangeDF$area.km2[i],0),
+          col=cols[i])
+  
+}
+
+axis(1, seq(0,5),labels=c("","tree","loss","gain","other",""), cex.axis=1)
+axis(2, seq(0,10, by=2), las=2, cex.axis=1)
+mtext("Tree cover change status", side=1, line=3, cex=1 )
+mtext(expression(paste("Area (km"^"2",")")), side=2, line=2, cex=1 )
+dev.off()
 
