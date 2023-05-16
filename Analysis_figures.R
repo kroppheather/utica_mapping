@@ -219,7 +219,7 @@ area17DF$area.km2 <- area17DF$area.m2*1e-6
 # set up mapping variables
 
 #0=other, 1=tree,2=build,3=pavement
-colsClass <- c("#FFFFFF","#008C17","#9287A1","#292928")
+colsClass <- c("#FFFFFF","#008C17","#9287A1","#3B3B3A")
 # plot dim
 wd <- 2.5
 hd1 <- 2.5
@@ -232,6 +232,8 @@ sce <- 1
 cap <- 1
 # axis label size for area plot
 lax <- 1
+#border for bars
+borderi <- c("black",NA,NA,NA)
 
 
 png(paste0(dirSave, "/cover_panel_true_white.png"), width=8.5, height=4.5, units="in", res=300)
@@ -259,7 +261,7 @@ plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,8),
 for(i in 1:4){
   polygon(c(i-0.25,i-0.25,i+0.25,i+0.25),
           c(0,area57DF$area.km2[i],area57DF$area.km2[i],0),
-          col=colsClass[i], border=c("black",NA,NA,NA))
+          col=colsClass[i], border=borderi[i])
   
 }
 
@@ -293,11 +295,10 @@ plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,8),
 for(i in 1:4){
   polygon(c(i-0.25,i-0.25,i+0.25,i+0.25),
           c(0,area87DF$area.km2[i],area87DF$area.km2[i],0),
-          col=colsClass[i], border=NA)
+          col=colsClass[i], border=borderi[i])
   
 }
-polygon(c(2-0.25,2-0.25,2+0.25,2+0.25),
-        c(0,8,8,0), col=rgb(.9,.9,.9,.1), border=c("black",NA,NA,NA))
+
 
 axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=cap)
 mtext("Land cover type", side=1, line=2.5, cex=lax )
@@ -327,7 +328,7 @@ plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,8),
 for(i in 1:4){
   polygon(c(i-0.25,i-0.25,i+0.25,i+0.25),
           c(0,area17DF$area.km2[i],area17DF$area.km2[i],0),
-          col=colsClass[i], border=c("black",NA,NA,NA))
+          col=colsClass[i], border=borderi[i])
   
 }
 
