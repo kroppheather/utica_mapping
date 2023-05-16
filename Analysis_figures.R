@@ -219,7 +219,7 @@ area17DF$area.km2 <- area17DF$area.m2*1e-6
 # set up mapping variables
 
 #0=other, 1=tree,2=build,3=pavement
-colsClass <- c("#42804C","#008C17","#C9C9C9","#e5e5e5")
+colsClass <- c("#C9C9C9","#008C17","#CCAB8F","#292928")
 # plot dim
 wd <- 2.5
 hd1 <- 2.5
