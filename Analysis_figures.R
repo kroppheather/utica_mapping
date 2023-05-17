@@ -31,7 +31,7 @@ lc2017 <- rast(paste0(dirI,"/lc_2017.tif"))
 
 # read in original images
 
-img57 <- rast("E:/Google Drive/research/projects/utica/utica50/utica50_3.tif")
+img57 <- rast("E:/Google Drive/research/projects/utica/utica50/A550500171317_ref.tif")
 img87 <- rast("E:/Google Drive/research/projects/utica/model_save/1980/all_maps/utica80s_crop_orig.tif")
 img17 <- rast("E:/Google Drive/research/projects/utica/utica17/u2017_crop.tif")
 
@@ -236,6 +236,12 @@ area17DF$area.km2 <- area17DF$area.m2*1e-6
 
 #0=other, 1=tree,2=build,3=pavement
 colsClass <- c("#FFFFFF","#008C17","#9287A1","#3B3B3A")
+#coordinates for area labels
+area57y <- c(7,4,2,2.5)
+area87y <- c(6.9,2.8,4.5,4.5)
+area17y <- c(7,4,4,4.7)
+astrix <- c("","*","","")
+
 # plot dim
 wd <- 2.5
 hd1 <- 2.5
@@ -243,18 +249,27 @@ hd2 <- 2
 # arrow line width for scale bar
 awd <- 1
 # text size for scale bar
-sce <- 1
+sce <- 1.2
 #axis size for area plot
 cap <- 1
 # axis label size for area plot
 lax <- 1
 #border for bars
 borderi <- c("black",NA,NA,NA)
+#size for area text label
+tcx <- 1.2
 
 
-png(paste0(dirSave, "/fig_1_cover_panel.png"), width=8.5, height=6, units="in", res=300)
-layout(matrix(seq(1,6),ncol=3), width=lcm(rep(wd*2.54,3)),height=lcm(c(hd1,hd2)*2.54))
-# 1957
+png(paste0(dirSave, "/fig_1_cover_panel.png"), width=8.5, height=10, units="in", res=300)
+layout(matrix(seq(1,9),ncol=3), width=lcm(rep(wd*2.54,3)),height=lcm(c(hd1,hd1,hd2)*2.54))
+
+### 1957 ###
+# 1957 image
+par(mai=c(0.01,0.01,0.01,0.01))
+plot(img57_crop, col=grey(1:100/100),axes=FALSE, mar=NA, legend=FALSE,
+     maxcell=ncell(img57_crop))
+
+# 1957 land cover
 par(mai=c(0.01,0.01,0.01,0.01))
 
 plot(lc1957_crop, breaks=c(-0.5,0.5,1.5,2.5,3.5),col=colsClass,
@@ -269,6 +284,7 @@ text(357000,342700,"0", cex=sce)
 text(357500,342700,"0.5", cex=sce)
 text(358000,342700,"1 km", cex=sce)
 
+# land cover area total
 par(mai=c(0.01,0.01,0.01,0.01))
 
 plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,8),
@@ -280,7 +296,7 @@ for(i in 1:4){
           col=colsClass[i], border=borderi[i])
   
 }
-
+text(seq(1,4), area57y, paste0(round(area57DF$area.km2,1)), cex=tcx)
 
 
 axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=cap)
@@ -288,8 +304,13 @@ axis(2, seq(0,8, by=2), las=2, cex.axis= cap)
 mtext("Land cover type", side=1, line=2.5, cex=lax )
 mtext(expression(paste("Area (km"^"2",")")), side=2, line=1.5, cex=lax )
 
+### 1987 ###
+# 1987 image
+par(mai=c(0.01,0.01,0.01,0.01))
+plot(img87_crop, col=grey(1:100/100),axes=FALSE, mar=NA, legend=FALSE,
+     maxcell=ncell(img87_crop))
 
-# 1987
+# 1987 land cover
 par(mai=c(0.01,0.01,0.01,0.01))
 
 plot(lc1987_crop, breaks=c(-0.5,0.5,1.5,2.5,3.5),col=colsClass,
@@ -314,14 +335,21 @@ for(i in 1:4){
           col=colsClass[i], border=borderi[i])
   
 }
-
+text(seq(1,4), area87y, 
+     paste0(round(area87DF$area.km2,1),astrix), cex=tcx)
 
 axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=cap)
 mtext("Land cover type", side=1, line=2.5, cex=lax )
 
 
-# 2017
 
+### 2017 ###
+# 2017 image
+par(mai=c(0.01,0.01,0.01,0.01))
+plotRGB(img17_crop,axes=FALSE, mar=NA, 
+     maxcell=ncell(img17_crop))
+
+# 2017 landcover
 par(mai=c(0.01,0.01,0.01,0.01))
 
 
@@ -347,7 +375,7 @@ for(i in 1:4){
           col=colsClass[i], border=borderi[i])
   
 }
-
+text(seq(1,4), area87y, paste0(round(area87DF$area.km2,1)), cex=tcx)
 axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=cap)
 
 mtext("Land cover type", side=1, line=2.5, cex=lax )
