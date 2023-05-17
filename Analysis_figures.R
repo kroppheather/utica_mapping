@@ -28,9 +28,20 @@ lc1957 <- rast(paste0(dirI,"/lc_1957.tif"))
 lc1987 <- rast(paste0(dirI,"/lc_1987.tif"))
 lc2017 <- rast(paste0(dirI,"/lc_2017.tif"))
 
+
+# read in original images
+
+img57 <- rast("E:/Google Drive/research/projects/utica/utica50/utica50_3.tif")
+img87 <- rast("E:/Google Drive/research/projects/utica/model_save/1980/all_maps/utica80s_crop_orig.tif")
+img17 <- rast("E:/Google Drive/research/projects/utica/utica17/u2017_crop.tif")
+
 # lc1987 is still in WGS84 project to state plane
 
 lc1987 <- project(lc1987,"+init=epsg:32116", method="near")
+
+img57 <-  project(img57,"+init=epsg:32116", method="near")
+img87 <-  project(img87,"+init=epsg:32116", method="near")
+img17 <-  project(img17,"+init=epsg:32116", method="near")
 
 # census shape files from the ACS 2020
 # average summer land surface temperature from landsat collection 2 level 2
@@ -190,6 +201,11 @@ lc2017_crop <- crop(lc2017,overlapExt, snap="near")
 lc1987_crop <- crop(lc1987,overlapExt, snap="near")
 lc1957_crop <- crop(lc1957,overlapExt, snap="near")
 
+
+img17_crop <- crop(img17,overlapExt, snap="near")
+img57_crop <- crop(img57,overlapExt, snap="near")
+img87_crop <- crop(img87,overlapExt, snap="near")
+plot(img57_crop, col=grey(1:100/100))
 # count areas
 
 
@@ -223,7 +239,7 @@ colsClass <- c("#FFFFFF","#008C17","#9287A1","#3B3B3A")
 # plot dim
 wd <- 2.5
 hd1 <- 2.5
-hd2 <- 1
+hd2 <- 2
 # arrow line width for scale bar
 awd <- 1
 # text size for scale bar
@@ -236,7 +252,7 @@ lax <- 1
 borderi <- c("black",NA,NA,NA)
 
 
-png(paste0(dirSave, "/cover_panel_true_white.png"), width=8.5, height=4.5, units="in", res=300)
+png(paste0(dirSave, "/fig_1_cover_panel.png"), width=8.5, height=6, units="in", res=300)
 layout(matrix(seq(1,6),ncol=3), width=lcm(rep(wd*2.54,3)),height=lcm(c(hd1,hd2)*2.54))
 # 1957
 par(mai=c(0.01,0.01,0.01,0.01))
@@ -395,8 +411,8 @@ layout(matrix(seq(1,2),ncol=2), width=lcm(rep(wd*2.54,2)),height=lcm(c(hd)*2.54)
 par(mai=c(0,0,0,0))
 plot(treeChange,breaks=c(0,1.5,2.5,3.5,4.5),
      col=cols,
-     legend=FALSE, ylim=c(342400,347000), axes=FALSE)
-    # maxpixels=(treeChange@nrows * treeChange@ncols)/3)#down sample still
+     legend=FALSE, ylim=c(342400,347000), axes=FALSE,
+     maxpixels=(treeChange@nrows * treeChange@ncols)/3)#down sample still
 
 legend(357000,347000,
        c("Tree","Loss", "Gain","Other"),
