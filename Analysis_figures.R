@@ -430,19 +430,19 @@ TchangeDF$area.km2 <- TchangeDF$area.m2*1e-6
 awd <- 1
 # text size for scale bar
 sce <- 1
-cols <- c("#176611","#9D769A","#9BC101", "grey85")
+cols <- c("#176611","#9D769A","#9BC101", "#FFFFFF")
 wd <- 6
 hd <- 6
 
-png(paste0(dirSave,"/tree_change_map.png"), width=12, height=6,
+png(paste0(dirSave,"/fig_2_tree_change_map.png"), width=12, height=6,
     units="in", res=300 )
 
 layout(matrix(seq(1,2),ncol=2), width=lcm(rep(wd*2.54,2)),height=lcm(c(hd)*2.54))
 par(mai=c(0,0,0,0))
 plot(treeChange,breaks=c(0,1.5,2.5,3.5,4.5),
      col=cols,
-     legend=FALSE, ylim=c(342400,347000), axes=FALSE,
-     maxpixels=(treeChange@nrows * treeChange@ncols)/3)#down sample still
+     legend=FALSE,  axes=FALSE,
+     maxcell=ncell(treeChange))
 
 legend(357000,347000,
        c("Tree","Loss", "Gain","Other"),
@@ -474,4 +474,6 @@ axis(2, seq(0,10, by=2), las=2, cex.axis=1)
 mtext("Tree cover change status", side=1, line=3, cex=1 )
 mtext(expression(paste("Area (km"^"2",")")), side=2, line=2, cex=1 )
 dev.off()
+
+
 
