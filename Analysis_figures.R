@@ -237,10 +237,8 @@ area17DF$area.km2 <- area17DF$area.m2*1e-6
 #0=other, 1=tree,2=build,3=pavement
 colsClass <- c("#FFFFFF","#008C17","#9287A1","#3B3B3A")
 #coordinates for area labels
-area57y <- c(7,4,2,2.5)
-area87y <- c(6.9,2.8,4.5,4.5)
-area17y <- c(7,4,4,4.7)
-astrix <- c("","*","","")
+areayoff <- c(-0.5,0.5,0.5,0.5)
+
 
 # plot dim
 wd <- 2.5
@@ -258,7 +256,10 @@ lax <- 1
 borderi <- c("black",NA,NA,NA)
 #size for area text label
 tcx <- 1.2
-
+#panel label line
+llc <- -1
+#panel label size
+pcx <- 1
 
 png(paste0(dirSave, "/fig_1_cover_panel.png"), width=8.5, height=10, units="in", res=300)
 layout(matrix(seq(1,9),ncol=3), width=lcm(rep(wd*2.54,3)),height=lcm(c(hd1,hd1,hd2)*2.54))
@@ -268,6 +269,7 @@ layout(matrix(seq(1,9),ncol=3), width=lcm(rep(wd*2.54,3)),height=lcm(c(hd1,hd1,h
 par(mai=c(0.01,0.01,0.01,0.01))
 plot(img57_crop, col=grey(1:100/100),axes=FALSE, mar=NA, legend=FALSE,
      maxcell=ncell(img57_crop))
+mtext("a", side=3, at=360500,  line=llc, cex=pcx)
 
 # 1957 land cover
 par(mai=c(0.01,0.01,0.01,0.01))
@@ -283,7 +285,7 @@ arrows(358000,342800,358000,342850, code=0, lwd=awd)
 text(357000,342700,"0", cex=sce)
 text(357500,342700,"0.5", cex=sce)
 text(358000,342700,"1 km", cex=sce)
-
+mtext("d", side=3, at=360500,  line=llc, cex=pcx)
 # land cover area total
 par(mai=c(0.01,0.01,0.01,0.01))
 
@@ -296,20 +298,20 @@ for(i in 1:4){
           col=colsClass[i], border=borderi[i])
   
 }
-text(seq(1,4), area57y, paste0(round(area57DF$area.km2,1)), cex=tcx)
+text(seq(1,4), area57DF$area.km2 +areayoff , paste0(round(area57DF$area.km2,1)), cex=tcx)
 
 
 axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=cap)
 axis(2, seq(0,8, by=2), las=2, cex.axis= cap)
 mtext("Land cover type", side=1, line=2.5, cex=lax )
 mtext(expression(paste("Area (km"^"2",")")), side=2, line=1.5, cex=lax )
-
+mtext("g", side=3, at=4.2,  line=llc, cex=pcx)
 ### 1987 ###
 # 1987 image
 par(mai=c(0.01,0.01,0.01,0.01))
 plot(img87_crop, col=grey(1:100/100),axes=FALSE, mar=NA, legend=FALSE,
      maxcell=ncell(img87_crop))
-
+mtext("b", side=3, at=360500,  line=llc, cex=pcx)
 # 1987 land cover
 par(mai=c(0.01,0.01,0.01,0.01))
 
@@ -323,7 +325,7 @@ arrows(358000,342800,358000,342850, code=0, lwd=awd)
 text(357000,342700,"0", cex=sce)
 text(357500,342700,"0.5", cex=sce)
 text(358000,342700,"1 km", cex=sce)
-
+mtext("e", side=3, at=360500,  line=llc, cex=pcx)
 par(mai=c(0.01,0.01,0.01,0.01))
 
 plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,8),
@@ -335,12 +337,12 @@ for(i in 1:4){
           col=colsClass[i], border=borderi[i])
   
 }
-text(seq(1,4), area87y, 
+text(seq(1,4), area87DF$area.km2 +areayoff, 
      paste0(round(area87DF$area.km2,1),astrix), cex=tcx)
 
 axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=cap)
 mtext("Land cover type", side=1, line=2.5, cex=lax )
-
+mtext("h", side=3, at=4.2,  line=llc, cex=pcx)
 
 
 ### 2017 ###
@@ -348,7 +350,7 @@ mtext("Land cover type", side=1, line=2.5, cex=lax )
 par(mai=c(0.01,0.01,0.01,0.01))
 plotRGB(img17_crop,axes=FALSE, mar=NA, 
      maxcell=ncell(img17_crop))
-
+mtext("c", side=3, at=360500,  line=llc, cex=pcx)
 # 2017 landcover
 par(mai=c(0.01,0.01,0.01,0.01))
 
@@ -363,7 +365,7 @@ arrows(358000,342800,358000,342850, code=0, lwd=awd)
 text(357000,342700,"0", cex=sce)
 text(357500,342700,"0.5", cex=sce)
 text(358000,342700,"1 km", cex=sce)
-
+mtext("f", side=3, at=360500,  line=llc, cex=pcx)
 par(mai=c(0.01,0.01,0.01,0.01))
 
 plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,8),
@@ -375,11 +377,11 @@ for(i in 1:4){
           col=colsClass[i], border=borderi[i])
   
 }
-text(seq(1,4), area87y, paste0(round(area87DF$area.km2,1)), cex=tcx)
+text(seq(1,4), area17DF$area.km2 +areayoff, paste0(round(area17DF$area.km2,1)), cex=tcx)
 axis(1, seq(0,5),labels=c("","Other","Tree","Building","Pavement",""), cex.axis=cap)
 
 mtext("Land cover type", side=1, line=2.5, cex=lax )
-
+mtext("i", side=3, at=4.2,  line=llc, cex=pcx)
 
 dev.off()
 
