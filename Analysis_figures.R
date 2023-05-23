@@ -44,6 +44,10 @@ img87 <-  project(img87,"+init=epsg:32116", method="near")
 img17 <-  project(img17,"+init=epsg:32116", method="near")
 
 # census shape files from the ACS 2020
+
+income <- st_read("E:/Google Drive/research/projects/utica/maps_final/census/Oneida_income_2020.shp")
+rental <- st_read("E:/Google Drive/research/projects/utica/maps_final/census/Oneida_rental_2020.shp")
+
 # average summer land surface temperature from landsat collection 2 level 2
 
 # read in validation data points
