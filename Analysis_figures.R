@@ -427,7 +427,7 @@ TchangeDF <- data.frame(Tchange)
 TchangeDF$area.m2 <- TchangeDF$count * res(treeChange)[1]*res(treeChange)[2]
 TchangeDF$area.km2 <- TchangeDF$area.m2*1e-6
 
-
+#### Figure 2: Tree change map and plot ----
 
 # plot parameters
 # arrow line width for scale bar
@@ -480,7 +480,7 @@ mtext(expression(paste("Area (km"^"2",")")), side=2, line=2, cex=1 )
 
 text(seq(1,4), TchangeDF$area.km2 +.5 , paste0(round(TchangeDF$area.km2,1)), cex=1)
 
-mtext("b", side=3, at=4.2,  line=-0.5, cex=1.1)
+mtext("b", side=3, at=4.2,  line=1, cex=1.1)
 dev.off()
 
 
