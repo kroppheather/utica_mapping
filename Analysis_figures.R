@@ -45,10 +45,12 @@ img17 <-  project(img17,"+init=epsg:32116", method="near")
 
 # census shape files from the ACS 2020
 
-income <- st_read("E:/Google Drive/research/projects/utica/maps_final/census/Oneida_income_2020.shp")
-rental <- st_read("E:/Google Drive/research/projects/utica/maps_final/census/Oneida_rental_2020.shp")
+income <-vect("E:/Google Drive/research/projects/utica/maps_final/census/Oneida_income_2020.shp")
+rental <- vect("E:/Google Drive/research/projects/utica/maps_final/census/Oneida_rental_2020.shp")
 
 # average summer land surface temperature from landsat collection 2 level 2
+tempC <- rast("E:/Google Drive/research/projects/utica/maps_final/dailyTemp.tif")
+tempCp <-  project(tempC,"+init=epsg:32116")
 
 # read in validation data points
 
@@ -485,3 +487,25 @@ dev.off()
 
 
 
+
+
+#### Census tract tree change ----
+temp_crop <- crop(tempCp,overlapExt, snap="near")
+#day 9 has too large of a missing extent
+temp_cropc <- temp_crop[[-9]]
+#calculate the mean for each day
+temp_day_stat <- global(temp_cropc, fun="mean", na.rm=TRUE)
+# Average temperature anom
+temp_anom_day <- temp_cropc
+for(i in 1:nlyr(temp_cropc)){
+  temp_anom_day[[i]] <- temp_cropc[[i]]- temp_day_stat$mean[i]
+  
+}
+
+temp_anom <- app(temp_anom_day,fun="mean", na.rm=TRUE)
+
+# crop census tracts to just include the area
+income_crop <- terra::crop(income,overlapExt)
+plot(income_crop)
+# caclulate zonal stats
+zonesT57 <- terra::zonal(x=trees57R, z=income_crop, fun="sum")
