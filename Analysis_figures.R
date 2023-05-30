@@ -449,7 +449,7 @@ plot(treeChange,breaks=c(0,1.5,2.5,3.5,4.5),
      maxcell=ncell(treeChange))
 
 legend(357000,347000,
-       c("Tree","Loss", "Gain","Other"),
+       c("Stable","Loss", "Gain","Other"),
        fill=cols,border=NA,
        bty="n",horiz=TRUE, cex=1)
 
@@ -461,7 +461,7 @@ arrows(358000,342800,358000,342850, code=0, lwd=awd)
 text(357000,342700,"0", cex=sce)
 text(357500,342700,"0.5", cex=sce)
 text(358000,342700,"1 km", cex=sce)
-
+mtext("a", side=3, at=360500,  line=-1, cex=1.1)
 par(mai=c(1,1,1,1))
 plot(c(0,1),c(0,1), xlim=c(0.5,4.5),ylim=c(0,11),
      xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
@@ -473,10 +473,14 @@ for(i in 1:4){
   
 }
 
-axis(1, seq(0,5),labels=c("","tree","loss","gain","other",""), cex.axis=1)
+axis(1, seq(0,5),labels=c("","stable","loss","gain","other",""), cex.axis=1)
 axis(2, seq(0,10, by=2), las=2, cex.axis=1)
 mtext("Tree cover change status", side=1, line=3, cex=1 )
 mtext(expression(paste("Area (km"^"2",")")), side=2, line=2, cex=1 )
+
+text(seq(1,4), TchangeDF$area.km2 +.5 , paste0(round(TchangeDF$area.km2,1)), cex=1)
+
+mtext("b", side=3, at=4.2,  line=-0.5, cex=1.1)
 dev.off()
 
 
