@@ -142,59 +142,8 @@ valid57m <- na.omit(rbind(other57extract,tree57extract,build57extract,pave57extr
 
 conf_57 <- confusionMatrix(as.factor(valid57m$lc_1957),as.factor(valid57m$actual))
 
-##### Table 1. Accuracy metrics ----
 
-# set up accuracy tables
-overallacc <- data.frame(year=c(1957,1987,2017),
-                         accuracy=c(conf_57$overall[1],conf_87$overall[1],conf_17$overall[1]))
-
-confusion_all <- list(conf_57$table,conf_87$table,conf_17$table)
-
-accuracy_table <- data.frame(year = rep(c(1957,1987,2017),each=4),
-                             type = rep(c("other","tree","building","pavement"),times=3),
-                             users = round(c(conf_57$table[1,1]/sum(conf_57$table[1,]),
-                                 conf_57$table[2,2]/sum(conf_57$table[2,]),
-                                 conf_57$table[3,3]/sum(conf_57$table[3,]),
-                                 conf_57$table[4,4]/sum(conf_57$table[4,]),
-                                 conf_87$table[1,1]/sum(conf_87$table[1,]),
-                                 conf_87$table[2,2]/sum(conf_87$table[2,]),
-                                 conf_87$table[3,3]/sum(conf_87$table[3,]),
-                                 conf_87$table[4,4]/sum(conf_87$table[4,]),
-                                 conf_17$table[1,1]/sum(conf_17$table[1,]),
-                                 conf_17$table[2,2]/sum(conf_17$table[2,]),
-                                 conf_17$table[3,3]/sum(conf_17$table[3,]),
-                                 conf_17$table[4,4]/sum(conf_17$table[4,]))*100,1),
-                             producers = round(c(conf_57$table[1,1]/sum(conf_57$table[,1]),
-                                          conf_57$table[2,2]/sum(conf_57$table[,2]),
-                                          conf_57$table[3,3]/sum(conf_57$table[,3]),
-                                          conf_57$table[4,4]/sum(conf_57$table[,4]),
-                                          conf_87$table[1,1]/sum(conf_87$table[,1]),
-                                          conf_87$table[2,2]/sum(conf_87$table[,2]),
-                                          conf_87$table[3,3]/sum(conf_87$table[,3]),
-                                          conf_87$table[4,4]/sum(conf_87$table[,4]),
-                                          conf_17$table[1,1]/sum(conf_17$table[,1]),
-                                          conf_17$table[2,2]/sum(conf_17$table[,2]),
-                                          conf_17$table[3,3]/sum(conf_17$table[,3]),
-                                          conf_17$table[4,4]/sum(conf_17$table[,4]))*100,1)) 
-
-accuracy_table$omission_err <- 100 - accuracy_table$producers
-accuracy_table$commission_err <- 100 - accuracy_table$users
-
-
-##### save validation tables ----
-
-write.table(round(overallacc,2), paste0(dirSave, "/overall_accuracy.csv"), sep=",", row.names=FALSE)
-
-write.table(confusion_all[[1]], paste0(dirSave, "/confusion_1957.csv"), sep=",", row.names=FALSE)
-write.table(confusion_all[[2]], paste0(dirSave, "/confusion_1987.csv"), sep=",", row.names=FALSE)
-write.table(confusion_all[[3]], paste0(dirSave, "/confusion_2017.csv"), sep=",", row.names=FALSE)
-
-write.table(accuracy_table, paste0(dirSave, "/accuracy_table.csv"), sep=",", row.names=FALSE)
-
-
-##### Figure 1. Landcover comparision ----
-
-##### organize land cover data for maps 
+##### Organize land cover data for maps ----
 plot(lc2017, xlim=c(351000,362000))
 plot(lc1957,add=TRUE)
 plot(lc1987, add=TRUE)
@@ -239,6 +188,154 @@ area17DF <- data.frame(l17count)
 
 area17DF$area.m2 <- area17DF$count * res(lc2017_crop)[1]*res(lc2017_crop)[2]
 area17DF$area.km2 <- area17DF$area.m2*1e-6
+
+
+
+#### Tree change calculation ----
+
+lc1957rs <- resample(lc1957_crop, lc2017_crop, method="near")
+
+trees57R <- classify(lc1957rs, rcl=matrix(c(0,0,
+                                            1,1,
+                                            2,0,
+                                            3,0), ncol=2, byrow=TRUE))
+
+trees17R <- classify(lc2017_crop, rcl=matrix(c(0,0,
+                                               1,1,
+                                               2,0,
+                                               3,0), ncol=2, byrow=TRUE))
+
+
+
+treeComp <- function(x,y){
+  ifelse(x == 1 & y == 1,1, # always tree cover
+         ifelse(x == 1 & y == 0, 2, # loss tree cover
+                ifelse(x == 0 & y == 1, 3, # gain
+                       ifelse(x == 0 & y == 0,4,0)))) # always other
+  
+}
+
+
+# need to find terra replacement for overlay
+treeChange <- lapp(c(x=trees57R, y=trees17R),treeComp)  
+
+
+
+Tchange <- freq(treeChange)
+
+TchangeDF <- data.frame(Tchange)
+
+TchangeDF$area.m2 <- TchangeDF$count * res(treeChange)[1]*res(treeChange)[2]
+TchangeDF$area.km2 <- TchangeDF$area.m2*1e-6
+
+
+#### Census tract tree change ----
+temp_crop <- crop(tempCp,overlapExt, snap="near")
+#day 9 has too large of a missing extent
+temp_cropc <- temp_crop[[-9]]
+#calculate the mean for each day
+temp_day_stat <- global(temp_cropc, fun="mean", na.rm=TRUE)
+# Average temperature anom
+temp_anom_day <- temp_cropc
+for(i in 1:nlyr(temp_cropc)){
+  temp_anom_day[[i]] <- temp_cropc[[i]]- temp_day_stat$mean[i]
+  
+}
+
+temp_anom <- app(temp_anom_day,fun="mean", na.rm=TRUE)
+temp_anomrs <- resample(temp_anom, trees17R, method="bilinear")
+
+# crop census tracts to just include the area
+income_crop <- terra::crop(income,overlapExt)
+plot(income_crop)
+income_cropR <- rasterize(income_crop,trees57R, field="GEOID")
+# caclulate zonal stats
+zonesT57 <- terra::zonal(x=trees57R, z=income_cropR, fun="sum",na.rm=TRUE)
+zonesT57$tree.area57 <- zonesT57$lc_1957*trees57R@ptr$res[1]*trees57R@ptr$res[2]
+zonesT17 <- terra::zonal(x=trees17R, z=income_cropR, fun="sum",na.rm=TRUE)
+zonesT17$tree.area17 <- zonesT17$lc_2017*trees17R@ptr$res[1]*trees17R@ptr$res[2]
+zonesTemp <- terra::zonal(x=temp_anomrs, z=income_cropR, fun="sum",na.rm=TRUE)
+
+# join all into table
+zonesT1 <- inner_join(zonesT57, zonesT17, by="GEOID")
+zonesT2 <- inner_join(zonesT1, zonesTemp, by="GEOID")
+rental.sfTable <- st_drop_geometry(rental.sf)
+zonesT3 <- inner_join(zonesT2, rental.sfTable, by="GEOID")
+censusAllt <- inner_join(income.sf, zonesT3, by="GEOID")
+censusAll <- st_crop(censusAllt,  xmin=356825,xmax=360870, ymin=342870,ymax=346415)
+plot(censusAll["tree.area57"])
+
+censusAll$area <- st_area(censusAll)
+attributes(censusAll$area) <- NULL
+censusAll$percTree57 <- (censusAll$tree.area57/censusAll$area)*100
+attributes(censusAll$percTree57) <- NULL
+
+censusAll$percTree17 <- (censusAll$tree.area17/censusAll$area)*100
+attributes(censusAll$percTree17) <- NULL
+
+# remove tracts that don't have a lot of area in the study extent
+censusAll <- censusAll %>%
+  filter(area > 200000)
+
+plot(censusAll["percTree17"])
+plot(censusAll["percTree57"])
+
+
+
+
+##### Table 1. Accuracy metrics ----
+
+# set up accuracy tables
+overallacc <- data.frame(year=c(1957,1987,2017),
+                         accuracy=c(conf_57$overall[1],conf_87$overall[1],conf_17$overall[1]))
+
+confusion_all <- list(conf_57$table,conf_87$table,conf_17$table)
+
+accuracy_table <- data.frame(year = rep(c(1957,1987,2017),each=4),
+                             type = rep(c("other","tree","building","pavement"),times=3),
+                             users = round(c(conf_57$table[1,1]/sum(conf_57$table[1,]),
+                                             conf_57$table[2,2]/sum(conf_57$table[2,]),
+                                             conf_57$table[3,3]/sum(conf_57$table[3,]),
+                                             conf_57$table[4,4]/sum(conf_57$table[4,]),
+                                             conf_87$table[1,1]/sum(conf_87$table[1,]),
+                                             conf_87$table[2,2]/sum(conf_87$table[2,]),
+                                             conf_87$table[3,3]/sum(conf_87$table[3,]),
+                                             conf_87$table[4,4]/sum(conf_87$table[4,]),
+                                             conf_17$table[1,1]/sum(conf_17$table[1,]),
+                                             conf_17$table[2,2]/sum(conf_17$table[2,]),
+                                             conf_17$table[3,3]/sum(conf_17$table[3,]),
+                                             conf_17$table[4,4]/sum(conf_17$table[4,]))*100,1),
+                             producers = round(c(conf_57$table[1,1]/sum(conf_57$table[,1]),
+                                                 conf_57$table[2,2]/sum(conf_57$table[,2]),
+                                                 conf_57$table[3,3]/sum(conf_57$table[,3]),
+                                                 conf_57$table[4,4]/sum(conf_57$table[,4]),
+                                                 conf_87$table[1,1]/sum(conf_87$table[,1]),
+                                                 conf_87$table[2,2]/sum(conf_87$table[,2]),
+                                                 conf_87$table[3,3]/sum(conf_87$table[,3]),
+                                                 conf_87$table[4,4]/sum(conf_87$table[,4]),
+                                                 conf_17$table[1,1]/sum(conf_17$table[,1]),
+                                                 conf_17$table[2,2]/sum(conf_17$table[,2]),
+                                                 conf_17$table[3,3]/sum(conf_17$table[,3]),
+                                                 conf_17$table[4,4]/sum(conf_17$table[,4]))*100,1)) 
+
+accuracy_table$omission_err <- 100 - accuracy_table$producers
+accuracy_table$commission_err <- 100 - accuracy_table$users
+
+
+
+##### save validation tables ----
+
+write.table(round(overallacc,2), paste0(dirSave, "/overall_accuracy.csv"), sep=",", row.names=FALSE)
+
+write.table(confusion_all[[1]], paste0(dirSave, "/confusion_1957.csv"), sep=",", row.names=FALSE)
+write.table(confusion_all[[2]], paste0(dirSave, "/confusion_1987.csv"), sep=",", row.names=FALSE)
+write.table(confusion_all[[3]], paste0(dirSave, "/confusion_2017.csv"), sep=",", row.names=FALSE)
+
+write.table(accuracy_table, paste0(dirSave, "/accuracy_table.csv"), sep=",", row.names=FALSE)
+
+
+
+##### Figure 1. Landcover comparision ----
 
 # set up mapping variables
 
@@ -394,42 +491,6 @@ mtext("i", side=3, at=4.2,  line=llc, cex=pcx)
 dev.off()
 
 
-#### Tree change calculation ----
-
-lc1957rs <- resample(lc1957_crop, lc2017_crop, method="near")
-
-trees57R <- classify(lc1957rs, rcl=matrix(c(0,0,
-                                            1,1,
-                                            2,0,
-                                            3,0), ncol=2, byrow=TRUE))
-
-trees17R <- classify(lc2017_crop, rcl=matrix(c(0,0,
-                                              1,1,
-                                              2,0,
-                                              3,0), ncol=2, byrow=TRUE))
-
-
-
-treeComp <- function(x,y){
-  ifelse(x == 1 & y == 1,1, # always tree cover
-         ifelse(x == 1 & y == 0, 2, # loss tree cover
-                ifelse(x == 0 & y == 1, 3, # gain
-                       ifelse(x == 0 & y == 0,4,0)))) # always other
-  
-}
-
-
-# need to find terra replacement for overlay
-treeChange <- lapp(c(x=trees57R, y=trees17R),treeComp)  
-
-
-
-Tchange <- freq(treeChange)
-
-TchangeDF <- data.frame(Tchange)
-
-TchangeDF$area.m2 <- TchangeDF$count * res(treeChange)[1]*res(treeChange)[2]
-TchangeDF$area.km2 <- TchangeDF$area.m2*1e-6
 
 #### Figure 2: Tree change map and plot ----
 
@@ -489,30 +550,4 @@ dev.off()
 
 
 
-
-
-#### Census tract tree change ----
-temp_crop <- crop(tempCp,overlapExt, snap="near")
-#day 9 has too large of a missing extent
-temp_cropc <- temp_crop[[-9]]
-#calculate the mean for each day
-temp_day_stat <- global(temp_cropc, fun="mean", na.rm=TRUE)
-# Average temperature anom
-temp_anom_day <- temp_cropc
-for(i in 1:nlyr(temp_cropc)){
-  temp_anom_day[[i]] <- temp_cropc[[i]]- temp_day_stat$mean[i]
-  
-}
-
-temp_anom <- app(temp_anom_day,fun="mean", na.rm=TRUE)
-temp_anomrs <- resample(temp_anom, trees17R, method="bilinear")
-
-# crop census tracts to just include the area
-income_crop <- terra::crop(income,overlapExt)
-plot(income_crop)
-income_cropR <- rasterize(income_crop,trees57R, field="GEOID")
-# caclulate zonal stats
-zonesT57 <- terra::zonal(x=trees57R, z=income_cropR, fun="sum",na.rm=TRUE)
-zonesT17 <- terra::zonal(x=trees17R, z=income_cropR, fun="sum",na.rm=TRUE)
-zonesTemp <- terra::zonal(x=temp_anomrs, z=income_cropR, fun="sum",na.rm=TRUE)
 
