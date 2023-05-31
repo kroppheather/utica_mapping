@@ -250,11 +250,12 @@ income_crop <- terra::crop(income,overlapExt)
 plot(income_crop)
 income_cropR <- rasterize(income_crop,trees57R, field="GEOID")
 # caclulate zonal stats
+# to calculate total pixels covered by trees and average temp anom
 zonesT57 <- terra::zonal(x=trees57R, z=income_cropR, fun="sum",na.rm=TRUE)
 zonesT57$tree.area57 <- zonesT57$lc_1957*trees57R@ptr$res[1]*trees57R@ptr$res[2]
 zonesT17 <- terra::zonal(x=trees17R, z=income_cropR, fun="sum",na.rm=TRUE)
 zonesT17$tree.area17 <- zonesT17$lc_2017*trees17R@ptr$res[1]*trees17R@ptr$res[2]
-zonesTemp <- terra::zonal(x=temp_anomrs, z=income_cropR, fun="sum",na.rm=TRUE)
+zonesTemp <- terra::zonal(x=temp_anomrs, z=income_cropR, fun="mean",na.rm=TRUE)
 
 # join all into table
 zonesT1 <- inner_join(zonesT57, zonesT17, by="GEOID")
@@ -277,12 +278,9 @@ attributes(censusAll$percTree17) <- NULL
 censusAll <- censusAll %>%
   filter(area > 200000)
 
-plot(censusAll["percTree17"])
-plot(censusAll["percTree57"])
-
-
-
-
+# percent of census tract tree change 
+censusAll$tree.change <- censusAll$percTree17 - censusAll$percTree57
+plot(censusAll["mean"])
 ##### Table 1. Accuracy metrics ----
 
 # set up accuracy tables
@@ -551,3 +549,5 @@ dev.off()
 
 
 
+
+#### Figure 3: 
