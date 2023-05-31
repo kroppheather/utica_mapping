@@ -333,7 +333,7 @@ write.table(accuracy_table, paste0(dirSave, "/accuracy_table.csv"), sep=",", row
 
 
 
-##### Figure 1. Landcover comparision ----
+##### Figure 1. Landcover comparison ----
 
 # set up mapping variables
 
@@ -550,4 +550,78 @@ dev.off()
 
 
 
-#### Figure 3: 
+#### Figure 3: Tree cover patterns in census tracts ----
+
+
+# plot dim
+wd <- 3
+hd1 <- 3
+
+# arrow line width for scale bar
+awd <- 1
+
+#axis size for area plot
+cap <- 1
+# axis label size for area plot
+lax <- 1
+
+#panel label line
+llc <- -1
+#panel label size
+pcx <- 1
+
+png(paste0(dirSave, "/fig_3_census_panel.png"), width=16, height=5, units="in", res=300)
+layout(matrix(seq(1,4),ncol=4), width=lcm(rep(wd*2.54,4)),height=lcm(hd1*2.54))
+
+par(mai=c(0,0,0,0))
+plot(censusAll$percTree17, 
+     censusAll$tree.change, 
+     ylim=c(-30,22), xlim=c(0,50),
+     xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
+     type="n")
+points(censusAll$percTree17, censusAll$tree.change, pch=19)
+axis(2, seq(-30,20, by=5), cex.axis=cap, las=2)
+axis(1, seq(0,40, by=10), cex.axis=cap)
+
+mtext("Percentage of tract with tree cover in 2017 (%)", side=1, line=3, cex=pcx)
+
+mtext("Difference in the percentage of tract tree cover (2017-1957; %)", side=2, line=3, cex=pcx)
+box(which="plot")
+par(mai=c(0,0,0,0))
+
+plot(censusAll$mean, 
+     censusAll$tree.change, 
+     ylim=c(-30,22), xlim=c(-7,6),
+     xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
+     type="n")
+points(censusAll$mean, censusAll$tree.change, pch=19)
+axis(1, seq(-7,4, by=1), cex.axis=cap)
+
+mtext(expression(paste("Surface temperature anomaly (",~degree,"C)")), side=1, line=3, cex=pcx)
+box(which="plot")
+
+par(mai=c(0,0,0,0))
+plot(censusAll$med_income, 
+     censusAll$tree.change,
+     ylim=c(-30,22), xlim=c(10000,70000),
+     xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
+     type="n")
+
+points(censusAll$med_income, censusAll$tree.change, pch=19)
+
+axis(1, seq(10000,70000, by=10000), c("","20,000","", "40,000","","60,000",""), cex.axis=cap)
+box(which="plot")
+
+
+par(mai=c(0,0,0,0))
+plot(censusAll$RentP, 
+     censusAll$tree.change,
+     ylim=c(-30,22), xlim=c(-1,90),
+     xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
+     type="n")
+
+points(censusAll$RentP, censusAll$tree.change, pch=19)
+
+axis(1, seq(0,100, by=20), cex.axis=cap)
+box(which="plot")
+dev.off()
