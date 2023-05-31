@@ -47,6 +47,8 @@ img17 <-  project(img17,"+init=epsg:32116", method="near")
 
 income <-vect("E:/Google Drive/research/projects/utica/maps_final/census/Oneida_income_2020.shp")
 rental <- vect("E:/Google Drive/research/projects/utica/maps_final/census/Oneida_rental_2020.shp")
+income.sf <-st_read("E:/Google Drive/research/projects/utica/maps_final/census/Oneida_income_2020.shp")
+rental.sf <- st_read("E:/Google Drive/research/projects/utica/maps_final/census/Oneida_rental_2020.shp")
 
 # average summer land surface temperature from landsat collection 2 level 2
 tempC <- rast("E:/Google Drive/research/projects/utica/maps_final/dailyTemp.tif")
@@ -503,9 +505,14 @@ for(i in 1:nlyr(temp_cropc)){
 }
 
 temp_anom <- app(temp_anom_day,fun="mean", na.rm=TRUE)
+temp_anomrs <- resample(temp_anom, trees17R, method="bilinear")
 
 # crop census tracts to just include the area
 income_crop <- terra::crop(income,overlapExt)
 plot(income_crop)
+income_cropR <- rasterize(income_crop,trees57R, field="GEOID")
 # caclulate zonal stats
-zonesT57 <- terra::zonal(x=trees57R, z=income_crop, fun="sum")
+zonesT57 <- terra::zonal(x=trees57R, z=income_cropR, fun="sum",na.rm=TRUE)
+zonesT17 <- terra::zonal(x=trees17R, z=income_cropR, fun="sum",na.rm=TRUE)
+zonesTemp <- terra::zonal(x=temp_anomrs, z=income_cropR, fun="sum",na.rm=TRUE)
+
