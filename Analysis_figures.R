@@ -583,9 +583,11 @@ points(censusAll$percTree17, censusAll$tree.change, pch=19)
 axis(2, seq(-30,20, by=5), cex.axis=cap, las=2)
 axis(1, seq(0,40, by=10), cex.axis=cap)
 
-mtext("Percentage of tract with tree cover in 2017 (%)", side=1, line=3, cex=pcx)
+mtext("Percentage of tract ", side=1, line=3, cex=pcx)
+mtext("with tree cover in 2017 (%)", side=1, line=5, cex=pcx)
 
-mtext("Difference in the percentage of tract tree cover (2017-1957; %)", side=2, line=3, cex=pcx)
+mtext("Difference in percent coverage ", side=2, line=5, cex=pcx)
+mtext("of tree cover in tract(2017-1957; %)", side=2, line=3, cex=pcx)
 box(which="plot")
 par(mai=c(0,0,0,0))
 
