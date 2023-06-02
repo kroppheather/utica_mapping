@@ -561,7 +561,7 @@ hd1 <- 3
 awd <- 1
 
 #axis size for area plot
-cap <- 1
+cap <- 1.25
 # axis label size for area plot
 lax <- 1
 
@@ -586,8 +586,11 @@ axis(1, seq(0,40, by=10), cex.axis=cap)
 mtext("Percentage of tract ", side=1, line=3, cex=pcx)
 mtext("with tree cover in 2017 (%)", side=1, line=5, cex=pcx)
 
-mtext("Difference in percent coverage ", side=2, line=5, cex=pcx)
-mtext("of tree cover in tract(2017-1957; %)", side=2, line=3, cex=pcx)
+mtext("Difference in percent tree cover", side=2, line=7, cex=pcx)
+mtext("in tract from 2017-1957", side=2, line=5, cex=pcx)
+mtext("(% of tract area)", side=2, line=3, cex=pcx)
+
+
 box(which="plot")
 par(mai=c(0,0,0,0))
 
@@ -613,6 +616,7 @@ points(censusAll$med_income, censusAll$tree.change, pch=19)
 
 axis(1, seq(10000,70000, by=10000), c("","20,000","", "40,000","","60,000",""), cex.axis=cap)
 box(which="plot")
+mtext("Median household income ($) ", side=1, line=3, cex=pcx)
 
 
 par(mai=c(0,0,0,0))
@@ -626,4 +630,8 @@ points(censusAll$RentP, censusAll$tree.change, pch=19)
 
 axis(1, seq(0,100, by=20), cex.axis=cap)
 box(which="plot")
+mtext("Renter occupied households (%) ", side=1, line=3, cex=pcx)
 dev.off()
+
+
+
