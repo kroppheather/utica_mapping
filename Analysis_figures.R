@@ -511,7 +511,7 @@ plot(treeChange,breaks=c(0,1.5,2.5,3.5,4.5),
      legend=FALSE,  axes=FALSE,
      maxcell=ncell(treeChange))
 
-legend(357000,347000,
+legend(357000,346650,
        c("Stable","Loss", "Gain","Other"),
        fill=cols,border=NA,
        bty="n",horiz=TRUE, cex=1)
