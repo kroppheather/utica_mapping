@@ -43,6 +43,8 @@ img57 <-  project(img57,"+init=epsg:32116", method="near")
 img87 <-  project(img87,"+init=epsg:32116", method="near")
 img17 <-  project(img17,"+init=epsg:32116", method="near")
 img57@ptr$res
+img87@ptr$res
+img17@ptr$res
 
 # census shape files from the ACS 2020
 
