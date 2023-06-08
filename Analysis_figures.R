@@ -42,6 +42,7 @@ lc1987 <- project(lc1987,"+init=epsg:32116", method="near")
 img57 <-  project(img57,"+init=epsg:32116", method="near")
 img87 <-  project(img87,"+init=epsg:32116", method="near")
 img17 <-  project(img17,"+init=epsg:32116", method="near")
+img57@ptr$res
 
 # census shape files from the ACS 2020
 
@@ -513,7 +514,7 @@ plot(treeChange,breaks=c(0,1.5,2.5,3.5,4.5),
 
 legend(357000,346650,
        c("Stable","Loss", "Gain","Other"),
-       fill=cols,border=NA,
+       fill=cols,border=c(NA,NA,NA,"black"),
        bty="n",horiz=TRUE, cex=1)
 
 
