@@ -707,3 +707,21 @@ axis(1, seq(0,100, by=20), cex.axis=cap)
 box(which="plot")
 mtext("Renter occupied households (%) ", side=1, line=3, cex=pcx)
 dev.off()
+
+# run regressions
+
+temp.change.mod <- lm(censusAll$tree.change ~ 
+                        censusAll$mean)
+qqnorm(temp.change.mod$residuals)
+qqline(temp.change.mod$residuals)
+shapiro.test(temp.change.mod$residuals)
+plot(censusAll$mean, temp.change.mod$residuuals)
+summary(temp.change.mod)
+
+tree.change.mod <- lm(censusAll$tree.change ~ 
+                        censusAll$percTree17)
+qqnorm(tree.change.mod$residuals)
+qqline(tree.change.mod$residuals)
+shapiro.test(tree.change.mod$residuals)
+plot(censusAll$mean, tree.change.mod$residuuals)
+summary(tree.change.mod)
