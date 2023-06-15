@@ -284,6 +284,56 @@ censusAll <- censusAll %>%
 # percent of census tract tree change 
 censusAll$tree.change <- censusAll$percTree17 - censusAll$percTree57
 plot(censusAll["mean"])
+
+
+
+holc <- st_read("E:/Google Drive/research/projects/utica/holc/NYUtica1936/cartodb-query.shp")
+holcp <- st_transform(holc, crs(trees57R))
+holcv <- vect("E:/Google Drive/research/projects/utica/holc/NYUtica1936/cartodb-query.shp")
+holcv2 <- project(holcv, crs(trees57R))
+holcR <- rasterize(holcv2, trees57R, field="holc_id")
+holcZ57 <- terra::zonal(x=trees57R, z=holcR, fun="sum",na.rm=TRUE)
+holcZ57$tree.area57 <- holcZ57$lc_1957*trees57R@ptr$res[1]*trees57R@ptr$res[2]
+holcZ17 <- terra::zonal(x=trees17R, z=holcR, fun="sum",na.rm=TRUE)
+holcZ17$tree.area17 <- holcZ17$lc_2017*trees17R@ptr$res[1]*trees17R@ptr$res[2]
+holcZones <- inner_join(holcZ17, holcZ57, by="holc_id")
+ext(trees57R)[1]
+holcC <- st_crop(holcp,xmin=356825,xmax=360870, ymin=342870,ymax=346415)
+holcTree <- inner_join(holcC, holcZones, by="holc_id")
+holcTree$area <- st_area(holcTree)
+holcTree$perc17 <- (holcTree$tree.area17/holcTree$area)*100
+holcTree$perc57 <- (holcTree$tree.area57/holcTree$area)*100
+holcTree$percChange <- holcTree$perc17-holcTree$perc57
+
+plot(holcR)
+plot(holcp["holc_grade"])
+
+origArea <- data.frame(holc_id = holcp$holc_id,
+                       orig_area = st_area(holcp))
+
+holcTree <- inner_join(holcTree, origArea, by="holc_id")
+holcTree$percOrig <- (holcTree$area/holcTree$orig_area)*100
+attributes(holcTree$percOrig) <- NULL
+holcTreeCov <- holcTree %>%
+  filter(percOrig > 75)
+
+plot(trees57R)
+plot(holcp["holc_grade"], add=TRUE)
+#original area
+holc
+
+
+plot(as.numeric(as.factor(holcTreeCov$holc_grade))+rnorm(nrow(holcTreeCov),0,.05),holcTreeCov$perc57 )
+plot(as.numeric(as.factor(holcTreeCov$holc_grade))+rnorm(nrow(holcTreeCov),0,.05),holcTreeCov$perc17 )
+
+plot(trees17R)
+plot(holcTreeCov["holc_grade"], add=TRUE)
+plot(holcTreeCov["holc_grade"], add=TRUE)
+plot(holcTreeCov["perc57"])
+plot(holcTreeCov["perc17"])
+library(mapview)
+mapview(holcTreeCov)
+
 ##### Table 1. Accuracy metrics ----
 
 # set up accuracy tables
