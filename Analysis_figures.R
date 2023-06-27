@@ -775,3 +775,14 @@ qqline(tree.change.mod$residuals)
 shapiro.test(tree.change.mod$residuals)
 plot(censusAll$mean, tree.change.mod$residuuals)
 summary(tree.change.mod)
+
+#### Figure 5: Census maps
+
+# map panel
+wd <- 3
+hd1 <- 3 
+
+png(paste0(dirSave, "/fig_4_current_census_panel.png"), width=16, height=5, units="in", res=300)
+layout(matrix(seq(1,4),ncol=2), width=lcm(rep(wd*2.54,2)),height=lcm(rep(hd1*2.54,2)))
+
+dev.off()
