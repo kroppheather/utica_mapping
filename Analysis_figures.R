@@ -883,14 +883,28 @@ breaksT17 <- round(getJenksBreaks(censusAll$percTree17,6))
 plot(censusAll["percTree17"],
      breaks=breaksT17, pal=colsTree)
 # map panel
+hdl <- 1
 wd <- 6
 hd1 <- 6* (nrow(img17_crop)/ncol(img17_crop))
 
 
 
 png(paste0(dirSave, "/fig_5_current_census_maps.png"), width=14, height=14, units="in", res=300)
-layout(matrix(seq(1,4),ncol=2, byrow=TRUE), width=lcm(rep(wd*2.54,2)),height=lcm(rep(hd1*2.54,2)))
+layout(matrix(seq(1,8),ncol=2, byrow=TRUE), width=lcm(rep(wd*2.54,4)),height=lcm(c(hdl,rep(hd1*2.54,2),hdl)))
 
+par(mai=c(0,0,0,0))
+plot(c(0,10),c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
+
+par(mai=c(0,0,0,0))
+plot(c(min(breaksT17)-6,max(breaksT17))+5,c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
+
+for(i in 1:(length(breaksT17)-1)){
+  polygon(c(breaksT17[i],breaksT17[i],breaksT17[i+1],breaksT17[i+1]),
+          c(0.25,0.75,0.75,0.25),
+          col=colsTree[i], border=NA)
+}
+arrows(breaksT17,0.75,breaksT17,1, code=0, lwd=2)
+mtext(paste0(breaksT17),at=breaksT17,side=3,line=0)
 
 par(mai=c(0,0,0,0))
 plotRGB(img17_crop,axes=FALSE, mar=NA)
@@ -900,7 +914,7 @@ text(censusAllcenter[,1] + labelxoffset,
      censusAllcenter[,2]+ labelyoffset,
      censusAll$labelName, col="white",  font=2, cex=1.75)
 
-box(which="plot")
+
 
 par(mai=c(0,0,0,0))
 plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
@@ -914,9 +928,16 @@ plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
 plot(censusAll["tree.change"], key.pos=NULL, main=NA, reset=FALSE,
      xaxs="i",yaxs="i", add=TRUE)
 
+
 par(mai=c(0,0,0,0))
 plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
 plot(censusAll["med_income"], key.pos=NULL, main=NA, reset=FALSE,
      add=TRUE)
+
+par(mai=c(0,0,0,0))
+plot(c(0,10),c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
+
+par(mai=c(0,0,0,0))
+plot(c(0,10),c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
 
 dev.off()
