@@ -607,8 +607,8 @@ dev.off()
 
 
 # plot dim
-wd <- 4
-hd1 <- 4
+wd <- 3.5
+hd1 <- 3.5
 
 # arrow line width for scale bar
 awd <- 1
@@ -620,19 +620,23 @@ lax <- 1.5
 
 #panel label line
 llc <- -1
-#panel label size
+#axis title label size
 pcx <- 1.25
+# point size
+ptc <- 1.5
+# panel text label size
+tcx <- 1.5
 
-png(paste0(dirSave, "/fig_3_census_panel.png"), width=9, height=9, units="in", res=300)
-layout(matrix(seq(1,4),ncol=2, byrow=TRUE), width=lcm(rep(wd*2.54,4)),height=lcm(hd1*2.54))
+png(paste0(dirSave, "/fig_3_census_panel.png"), width=10, height=9, units="in", res=300)
+layout(matrix(seq(1,4),ncol=2, byrow=TRUE), width=lcm(rep(wd*2.54,2)),height=lcm(rep(hd1*2.54,2)))
 
-par(mai=c(1,0,0,0))
+par(mai=c(0.5,0,0,0))
 plot(censusAll$percTree17, 
      censusAll$tree.change, 
      ylim=c(-30,22), xlim=c(0,50),
      xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
      type="n")
-points(censusAll$percTree17, censusAll$tree.change, pch=19)
+points(censusAll$percTree17, censusAll$tree.change, pch=19,cex=ptc)
 axis(2, seq(-30,20, by=5), cex.axis=cap, las=2)
 axis(1, seq(0,40, by=10), cex.axis=cap)
 
@@ -642,30 +646,32 @@ mtext("with tree cover in 2017 (%)", side=1, line=5, cex=pcx)
 mtext("Difference in percent tree cover", side=2, line=7, cex=pcx)
 mtext("in tract from 2017-1957", side=2, line=5, cex=pcx)
 mtext("(% of tract area)", side=2, line=3, cex=pcx)
-
+text(47,19, "a", cex=tcx)
 
 box(which="plot")
-par(mai=c(1,0,0,0))
+par(mai=c(0.5,0,0,0))
 
 plot(censusAll$mean, 
      censusAll$tree.change, 
      ylim=c(-30,22), xlim=c(-7,6),
      xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
      type="n")
-points(censusAll$mean, censusAll$tree.change, pch=19)
-axis(1, seq(-7,4, by=1), cex.axis=cap)
+points(censusAll$mean, censusAll$tree.change, pch=19,cex=ptc)
+axis(1, seq(-6,4, by=2), cex.axis=cap)
 
 mtext(expression(paste("Surface temperature anomaly (",~degree,"C)")), side=1, line=3, cex=pcx)
 box(which="plot")
+text(5.5,19, "b", cex=tcx)
 
-par(mai=c(0,0,1,0))
+
+par(mai=c(0,0,0.5,0))
 plot(censusAll$med_income, 
      censusAll$tree.change,
      ylim=c(-30,22), xlim=c(10000,70000),
      xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
      type="n")
 
-points(censusAll$med_income, censusAll$tree.change, pch=19)
+points(censusAll$med_income, censusAll$tree.change, pch=19,cex=ptc)
 
 axis(1, seq(10000,70000, by=10000), c("","20,000","", "40,000","","60,000",""), cex.axis=cap)
 box(which="plot")
@@ -673,19 +679,22 @@ mtext("Median household income ($) ", side=1, line=3, cex=pcx)
 mtext("Difference in percent tree cover", side=2, line=7, cex=pcx)
 mtext("in tract from 2017-1957", side=2, line=5, cex=pcx)
 mtext("(% of tract area)", side=2, line=3, cex=pcx)
+text(67000,19, "c", cex=tcx)
 
-par(mai=c(0,0,1,0))
+par(mai=c(0,0,0.5,0))
 plot(censusAll$RentP, 
      censusAll$tree.change,
-     ylim=c(-30,22), xlim=c(-1,90),
+     ylim=c(-30,22), xlim=c(0,90),
      xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
      type="n")
 
-points(censusAll$RentP, censusAll$tree.change, pch=19)
+points(censusAll$RentP, censusAll$tree.change, pch=19,cex=ptc)
 
 axis(1, seq(0,100, by=20), cex.axis=cap)
 box(which="plot")
 mtext("Renter occupied households (%) ", side=1, line=3, cex=pcx)
+text(85,19, "d", cex=tcx)
+
 dev.off()
 
 
