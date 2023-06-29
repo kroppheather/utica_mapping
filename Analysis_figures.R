@@ -9,6 +9,7 @@ library(terra)
 library(sf)
 library(dplyr)
 library(caret)
+library(lmtest)
 
 ##### saving directory ----
 dirSave <- "E:/Google Drive/research/projects/utica/manuscript/figures"
@@ -344,13 +345,14 @@ qqline(temp.change.mod$residuals)
 shapiro.test(temp.change.mod$residuals)
 plot(censusAll$mean, temp.change.mod$residuals)
 summary(temp.change.mod)
-
+bptest(temp.change.mod)
 tree.change.mod <- lm(censusAll$tree.change ~ 
                         censusAll$percTree17)
 qqnorm(tree.change.mod$residuals)
 qqline(tree.change.mod$residuals)
 shapiro.test(tree.change.mod$residuals)
 plot(censusAll$mean, tree.change.mod$residuals)
+bptest(tree.change.mod)
 summary(tree.change.mod)
 
 income.change.mod <- lm(censusAll$tree.change ~ 
@@ -376,7 +378,9 @@ qqnorm(temp.tree.mod$residuals)
 qqline(temp.tree.mod$residuals)
 shapiro.test(temp.tree.mod$residuals)
 plot(censusAll$mean, temp.tree.mod$residuals)
+abline(h=0)
 summary(temp.tree.mod)
+bptest(temp.tree.mod)
 
 income.tree.mod <- lm(censusAll$percTree17 ~ 
                         censusAll$med_income)
@@ -766,8 +770,8 @@ dev.off()
 
 
 # plot dim
-wd <- 3
-hd1 <- 3
+wd <- 3.5
+hd1 <- 3.5
 
 # arrow line width for scale bar
 awd <- 1
@@ -783,6 +787,10 @@ llc <- -1
 pcx <- 1
 #line width
 rlw <- 2
+# panel letter label size
+tcx <- 2
+#line size
+lwx <- 2
 
 png(paste0(dirSave, "/fig_4_current_census_panel.png"), width=16, height=5, units="in", res=300)
 layout(matrix(seq(1,3),ncol=3), width=lcm(rep(wd*2.54,3)),height=lcm(hd1*2.54))
@@ -794,13 +802,13 @@ plot(censusAll$mean,
      xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
      type="n")
 points(censusAll$mean, censusAll$percTree17, pch=19)
-
+abline(temp.tree.mod,lwd = lwx )
 axis(1, seq(-7,4, by=1), cex.axis=cap)
 axis(2, seq(0,40, by=10), cex.axis=cap)
 abline(tree.change.mod,lwd = rlw )
 mtext("Percentage of tract ", side=2, line=5, cex=pcx)
 mtext("with tree cover in 2017 (%)", side=2, line=3, cex=pcx)
-
+text(5.5,47, "a", cex=tcx)
 mtext(expression(paste("Surface temperature anomaly (",~degree,"C)")), side=1, line=3, cex=pcx)
 
 
@@ -819,7 +827,7 @@ points(censusAll$med_income, censusAll$percTree17, pch=19)
 axis(1, seq(10000,70000, by=10000), c("","20,000","", "40,000","","60,000",""), cex.axis=cap)
 box(which="plot")
 mtext("Median household income ($) ", side=1, line=3, cex=pcx)
-
+text(67000,47, "b", cex=tcx)
 
 par(mai=c(0,0,0,0))
 plot(censusAll$RentP, 
@@ -829,7 +837,7 @@ plot(censusAll$RentP,
      type="n")
 
 points(censusAll$RentP, censusAll$percTree17, pch=19)
-
+text(85,47, "c", cex=tcx)
 axis(1, seq(0,100, by=20), cex.axis=cap)
 box(which="plot")
 mtext("Renter occupied households (%) ", side=1, line=3, cex=pcx)
