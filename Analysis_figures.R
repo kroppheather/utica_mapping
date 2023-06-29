@@ -847,11 +847,30 @@ dev.off()
 
 #### Figure 5: Census maps ----
 library(tmap)
+par(mfrow=c(2,1))
 
-layout(matrix(seq(1,4),ncol=2))
+tm_shape(censusAll)+
+  tm_polygons("percTree17", 
+              palette=rev(hcl.colors(5, palette="Greens")), 
+              n=5,
+              style="jenks")
 
 
 
+censusAll$labelName <- gsub(", Oneida County, New York","",
+                gsub("Census Tract ","",
+                    censusAll$NAME.x))
+censusAllCentroid <- st_centroid(censusAll)
+censusAllcenter <- st_coordinates(censusAllCentroid)
+labelyoffset <- ifelse(censusAll$labelName == "201.02",
+                       125,
+                ifelse(censusAll$labelName == "214.01",
+                       -200,0))
+
+labelxoffset <- ifelse(censusAll$labelName == "201.02",
+                       -500,
+                       ifelse(censusAll$labelName == "214.01",
+                              -20,0))
 # map panel
 wd <- 3
 hd1 <- 3 
@@ -859,9 +878,22 @@ hd1 <- 3
 png(paste0(dirSave, "/fig_5_current_census_maps.png"), width=16, height=5, units="in", res=300)
 layout(matrix(seq(1,4),ncol=2), width=lcm(rep(wd*2.54,2)),height=lcm(rep(hd1*2.54,2)))
 
+par(mai=c(0,0,0,0))
+plotRGB(img17_crop,axes=FALSE, mar=NA)
+plot(censusAll$geometry, key.pos=NULL, main=NA,
+     add=TRUE, border="white", lwd=2)
+text(censusAllcenter[,1] + labelxoffset,
+     censusAllcenter[,2]+ labelyoffset,
+     censusAll$labelName, col="white", cex=1, font=2)
+
+
+par(mai=c(0,0,0,0))
+plot(censusAll["percTree17"], key.pos=NULL, main=NA)
+
+par(mai=c(0,0,0,0))
 plot(censusAll["percTree17"])
 
+par(mai=c(0,0,0,0))
+plot(censusAll["percTree17"])
 
-
-dev.off()
 dev.off()
