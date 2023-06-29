@@ -776,7 +776,7 @@ temp.change.mod <- lm(censusAll$tree.change ~
 qqnorm(temp.change.mod$residuals)
 qqline(temp.change.mod$residuals)
 shapiro.test(temp.change.mod$residuals)
-plot(censusAll$mean, temp.change.mod$residuuals)
+plot(censusAll$mean, temp.change.mod$residuals)
 summary(temp.change.mod)
 
 tree.change.mod <- lm(censusAll$tree.change ~ 
@@ -784,8 +784,25 @@ tree.change.mod <- lm(censusAll$tree.change ~
 qqnorm(tree.change.mod$residuals)
 qqline(tree.change.mod$residuals)
 shapiro.test(tree.change.mod$residuals)
-plot(censusAll$mean, tree.change.mod$residuuals)
+plot(censusAll$mean, tree.change.mod$residuals)
 summary(tree.change.mod)
+
+income.change.mod <- lm(censusAll$tree.change ~ 
+                        censusAll$med_income)
+qqnorm(income.change.mod$residuals)
+qqline(income.change.mod$residuals)
+shapiro.test(income.change.mod$residuals)
+plot(censusAll$med_income, tree.change.mod$residuals)
+summary(income.change.mod)
+
+renter.change.mod <- lm(censusAll$tree.change ~ 
+                          censusAll$RentP)
+qqnorm(renter.change.mod$residuals)
+qqline(renter.change.mod$residuals)
+shapiro.test(renter.change.mod$residuals)
+plot(censusAll$RentP, tree.change.mod$residuals)
+summary(renter.change.mod)
+
 
 #### Figure 5: Census maps ----
 
