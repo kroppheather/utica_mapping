@@ -770,29 +770,31 @@ dev.off()
 
 
 # plot dim
-wd <- 3.5
-hd1 <- 3.5
+wd <- 4
+hd1 <- 4
 
 # arrow line width for scale bar
 awd <- 1
 
 #axis size for area plot
-cap <- 1.25
+cap <- 2
 # axis label size for area plot
-lax <- 1
+lax <- 1.5
 
 #panel label line
 llc <- -1
 #panel label size
-pcx <- 1
+pcx <- 1.5
 #line width
 rlw <- 2
 # panel letter label size
 tcx <- 2
 #line size
 lwx <- 2
+# point size
+ptcx <- 2
 
-png(paste0(dirSave, "/fig_4_current_census_panel.png"), width=16, height=5, units="in", res=300)
+png(paste0(dirSave, "/fig_4_current_census_panel.png"), width=14, height=5.5, units="in", res=300)
 layout(matrix(seq(1,3),ncol=3), width=lcm(rep(wd*2.54,3)),height=lcm(hd1*2.54))
 
 par(mai=c(0,0,0,0))
@@ -801,9 +803,9 @@ plot(censusAll$mean,
      xlim=c(-7,6), ylim=c(0,50),
      xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
      type="n")
-points(censusAll$mean, censusAll$percTree17, pch=19)
+points(censusAll$mean, censusAll$percTree17, pch=19, cex=ptcx)
 abline(temp.tree.mod,lwd = lwx )
-axis(1, seq(-7,4, by=1), cex.axis=cap)
+axis(1, seq(-6,4, by=2), cex.axis=cap)
 axis(2, seq(0,40, by=10), cex.axis=cap)
 abline(tree.change.mod,lwd = rlw )
 mtext("Percentage of tract ", side=2, line=5, cex=pcx)
@@ -822,7 +824,7 @@ plot(censusAll$med_income,
      xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
      type="n")
 
-points(censusAll$med_income, censusAll$percTree17, pch=19)
+points(censusAll$med_income, censusAll$percTree17, pch=19, cex=ptcx)
 
 axis(1, seq(10000,70000, by=10000), c("","20,000","", "40,000","","60,000",""), cex.axis=cap)
 box(which="plot")
@@ -836,7 +838,7 @@ plot(censusAll$RentP,
      xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
      type="n")
 
-points(censusAll$RentP, censusAll$percTree17, pch=19)
+points(censusAll$RentP, censusAll$percTree17, pch=19, cex=ptcx)
 text(85,47, "c", cex=tcx)
 axis(1, seq(0,100, by=20), cex.axis=cap)
 box(which="plot")
@@ -844,6 +846,11 @@ mtext("Renter occupied households (%) ", side=1, line=3, cex=pcx)
 dev.off()
 
 #### Figure 5: Census maps ----
+library(tmap)
+
+layout(matrix(seq(1,4),ncol=2))
+
+
 
 # map panel
 wd <- 3
