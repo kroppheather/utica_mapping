@@ -871,29 +871,42 @@ labelxoffset <- ifelse(censusAll$labelName == "201.02",
                        -500,
                        ifelse(censusAll$labelName == "214.01",
                               -20,0))
-# map panel
-wd <- 3
-hd1 <- 3 
 
-png(paste0(dirSave, "/fig_5_current_census_maps.png"), width=16, height=5, units="in", res=300)
-layout(matrix(seq(1,4),ncol=2), width=lcm(rep(wd*2.54,2)),height=lcm(rep(hd1*2.54,2)))
+
+# map panel
+wd <- 6
+hd1 <- 6* (nrow(img17_crop)/ncol(img17_crop))
+
+
+
+png(paste0(dirSave, "/fig_5_current_census_maps.png"), width=17, height=17, units="in", res=300)
+layout(matrix(seq(1,4),ncol=2, byrow=TRUE), width=lcm(rep(wd*2.54,2)),height=lcm(rep(hd1*2.54,2)))
+
 
 par(mai=c(0,0,0,0))
 plotRGB(img17_crop,axes=FALSE, mar=NA)
 plot(censusAll$geometry, key.pos=NULL, main=NA,
-     add=TRUE, border="white", lwd=2)
+      border="white", lwd=2, add=TRUE, reset=FALSE)
 text(censusAllcenter[,1] + labelxoffset,
      censusAllcenter[,2]+ labelyoffset,
      censusAll$labelName, col="white", cex=1, font=2)
 
+box(which="plot")
 
 par(mai=c(0,0,0,0))
-plot(censusAll["percTree17"], key.pos=NULL, main=NA)
+plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
+plot(censusAll["percTree17"], key.pos=NULL, main=NA, reset=FALSE,
+     add=TRUE)
+
 
 par(mai=c(0,0,0,0))
-plot(censusAll["percTree17"])
+plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
+plot(censusAll["tree.change"], key.pos=NULL, main=NA, reset=FALSE,
+     xaxs="i",yaxs="i", add=TRUE)
 
 par(mai=c(0,0,0,0))
-plot(censusAll["percTree17"])
+plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
+plot(censusAll["med_income"], key.pos=NULL, main=NA, reset=FALSE,
+     add=TRUE)
 
 dev.off()
