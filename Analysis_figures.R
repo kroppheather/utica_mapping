@@ -334,6 +334,66 @@ plot(holcTreeCov["perc17"])
 library(mapview)
 mapview(holcTreeCov)
 
+
+# run regressions
+
+temp.change.mod <- lm(censusAll$tree.change ~ 
+                        censusAll$mean)
+qqnorm(temp.change.mod$residuals)
+qqline(temp.change.mod$residuals)
+shapiro.test(temp.change.mod$residuals)
+plot(censusAll$mean, temp.change.mod$residuals)
+summary(temp.change.mod)
+
+tree.change.mod <- lm(censusAll$tree.change ~ 
+                        censusAll$percTree17)
+qqnorm(tree.change.mod$residuals)
+qqline(tree.change.mod$residuals)
+shapiro.test(tree.change.mod$residuals)
+plot(censusAll$mean, tree.change.mod$residuals)
+summary(tree.change.mod)
+
+income.change.mod <- lm(censusAll$tree.change ~ 
+                          censusAll$med_income)
+qqnorm(income.change.mod$residuals)
+qqline(income.change.mod$residuals)
+shapiro.test(income.change.mod$residuals)
+plot(censusAll$med_income, tree.change.mod$residuals)
+summary(income.change.mod)
+
+renter.change.mod <- lm(censusAll$tree.change ~ 
+                          censusAll$RentP)
+qqnorm(renter.change.mod$residuals)
+qqline(renter.change.mod$residuals)
+shapiro.test(renter.change.mod$residuals)
+plot(censusAll$RentP, tree.change.mod$residuals)
+summary(renter.change.mod)
+
+
+temp.tree.mod <- lm(censusAll$percTree17 ~ 
+                      censusAll$mean)
+qqnorm(temp.tree.mod$residuals)
+qqline(temp.tree.mod$residuals)
+shapiro.test(temp.tree.mod$residuals)
+plot(censusAll$mean, temp.tree.mod$residuals)
+summary(temp.tree.mod)
+
+income.tree.mod <- lm(censusAll$percTree17 ~ 
+                        censusAll$med_income)
+
+
+shapiro.test(na.omit(income.tree.mod$residuals))
+plot(censusAll$med_income,income.tree.mod$residuals)
+summary(income.tree.mod)
+
+renter.tree.mod <- lm(censusAll$percTree17 ~ 
+                        censusAll$RentP)
+
+shapiro.test(na.omit(renter.tree.mod$residuals))
+plot(na.omit(censusAll$RentP),renter.tree.mod$residuals)
+summary(renter.tree.mod)
+
+
 ##### Table 1. Accuracy metrics ----
 
 # set up accuracy tables
@@ -626,6 +686,8 @@ pcx <- 1.25
 ptc <- 1.5
 # panel text label size
 tcx <- 1.5
+# line width
+lwx <- 2
 
 png(paste0(dirSave, "/fig_3_census_panel.png"), width=10, height=9, units="in", res=300)
 layout(matrix(seq(1,4),ncol=2, byrow=TRUE), width=lcm(rep(wd*2.54,2)),height=lcm(rep(hd1*2.54,2)))
@@ -637,6 +699,7 @@ plot(censusAll$percTree17,
      xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
      type="n")
 points(censusAll$percTree17, censusAll$tree.change, pch=19,cex=ptc)
+abline(tree.change.mod, lwd=lwx)
 axis(2, seq(-30,20, by=5), cex.axis=cap, las=2)
 axis(1, seq(0,40, by=10), cex.axis=cap)
 
@@ -658,7 +721,7 @@ plot(censusAll$mean,
      type="n")
 points(censusAll$mean, censusAll$tree.change, pch=19,cex=ptc)
 axis(1, seq(-6,4, by=2), cex.axis=cap)
-
+abline(temp.change.mod,lwd = lwx )
 mtext(expression(paste("Surface temperature anomaly (",~degree,"C)")), side=1, line=3, cex=pcx)
 box(which="plot")
 text(5.5,19, "b", cex=tcx)
@@ -672,7 +735,6 @@ plot(censusAll$med_income,
      type="n")
 
 points(censusAll$med_income, censusAll$tree.change, pch=19,cex=ptc)
-
 axis(1, seq(10000,70000, by=10000), c("","20,000","", "40,000","","60,000",""), cex.axis=cap)
 box(which="plot")
 mtext("Median household income ($) ", side=1, line=3, cex=pcx)
@@ -680,6 +742,8 @@ mtext("Difference in percent tree cover", side=2, line=7, cex=pcx)
 mtext("in tract from 2017-1957", side=2, line=5, cex=pcx)
 mtext("(% of tract area)", side=2, line=3, cex=pcx)
 text(67000,19, "c", cex=tcx)
+
+
 
 par(mai=c(0,0,0.5,0))
 plot(censusAll$RentP, 
@@ -689,7 +753,6 @@ plot(censusAll$RentP,
      type="n")
 
 points(censusAll$RentP, censusAll$tree.change, pch=19,cex=ptc)
-
 axis(1, seq(0,100, by=20), cex.axis=cap)
 box(which="plot")
 mtext("Renter occupied households (%) ", side=1, line=3, cex=pcx)
@@ -718,6 +781,8 @@ lax <- 1
 llc <- -1
 #panel label size
 pcx <- 1
+#line width
+rlw <- 2
 
 png(paste0(dirSave, "/fig_4_current_census_panel.png"), width=16, height=5, units="in", res=300)
 layout(matrix(seq(1,3),ncol=3), width=lcm(rep(wd*2.54,3)),height=lcm(hd1*2.54))
@@ -729,9 +794,10 @@ plot(censusAll$mean,
      xlab= " ", ylab = " ", xaxs="i", yaxs="i",axes=FALSE,
      type="n")
 points(censusAll$mean, censusAll$percTree17, pch=19)
+
 axis(1, seq(-7,4, by=1), cex.axis=cap)
 axis(2, seq(0,40, by=10), cex.axis=cap)
-
+abline(tree.change.mod,lwd = rlw )
 mtext("Percentage of tract ", side=2, line=5, cex=pcx)
 mtext("with tree cover in 2017 (%)", side=2, line=3, cex=pcx)
 
@@ -768,41 +834,6 @@ axis(1, seq(0,100, by=20), cex.axis=cap)
 box(which="plot")
 mtext("Renter occupied households (%) ", side=1, line=3, cex=pcx)
 dev.off()
-
-# run regressions
-
-temp.change.mod <- lm(censusAll$tree.change ~ 
-                        censusAll$mean)
-qqnorm(temp.change.mod$residuals)
-qqline(temp.change.mod$residuals)
-shapiro.test(temp.change.mod$residuals)
-plot(censusAll$mean, temp.change.mod$residuals)
-summary(temp.change.mod)
-
-tree.change.mod <- lm(censusAll$tree.change ~ 
-                        censusAll$percTree17)
-qqnorm(tree.change.mod$residuals)
-qqline(tree.change.mod$residuals)
-shapiro.test(tree.change.mod$residuals)
-plot(censusAll$mean, tree.change.mod$residuals)
-summary(tree.change.mod)
-
-income.change.mod <- lm(censusAll$tree.change ~ 
-                        censusAll$med_income)
-qqnorm(income.change.mod$residuals)
-qqline(income.change.mod$residuals)
-shapiro.test(income.change.mod$residuals)
-plot(censusAll$med_income, tree.change.mod$residuals)
-summary(income.change.mod)
-
-renter.change.mod <- lm(censusAll$tree.change ~ 
-                          censusAll$RentP)
-qqnorm(renter.change.mod$residuals)
-qqline(renter.change.mod$residuals)
-shapiro.test(renter.change.mod$residuals)
-plot(censusAll$RentP, tree.change.mod$residuals)
-summary(renter.change.mod)
-
 
 #### Figure 5: Census maps ----
 
