@@ -10,6 +10,7 @@ library(sf)
 library(dplyr)
 library(caret)
 library(lmtest)
+library(BAMMtools)
 
 ##### saving directory ----
 dirSave <- "E:/Google Drive/research/projects/utica/manuscript/figures"
@@ -873,13 +874,21 @@ labelxoffset <- ifelse(censusAll$labelName == "201.02",
                               -20,0))
 
 
+colsTree <- rev(hcl.colors(5, palette="Greens"))
+
+#get breaks
+breaksT17 <- round(getJenksBreaks(censusAll$percTree17,6))
+ 
+
+plot(censusAll["percTree17"],
+     breaks=breaksT17, pal=colsTree)
 # map panel
 wd <- 6
 hd1 <- 6* (nrow(img17_crop)/ncol(img17_crop))
 
 
 
-png(paste0(dirSave, "/fig_5_current_census_maps.png"), width=17, height=17, units="in", res=300)
+png(paste0(dirSave, "/fig_5_current_census_maps.png"), width=14, height=14, units="in", res=300)
 layout(matrix(seq(1,4),ncol=2, byrow=TRUE), width=lcm(rep(wd*2.54,2)),height=lcm(rep(hd1*2.54,2)))
 
 
@@ -889,14 +898,15 @@ plot(censusAll$geometry, key.pos=NULL, main=NA,
       border="white", lwd=2, add=TRUE, reset=FALSE)
 text(censusAllcenter[,1] + labelxoffset,
      censusAllcenter[,2]+ labelyoffset,
-     censusAll$labelName, col="white", cex=1, font=2)
+     censusAll$labelName, col="white",  font=2, cex=1.75)
 
 box(which="plot")
 
 par(mai=c(0,0,0,0))
 plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
 plot(censusAll["percTree17"], key.pos=NULL, main=NA, reset=FALSE,
-     add=TRUE)
+     add=TRUE,
+     breaks=breaksT17, pal=colsTree)
 
 
 par(mai=c(0,0,0,0))
