@@ -891,20 +891,27 @@ breaksChange <- round( seq(floor(range(censusAll$tree.change))[1],
 
 
 # map panel
-hdl <- 3
-wd <- 10
-hd1 <- 10* (nrow(img17_crop)/ncol(img17_crop))
+hdl <- 2
+wd <- 7
+hd1 <- 7* (nrow(img17_crop)/ncol(img17_crop))
 # legend label size
 llcx <- 2
+# panel letter label
+pllcx <- 3.5
+# legend tick width
+lltw <- 3
+# legend number label size
+lacx <- 1.75
+# line number for legend label number
+lnacx <- 1
 
-
-png(paste0(dirSave, "/fig_5_current_census_maps.png"), width=22, height=22, units="in", res=300)
+png(paste0(dirSave, "/fig_5_current_census_maps.png"), width=15, height=15, units="in", res=300)
 layout(matrix(seq(1,8),ncol=2, byrow=TRUE), width=lcm(rep(wd*2.54,4)),height=lcm(c(hdl,hd1*2.54,hdl,hd1*2.54)))
 
 par(mai=c(0.25,0.25,0.25,0.25))
 plot(c(0,10),c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
-text(9.5, 0.5, "a", cex=2.5)
-mtext("2017 imagery and census identifier", side=3, line=1, cex=llcx)
+text(9.5, 0.5, "a", cex=pllcx)
+mtext("2017 imagery and tract identifier", side=3, line=1, cex=llcx)
 
 # legend for tree change
 par(mai=c(0.25,0.25,0.25,0.25))
@@ -915,10 +922,10 @@ for(i in 1:(length(breaksChange)-1)){
           c(0.25,0.75,0.75,0.25),
           col=colsChange[i], border=NA)
 }
-arrows(breaksChange,0,breaksChange,0.25, code=0, lwd=2)
-mtext(paste0(breaksChange),at=breaksChange,side=1,line=0.5, cex=1.25)
+arrows(breaksChange,0,breaksChange,0.25, code=0, lwd=lltw)
+mtext(paste0(breaksChange),at=breaksChange,side=1,line=lnacx, cex=lacx)
 mtext("Difference in % tree canopy 2017-1957", side=3, line=1, cex=llcx)
-text(max(breaksChange)+3, 0.5, "b", cex=2.5)
+text(max(breaksChange)+3, 0.5, "b", cex=pllcx)
 
 
 
@@ -949,10 +956,10 @@ for(i in 1:(length(breaksT17)-1)){
           c(0.25,0.75,0.75,0.25),
           col=colsTree[i], border=NA)
 }
-arrows(breaksT57,0,breaksT57,0.25, code=0, lwd=2)
-mtext(paste0(breaksT57),at=breaksT57,side=1,line=0.5, cex=1.25)
+arrows(breaksT57,0,breaksT57,0.25, code=0, lwd=lltw)
+mtext(paste0(breaksT57),at=breaksT57,side=1,line=lnacx, cex=lacx)
 mtext("% tree canopy cover in 1957", side=3, line=1, cex=llcx)
-text(max(breaksT57)+3, 0.5, "c", cex=2.5)
+text(max(breaksT57)+3, 0.5, "c", cex=pllcx)
 
 
 #legend for 2017
@@ -964,10 +971,10 @@ for(i in 1:(length(breaksT17)-1)){
           c(0.25,0.75,0.75,0.25),
           col=colsTree[i], border=NA)
 }
-arrows(breaksT17,0,breaksT17,0.25, code=0, lwd=2)
-mtext(paste0(breaksT17),at=breaksT17,side=1,line=0.5, cex=1.25)
+arrows(breaksT17,0,breaksT17,0.25, code=0, lwd=lltw)
+mtext(paste0(breaksT17),at=breaksT17,side=1,line=lnacx, cex=lacx)
 mtext("% tree canopy cover in 2017", side=3, line=1, cex=llcx)
-text(max(breaksT17)+3, 0.5, "d", cex=2.5)
+text(max(breaksT17)+3, 0.5, "d", cex=pllcx)
 
 
 
