@@ -875,86 +875,39 @@ labelxoffset <- ifelse(censusAll$labelName == "201.02",
 
 
 colsTree <- rev(hcl.colors(5, palette="Greens"))
-colsChange <- hcl.colors(5, palette="PRGn")
+colsChange <- hcl.colors(9, palette="PRGn")[1:8]
+
+colsChange[5] <- "#EFDF9D"
 #get breaks
 breaksT17 <- round(getJenksBreaks(censusAll$percTree17,6))
 # make sure first break is rounded down
 breaksT57 <- c(floor(getJenksBreaks(censusAll$percTree57,6)[1]),
                round(getJenksBreaks(censusAll$percTree57,6)[2:6]))
 
-breaksChange <- seq(-30,20,by=10)
+breaksChange <- round( seq(floor(range(censusAll$tree.change))[1], 
+                    ceiling(range(censusAll$tree.change))[2],
+                    length.out=9),1)
 
-plot(censusAll["tree.change"],
-     breaks=breaksChange, pal=colsChange)
+
+
 # map panel
-hdl <- 1
-wd <- 6
-hd1 <- 6* (nrow(img17_crop)/ncol(img17_crop))
+hdl <- 3
+wd <- 10
+hd1 <- 10* (nrow(img17_crop)/ncol(img17_crop))
+# legend label size
+llcx <- 2
 
 
+png(paste0(dirSave, "/fig_5_current_census_maps.png"), width=22, height=22, units="in", res=300)
+layout(matrix(seq(1,8),ncol=2, byrow=TRUE), width=lcm(rep(wd*2.54,4)),height=lcm(c(hdl,hd1*2.54,hdl,hd1*2.54)))
 
-png(paste0(dirSave, "/fig_5_current_census_maps.png"), width=14, height=14, units="in", res=300)
-layout(matrix(seq(1,8),ncol=2, byrow=TRUE), width=lcm(rep(wd*2.54,4)),height=lcm(c(hdl,rep(hd1*2.54,2),hdl)))
-
-par(mai=c(0,0,0,0))
+par(mai=c(0.25,0.25,0.25,0.25))
 plot(c(0,10),c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
-#legend for 1957
-par(mai=c(0,0,0,0))
-plot(c(min(breaksT57)-6,max(breaksT57))+5,c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
+text(9.5, 0.5, "a", cex=2.5)
+mtext("2017 imagery and census identifier", side=3, line=1, cex=llcx)
 
-for(i in 1:(length(breaksT17)-1)){
-  polygon(c(breaksT57[i],breaksT57[i],breaksT57[i+1],breaksT57[i+1]),
-          c(0.25,0.75,0.75,0.25),
-          col=colsTree[i], border=NA)
-}
-arrows(breaksT57,0.75,breaksT57,1, code=0, lwd=2)
-mtext(paste0(breaksT57),at=breaksT57,side=3,line=0)
-
-# map of imagery and census tract geometry
-par(mai=c(0,0,0,0))
-plotRGB(img17_crop,axes=FALSE, mar=NA)
-plot(censusAll$geometry, key.pos=NULL, main=NA,
-      border="white", lwd=2, add=TRUE, reset=FALSE)
-text(censusAllcenter[,1] + labelxoffset,
-     censusAllcenter[,2]+ labelyoffset,
-     censusAll$labelName, col="white",  font=2, cex=1.75)
-
-
-
-par(mai=c(0,0,0,0))
-plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
-plot(censusAll["percTree57"], key.pos=NULL, main=NA, reset=FALSE,
-     add=TRUE,
-     breaks=breaksT57, pal=colsTree)
-
-par(mai=c(0,0,0,0))
-plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
-plot(censusAll["percTree17"], key.pos=NULL, main=NA, reset=FALSE,
-     add=TRUE,
-     breaks=breaksT17, pal=colsTree)
-
-
-
-
-
-par(mai=c(0,0,0,0))
-plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
-plot(censusAll["tree.change"], key.pos=NULL, main=NA, reset=FALSE,
-     add=TRUE,breaks=breaksChange, pal=colsChange)
-
-#legend for 2017
-par(mai=c(0,0,0,0))
-plot(c(min(breaksT17)-6,max(breaksT17))+5,c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
-
-for(i in 1:(length(breaksT17)-1)){
-  polygon(c(breaksT17[i],breaksT17[i],breaksT17[i+1],breaksT17[i+1]),
-          c(0.25,0.75,0.75,0.25),
-          col=colsTree[i], border=NA)
-}
-arrows(breaksT17,0,breaksT17,0.25, code=0, lwd=2)
-mtext(paste0(breaksT17),at=breaksT17,side=1,line=0)
-
-par(mai=c(0,0,0,0))
+# legend for tree change
+par(mai=c(0.25,0.25,0.25,0.25))
 plot(c(min(breaksChange)-6,max(breaksChange))+5,c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
 
 for(i in 1:(length(breaksChange)-1)){
@@ -963,6 +916,78 @@ for(i in 1:(length(breaksChange)-1)){
           col=colsChange[i], border=NA)
 }
 arrows(breaksChange,0,breaksChange,0.25, code=0, lwd=2)
-mtext(paste0(breaksChange),at=breaksChange,side=1,line=0)
+mtext(paste0(breaksChange),at=breaksChange,side=1,line=0.5, cex=1.25)
+mtext("Difference in % tree canopy 2017-1957", side=3, line=1, cex=llcx)
+text(max(breaksChange)+3, 0.5, "b", cex=2.5)
+
+
+
+# map of imagery and census tract geometry
+par(mai=c(0.25,0.25,0.25,0.25))
+plotRGB(img17_crop,axes=FALSE, mar=NA)
+plot(censusAll$geometry, key.pos=NULL, main=NA,
+      border="white", lwd=2, add=TRUE, reset=FALSE)
+text(censusAllcenter[,1] + labelxoffset,
+     censusAllcenter[,2]+ labelyoffset,
+     censusAll$labelName, col="white",  font=2, cex=2.25)
+
+# map of tree change
+
+
+par(mai=c(0.25,0.25,0.25,0.25))
+plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
+plot(censusAll["tree.change"], key.pos=NULL, main=NA, reset=FALSE,
+     add=TRUE,breaks=breaksChange, pal=colsChange)
+
+
+#legend for 1957
+par(mai=c(0.25,0.25,0.25,0.25))
+plot(c(min(breaksT57)-6,max(breaksT57))+5,c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
+
+for(i in 1:(length(breaksT17)-1)){
+  polygon(c(breaksT57[i],breaksT57[i],breaksT57[i+1],breaksT57[i+1]),
+          c(0.25,0.75,0.75,0.25),
+          col=colsTree[i], border=NA)
+}
+arrows(breaksT57,0,breaksT57,0.25, code=0, lwd=2)
+mtext(paste0(breaksT57),at=breaksT57,side=1,line=0.5, cex=1.25)
+mtext("% tree canopy cover in 1957", side=3, line=1, cex=llcx)
+text(max(breaksT57)+3, 0.5, "c", cex=2.5)
+
+
+#legend for 2017
+par(mai=c(0.25,0.25,0.25,0.25))
+plot(c(min(breaksT17)-6,max(breaksT17))+5,c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
+
+for(i in 1:(length(breaksT17)-1)){
+  polygon(c(breaksT17[i],breaksT17[i],breaksT17[i+1],breaksT17[i+1]),
+          c(0.25,0.75,0.75,0.25),
+          col=colsTree[i], border=NA)
+}
+arrows(breaksT17,0,breaksT17,0.25, code=0, lwd=2)
+mtext(paste0(breaksT17),at=breaksT17,side=1,line=0.5, cex=1.25)
+mtext("% tree canopy cover in 2017", side=3, line=1, cex=llcx)
+text(max(breaksT17)+3, 0.5, "d", cex=2.5)
+
+
+
+
+# map of tree cover in 1957
+
+par(mai=c(0.25,0.25,0.25,0.25))
+plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
+plot(censusAll["percTree57"], key.pos=NULL, main=NA, reset=FALSE,
+     add=TRUE,
+     breaks=breaksT57, pal=colsTree)
+
+#map of 2017 cover
+par(mai=c(0.25,0.25,0.25,0.25))
+plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
+plot(censusAll["percTree17"], key.pos=NULL, main=NA, reset=FALSE,
+     add=TRUE,
+     breaks=breaksT17, pal=colsTree)
+
+
+
 
 dev.off()
