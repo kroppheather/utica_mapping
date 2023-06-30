@@ -994,7 +994,17 @@ plot(censusAll["percTree17"], key.pos=NULL, main=NA, reset=FALSE,
      add=TRUE,
      breaks=breaksT17, pal=colsTree)
 
+text(censusAllcenter[,1] + labelxoffset,
+     censusAllcenter[,2]+ labelyoffset,
+     ifelse(is.na(censusAll$med_income),"NA",
+            paste0("$",round(censusAll$med_income/1000,0),"k")), 
+     col="black",  font=2, cex=2)
 
+text(censusAllcenter[,1] + labelxoffset,
+     censusAllcenter[,2]+ labelyoffset-120,
+     ifelse(is.na(censusAll$RentP),"NA",
+            paste0(round(censusAll$RentP,0),"%")), 
+     col="black",  font=2, cex=2)
 
 
 dev.off()
