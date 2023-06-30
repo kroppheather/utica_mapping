@@ -875,13 +875,17 @@ labelxoffset <- ifelse(censusAll$labelName == "201.02",
 
 
 colsTree <- rev(hcl.colors(5, palette="Greens"))
-
+colsChange <- hcl.colors(5, palette="PRGn")
 #get breaks
 breaksT17 <- round(getJenksBreaks(censusAll$percTree17,6))
- 
+# make sure first break is rounded down
+breaksT57 <- c(floor(getJenksBreaks(censusAll$percTree57,6)[1]),
+               round(getJenksBreaks(censusAll$percTree57,6)[2:6]))
 
-plot(censusAll["percTree17"],
-     breaks=breaksT17, pal=colsTree)
+breaksChange <- seq(-30,20,by=10)
+
+plot(censusAll["tree.change"],
+     breaks=breaksChange, pal=colsChange)
 # map panel
 hdl <- 1
 wd <- 6
@@ -894,18 +898,19 @@ layout(matrix(seq(1,8),ncol=2, byrow=TRUE), width=lcm(rep(wd*2.54,4)),height=lcm
 
 par(mai=c(0,0,0,0))
 plot(c(0,10),c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
-
+#legend for 1957
 par(mai=c(0,0,0,0))
-plot(c(min(breaksT17)-6,max(breaksT17))+5,c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
+plot(c(min(breaksT57)-6,max(breaksT57))+5,c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
 
 for(i in 1:(length(breaksT17)-1)){
-  polygon(c(breaksT17[i],breaksT17[i],breaksT17[i+1],breaksT17[i+1]),
+  polygon(c(breaksT57[i],breaksT57[i],breaksT57[i+1],breaksT57[i+1]),
           c(0.25,0.75,0.75,0.25),
           col=colsTree[i], border=NA)
 }
-arrows(breaksT17,0.75,breaksT17,1, code=0, lwd=2)
-mtext(paste0(breaksT17),at=breaksT17,side=3,line=0)
+arrows(breaksT57,0.75,breaksT57,1, code=0, lwd=2)
+mtext(paste0(breaksT57),at=breaksT57,side=3,line=0)
 
+# map of imagery and census tract geometry
 par(mai=c(0,0,0,0))
 plotRGB(img17_crop,axes=FALSE, mar=NA)
 plot(censusAll$geometry, key.pos=NULL, main=NA,
@@ -918,26 +923,46 @@ text(censusAllcenter[,1] + labelxoffset,
 
 par(mai=c(0,0,0,0))
 plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
+plot(censusAll["percTree57"], key.pos=NULL, main=NA, reset=FALSE,
+     add=TRUE,
+     breaks=breaksT57, pal=colsTree)
+
+par(mai=c(0,0,0,0))
+plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
 plot(censusAll["percTree17"], key.pos=NULL, main=NA, reset=FALSE,
      add=TRUE,
      breaks=breaksT17, pal=colsTree)
 
 
+
+
+
 par(mai=c(0,0,0,0))
 plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
 plot(censusAll["tree.change"], key.pos=NULL, main=NA, reset=FALSE,
-     xaxs="i",yaxs="i", add=TRUE)
+     add=TRUE,breaks=breaksChange, pal=colsChange)
 
+#legend for 2017
+par(mai=c(0,0,0,0))
+plot(c(min(breaksT17)-6,max(breaksT17))+5,c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
+
+for(i in 1:(length(breaksT17)-1)){
+  polygon(c(breaksT17[i],breaksT17[i],breaksT17[i+1],breaksT17[i+1]),
+          c(0.25,0.75,0.75,0.25),
+          col=colsTree[i], border=NA)
+}
+arrows(breaksT17,0,breaksT17,0.25, code=0, lwd=2)
+mtext(paste0(breaksT17),at=breaksT17,side=1,line=0)
 
 par(mai=c(0,0,0,0))
-plot(img57_crop,axes=FALSE, mar=NA, col="white", legend=FALSE)
-plot(censusAll["med_income"], key.pos=NULL, main=NA, reset=FALSE,
-     add=TRUE)
+plot(c(min(breaksChange)-6,max(breaksChange))+5,c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
 
-par(mai=c(0,0,0,0))
-plot(c(0,10),c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
-
-par(mai=c(0,0,0,0))
-plot(c(0,10),c(0,1), type="n", axes=FALSE, xaxs="i",yaxs="i")
+for(i in 1:(length(breaksChange)-1)){
+  polygon(c(breaksChange[i],breaksChange[i],breaksChange[i+1],breaksChange[i+1]),
+          c(0.25,0.75,0.75,0.25),
+          col=colsChange[i], border=NA)
+}
+arrows(breaksChange,0,breaksChange,0.25, code=0, lwd=2)
+mtext(paste0(breaksChange),at=breaksChange,side=1,line=0)
 
 dev.off()
