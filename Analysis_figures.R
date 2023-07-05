@@ -887,8 +887,9 @@ breaksT57 <- c(floor(getJenksBreaks(censusAll$percTree57,6)[1]),
 breaksChange <- round( seq(floor(range(censusAll$tree.change))[1], 
                     ceiling(range(censusAll$tree.change))[2],
                     length.out=9),1)
-
-
+# change to NA for renters if there are no occupied units
+censusAll$RentPF <- ifelse(censusAll$totalOcc == 0,
+                           NA, censusAll$RentP)
 
 # map panel
 hdl <- 2
@@ -931,7 +932,7 @@ text(max(breaksChange)+3, 0.5, "b", cex=pllcx)
 
 # map of imagery and census tract geometry
 par(mai=c(0.25,0.25,0.25,0.25))
-plotRGB(img17_crop,axes=FALSE, mar=NA)
+plotRGB(img17_crop,axes=FALSE, mar=NA, maxcell=ncell(img17_crop))
 plot(censusAll$geometry, key.pos=NULL, main=NA,
       border="white", lwd=2, add=TRUE, reset=FALSE)
 text(censusAllcenter[,1] + labelxoffset,
@@ -1002,8 +1003,8 @@ text(censusAllcenter[,1] + labelxoffset,
 
 text(censusAllcenter[,1] + labelxoffset,
      censusAllcenter[,2]+ labelyoffset-120,
-     ifelse(is.na(censusAll$RentP),"NA",
-            paste0(round(censusAll$RentP,0),"%")), 
+     ifelse(is.na(censusAll$RentPF),"NA",
+            paste0(round(censusAll$RentPF,0),"%")), 
      col="black",  font=2, cex=2)
 
 
