@@ -437,7 +437,10 @@ accuracy_table <- data.frame(year = rep(c(1957,1987,2017),each=4),
 accuracy_table$omission_err <- 100 - accuracy_table$producers
 accuracy_table$commission_err <- 100 - accuracy_table$users
 
-
+# create a normalized confusion matrix
+confusion57 <- conf_57$table
+confusion87 <- conf_87$table
+confusion17 <- conf_17$table
 
 ##### save validation tables ----
 
@@ -449,7 +452,9 @@ write.table(confusion_all[[3]], paste0(dirSave, "/confusion_2017.csv"), sep=",",
 
 write.table(accuracy_table, paste0(dirSave, "/accuracy_table.csv"), sep=",", row.names=FALSE)
 
-
+write.table(confusion57, paste0(dirSave, "/confusion57_table.csv"), sep=",")
+write.table(confusion87, paste0(dirSave, "/confusion87_table.csv"), sep=",")
+write.table(confusion17, paste0(dirSave, "/confusion17_table.csv"), sep=",")
 
 ##### Figure 1. Landcover comparison ----
 
@@ -1009,3 +1014,8 @@ text(censusAllcenter[,1] + labelxoffset,
 
 
 dev.off()
+
+
+
+#### Paper stats
+
