@@ -1019,7 +1019,7 @@ dev.off()
 
 
 #### Paper stats
-CornHill <- censusAll[censusAll$Name == "Census Tract 264, Oneida County, New York"|
-                        censusAll$Name == "Census Tract 215, Oneida County, New York"|
-                        censusAll$Name == "Census Tract 212.01, Oneida County, New York"|
-                        censusAll$Name == "Census Tract 212.02, Oneida County, New York",]
+CornHill <- censusAll[censusAll$NAME.x == "Census Tract 264, Oneida County, New York"|
+                        censusAll$NAME.x == "Census Tract 215, Oneida County, New York"|
+                        censusAll$NAME.x == "Census Tract 212.01, Oneida County, New York"|
+                        censusAll$NAME.x == "Census Tract 212.02, Oneida County, New York",]
