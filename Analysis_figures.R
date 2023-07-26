@@ -1027,13 +1027,14 @@ CornHill <- censusAll[censusAll$NAME.x == "Census Tract 264, Oneida County, New 
 
 # read in tree cover data for comp
 
-lst_tree <- raster("E:/Google Drive/GIS/landsat_tree/CNY/p015r030_TC_2015.tif")
+lst_tree <- rast("E:/Google Drive/GIS/landsat_tree/CNY/p015r030_TC_2015.tif")
 plot(lst_tree)
+range(lst_tree)
 
-lst_tree <- projectRaster(lst_tree, crs="+init=epsg:32116")
+lst_tree <- project(lst_tree, crs(trees17R))
 
 
-lst_treeCrop <- crop(lst_tree, trees17R )
+lst_tree_crop <- crop(lst_tree, ext(trees17R))
 
 
 
@@ -1042,13 +1043,39 @@ lst_treeRS <- resample(trees17R,lst_tree, method="sum")
 # otherwise aggregate and then resample
 #resolution is 0.3
 tree17Agg <- aggregate(trees17R, fact=100, fun="sum", count=TRUE)
+
+tree17Perc <- (tree17Agg/10000)*100
+
+treeRS17 <- resample(tree17Perc, lst_tree_crop )
+
+plot(treeRS17)
+plot(lst_tree_crop)
+
+treeDiff <- treeRS17-lst_tree_crop
+
+
+
+
+lst_treeCrop <- 
+
+
+plot(lst_treeCrop)
+
+plot(lst_tree)
+plot(tree17Agg)
+res(tree17Agg)
+plot(tree17Perc)
+
 tree17Perc <- tree17Agg/
 
 
 plot(lst_treeRS)
-treelstIncome <- raster::zonal(lst_treeCrop,incomeRast,fun="mean" )
+income_cropRLST <- rasterize(income_crop,lst_tree_crop, field="GEOID")
+treelstIncome <- terra::zonal(x=lst_tree_crop, z=income_cropRLST, fun="mean",na.rm=TRUE)
 
-censusAll$treesLST <- treelstIncome[,2]
+censusAllLS <- left_join(censusAll, treelstIncome, by="GEOID")
 
-plot(censusAll$treePerc, censusAll$treesLST, xlim=c(0,50),ylim=c(0,50))
-
+plot(censusAllLS$p015r030_TC_2015, censusAllLS$percTree17,  xlim=c(0,50),ylim=c(0,50))
+modComp <- lm( censusAllLS$percTree17 ~ censusAllLS$p015r030_TC_2015 )
+summary(modComp)
+abline(modComp)
