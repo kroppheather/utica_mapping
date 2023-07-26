@@ -1018,8 +1018,37 @@ dev.off()
 
 
 
-#### Paper stats
+#### Paper stats ----
 CornHill <- censusAll[censusAll$NAME.x == "Census Tract 264, Oneida County, New York"|
                         censusAll$NAME.x == "Census Tract 215, Oneida County, New York"|
                         censusAll$NAME.x == "Census Tract 212.01, Oneida County, New York"|
                         censusAll$NAME.x == "Census Tract 212.02, Oneida County, New York",]
+#### Tree cover comp ----
+
+# read in tree cover data for comp
+
+lst_tree <- raster("E:/Google Drive/GIS/landsat_tree/CNY/p015r030_TC_2015.tif")
+plot(lst_tree)
+
+lst_tree <- projectRaster(lst_tree, crs="+init=epsg:32116")
+
+
+lst_treeCrop <- crop(lst_tree, trees17R )
+
+
+
+# check if this works. Not sure how sum is weighted here
+lst_treeRS <- resample(trees17R,lst_tree, method="sum")
+# otherwise aggregate and then resample
+#resolution is 0.3
+tree17Agg <- aggregate(trees17R, fact=100, fun="sum", count=TRUE)
+tree17Perc <- tree17Agg/
+
+
+plot(lst_treeRS)
+treelstIncome <- raster::zonal(lst_treeCrop,incomeRast,fun="mean" )
+
+censusAll$treesLST <- treelstIncome[,2]
+
+plot(censusAll$treePerc, censusAll$treesLST, xlim=c(0,50),ylim=c(0,50))
+
