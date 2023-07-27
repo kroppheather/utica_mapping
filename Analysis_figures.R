@@ -1079,3 +1079,6 @@ plot(censusAllLS$p015r030_TC_2015, censusAllLS$percTree17,  xlim=c(0,50),ylim=c(
 modComp <- lm( censusAllLS$percTree17 ~ censusAllLS$p015r030_TC_2015 )
 summary(modComp)
 abline(modComp)
+abline(0,1)
+#study exent
+res(trees17R)[1]*res(trees17R)[2]*ncell(trees17R)/(1000*1000)
