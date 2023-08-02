@@ -1082,3 +1082,13 @@ abline(modComp)
 abline(0,1)
 #study exent
 res(trees17R)[1]*res(trees17R)[2]*ncell(trees17R)/(1000*1000)
+
+# building increase
+(2.2+3.5)-(1.5+1.9)
+
+library(mapedit)
+citation()
+citation("dplyr")
+citation("mapedit")
+citation("raster")
+citation("sf")
