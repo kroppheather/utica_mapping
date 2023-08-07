@@ -753,6 +753,7 @@ mtext("Difference in percent tree cover", side=2, line=7, cex=pcx)
 mtext("in tract from 2017-1957", side=2, line=5, cex=pcx)
 mtext("(% of tract area)", side=2, line=3, cex=pcx)
 text(67000,19, "c", cex=tcx)
+axis(2, seq(-30,20, by=5), cex.axis=cap, las=2)
 
 
 
