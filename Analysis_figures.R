@@ -257,9 +257,9 @@ income_cropR <- rasterize(income_crop,trees57R, field="GEOID")
 # caclulate zonal stats
 # to calculate total pixels covered by trees and average temp anom
 zonesT57 <- terra::zonal(x=trees57R, z=income_cropR, fun="sum",na.rm=TRUE)
-zonesT57$tree.area57 <- zonesT57$lc_1957*trees57R@ptr$res[1]*trees57R@ptr$res[2]
+zonesT57$tree.area57 <- zonesT57$lc_1957*res(trees57R)[1]*res(trees57R)[2]
 zonesT17 <- terra::zonal(x=trees17R, z=income_cropR, fun="sum",na.rm=TRUE)
-zonesT17$tree.area17 <- zonesT17$lc_2017*trees17R@ptr$res[1]*trees17R@ptr$res[2]
+zonesT17$tree.area17 <- zonesT17$lc_2017*res(trees17R)[1]*res(trees17R)[2]
 zonesTemp <- terra::zonal(x=temp_anomrs, z=income_cropR, fun="mean",na.rm=TRUE)
 
 # join all into table
@@ -295,9 +295,9 @@ holcv <- vect("E:/Google Drive/research/projects/utica/holc/NYUtica1936/cartodb-
 holcv2 <- project(holcv, crs(trees57R))
 holcR <- rasterize(holcv2, trees57R, field="holc_id")
 holcZ57 <- terra::zonal(x=trees57R, z=holcR, fun="sum",na.rm=TRUE)
-holcZ57$tree.area57 <- holcZ57$lc_1957*trees57R@ptr$res[1]*trees57R@ptr$res[2]
+holcZ57$tree.area57 <- holcZ57$lc_1957*res(trees57R)[1]*res(trees57R)[2]
 holcZ17 <- terra::zonal(x=trees17R, z=holcR, fun="sum",na.rm=TRUE)
-holcZ17$tree.area17 <- holcZ17$lc_2017*trees17R@ptr$res[1]*trees17R@ptr$res[2]
+holcZ17$tree.area17 <- holcZ17$lc_2017*res(trees17R)[1]*res(trees17R)[2]
 holcZones <- inner_join(holcZ17, holcZ57, by="holc_id")
 ext(trees57R)[1]
 holcC <- st_crop(holcp,xmin=356825,xmax=360870, ymin=342870,ymax=346415)
