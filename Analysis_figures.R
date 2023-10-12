@@ -927,7 +927,7 @@ lwx <- 2
 # point size
 ptcx <- 2
 
-png(paste0(dirSave, "/fig_4_current_census_panel.png"), width=14, height=5.5, units="in", res=300)
+png(paste0(dirSave, "/revisions/fig_4_current_census_panel.png"), width=14, height=5.5, units="in", res=300)
 layout(matrix(seq(1,3),ncol=3), width=lcm(rep(wd*2.54,3)),height=lcm(hd1*2.54))
 
 par(mai=c(0,0,0,0))
@@ -1038,7 +1038,7 @@ lacx <- 1.75
 # line number for legend label number
 lnacx <- 1
 
-png(paste0(dirSave, "/fig_5_current_census_maps.png"), width=15, height=15, units="in", res=300)
+png(paste0(dirSave, "/revisions/fig_5_current_census_maps.png"), width=15, height=15, units="in", res=300)
 layout(matrix(seq(1,8),ncol=2, byrow=TRUE), width=lcm(rep(wd*2.54,4)),height=lcm(c(hdl,hd1*2.54,hdl,hd1*2.54)))
 
 par(mai=c(0.25,0.25,0.25,0.25))
@@ -1057,7 +1057,7 @@ for(i in 1:(length(breaksChange)-1)){
 }
 arrows(breaksChange,0,breaksChange,0.25, code=0, lwd=lltw)
 mtext(paste0(breaksChange),at=breaksChange,side=1,line=lnacx, cex=lacx)
-mtext("Difference in % tree canopy 2017-1957", side=3, line=1, cex=llcx)
+mtext("Difference in % tree cover 2017-1957", side=3, line=1, cex=llcx)
 text(max(breaksChange)+3, 0.5, "b", cex=pllcx)
 
 
@@ -1091,7 +1091,7 @@ for(i in 1:(length(breaksT17)-1)){
 }
 arrows(breaksT57,0,breaksT57,0.25, code=0, lwd=lltw)
 mtext(paste0(breaksT57),at=breaksT57,side=1,line=lnacx, cex=lacx)
-mtext("% tree canopy cover in 1957", side=3, line=1, cex=llcx)
+mtext("% tree cover in 1957", side=3, line=1, cex=llcx)
 text(max(breaksT57)+3, 0.5, "c", cex=pllcx)
 
 
@@ -1106,7 +1106,7 @@ for(i in 1:(length(breaksT17)-1)){
 }
 arrows(breaksT17,0,breaksT17,0.25, code=0, lwd=lltw)
 mtext(paste0(breaksT17),at=breaksT17,side=1,line=lnacx, cex=lacx)
-mtext("% tree canopy cover in 2017", side=3, line=1, cex=llcx)
+mtext("% tree cover in 2017", side=3, line=1, cex=llcx)
 text(max(breaksT17)+3, 0.5, "d", cex=pllcx)
 
 
