@@ -57,6 +57,22 @@ rental <- vect("E:/Google Drive/research/projects/utica/maps_final/census/Oneida
 income.sf <-st_read("E:/Google Drive/research/projects/utica/maps_final/census/Oneida_income_2020.shp")
 rental.sf <- st_read("E:/Google Drive/research/projects/utica/maps_final/census/Oneida_rental_2020.shp")
 
+# census blocks from ACS 2017
+incomeTable <- read.csv("E:/Google Drive/research/projects/utica/census_block/income_med.csv")
+renterTable <- read.csv("E:/Google Drive/research/projects/utica/census_block/renter.csv")
+blockGeom <- st_read("E:/Google Drive/research/projects/utica/census_block/tl_2017_36_bg/tl_2017_36_bg.shp")
+incomeTable$GEOID <- gsub("1500000US","",incomeTable$GEO_ID)
+renterTable$GEOID <- gsub("1500000US","",renterTable$GEO_ID)
+
+tableIR <- full_join(incomeTable,renterTable, by=c("GEOID", "GEO_ID","NAME"))
+tableIR$med_income <- as.numeric(tableIR$Med_income)
+tableIR$renterP <- ifelse(tableIR$Total <= 50, NA,
+                          (tableIR$Renter/tableIR$Total)*100)
+blockCensusj <- inner_join(blockGeom, tableIR, by="GEOID" )
+blockCensus <- st_transform(blockCensusj, 32116)
+blockCensusTemp <-  as(blockCensus, "Spatial")
+blockCensusT <- vect(blockCensusTemp)
+
 # average summer land surface temperature from landsat collection 2 level 2
 tempC <- rast("E:/Google Drive/research/projects/utica/maps_final/dailyTemp.tif")
 tempCp <-  project(tempC,"+init=epsg:32116")
@@ -252,10 +268,97 @@ for(i in 1:nlyr(temp_cropc)){
 temp_anom <- app(temp_anom_day,fun="mean", na.rm=TRUE)
 temp_anomrs <- resample(temp_anom, trees17R, method="bilinear")
 
+
+# census blocks after suggestions from a reviewer
+
+# crop
+
+block_crop <- terra::crop(blockCensusT,overlapExt)
+block_cropR <- rasterize(block_crop,trees57R, field="GEOID")
+# caclulate zonal stats
+# to calculate total pixels covered by trees and average temp anom
+zonesT57 <- terra::zonal(x=trees57R, z=block_cropR, fun="sum",na.rm=TRUE)
+zonesT57$tree.area57 <- zonesT57$lc_1957*res(trees57R)[1]*res(trees57R)[2]
+zonesT17 <- terra::zonal(x=trees17R, z=block_cropR, fun="sum",na.rm=TRUE)
+zonesT17$tree.area17 <- zonesT17$lc_2017*res(trees17R)[1]*res(trees17R)[2]
+zonesTemp <- terra::zonal(x=temp_anomrs, z=block_cropR, fun="mean",na.rm=TRUE)
+
+# join all into table
+zonesT1 <- inner_join(zonesT57, zonesT17, by="GEOID")
+zonesT2 <- inner_join(zonesT1, zonesTemp, by="GEOID")
+
+# join back into census block table
+blockAllt <- left_join(blockCensus, zonesT2, by="GEOID")
+# crop in sf since cropping happened at zonal step in terra data
+blockAll <- st_crop(blockAllt,  xmin=356825,xmax=360870, ymin=342870,ymax=346415)
+blockAll$area <- st_area(blockAll)
+attributes(blockAll$area) <- NULL
+# filter out census blocks that were heavily cropped
+blockAll <- blockAll %>%
+  filter(area > 15000)
+# calculate % covered by tree
+blockAll$percTree57 <- (blockAll$tree.area57/blockAll$area)*100
+blockAll$percTree17 <- (blockAll$tree.area17/blockAll$area)*100
+blockAll$tree.change <- blockAll$percTree17 - blockAll$percTree57
+
+plot(blockAll$med_income, blockAll$percTree17)
+plot(blockAll$renterP, blockAll$percTree17)
+plot(blockAll$med_income, blockAll$tree.change)
+plot(blockAll$renterP, blockAll$tree.change)
+plot(blockAll$mean, blockAll$tree.change)
+plot(blockAll$mean, blockAll$percTree17)
+plot(blockAll["mean"])
+plot(blockAll["tree.change"])
+
+modTC.BI <- lm(blockAll$tree.change ~ blockAll$med_income)
+qqnorm(modTC.BI$residuals)
+qqline(modTC.BI$residuals)
+shapiro.test(modTC.BI$residuals)
+plot(na.omit(blockAll$med_income), modTC.BI$residuals)
+summary(modTC.BI)
+bptest(modTC.BI)
+
+modTC.BR <- lm(blockAll$tree.change ~ blockAll$renterP)
+qqnorm(modTC.BR$residuals)
+qqline(modTC.BR$residuals)
+shapiro.test(modTC.BR$residuals)
+plot(na.omit(blockAll$renterP), modTC.BR$residuals)
+summary(modTC.BR)
+bptest(modTC.BR)
+
+modT.BI <- lm(blockAll$percTree17 ~ blockAll$med_income)
+qqnorm(modT.BI$residuals)
+qqline(modT.BI$residuals)
+shapiro.test(modT.BI$residuals)
+plot(na.omit(blockAll$med_income), modT.BI$residuals)
+summary(modT.BI)
+bptest(modT.BI)
+
+modTC.BR <- lm(blockAll$tree.change ~ blockAll$renterP)
+qqnorm(modTC.BR$residuals)
+qqline(modTC.BR$residuals)
+shapiro.test(modTC.BR$residuals)
+plot(na.omit(blockAll$renterP), modTC.BR$residuals)
+summary(modTC.BR)
+bptest(modTC.BR)
+
+modT.BR <- lm(blockAll$percTree17 ~ blockAll$renterP)
+qqnorm(modT.BR$residuals)
+qqline(modT.BR$residuals)
+shapiro.test(modT.BR$residuals)
+plot(na.omit(blockAll$renterP), modT.BR$residuals)
+summary(modT.BR)
+bptest(modT.BR)
+
+### patterns by tract (original to analysis)
+
 # crop census tracts to just include the area
 income_crop <- terra::crop(income,overlapExt)
 plot(income_crop)
 income_cropR <- rasterize(income_crop,trees57R, field="GEOID")
+censusAll <- censusAll %>%
+  filter(area > 200000)
+
 # caclulate zonal stats
 # to calculate total pixels covered by trees and average temp anom
 zonesT57 <- terra::zonal(x=trees57R, z=income_cropR, fun="sum",na.rm=TRUE)
