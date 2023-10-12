@@ -21,7 +21,9 @@ dirSave <- "E:/Google Drive/research/projects/utica/manuscript/figures"
 #in final maps folder:
 # other will be zero, trees =1, buildings =2, pavement =3
 # 1957: utica stratified sampling (fixed from overlay error in prediction file), 128 x128
-# 1987: utica stratified sampling 128 x 128
+# 1974: utica stratified sampling 128 x 128. Note that 1987 is the label for
+# 1974 due to a typo early on. This type ended up getting carried through the project
+# due to consistency in naming.
 # 1957: utica stratified sampling 256 x 256
 
 dirI <- "E:/Google Drive/research/projects/utica/maps_final"
@@ -440,8 +442,27 @@ accuracy_table$commission_err <- 100 - accuracy_table$users
 
 # create a normalized confusion matrix
 confusion57 <- conf_57$table
+refSum57 <- apply(confusion57,1,sum)
 confusion87 <- conf_87$table
+refSum87 <- apply(confusion87,1,sum)
 confusion17 <- conf_17$table
+refSum17 <- apply(confusion17,1,sum)
+
+acc57 <- accuracy_table %>%
+  filter(year == 1957)
+acc87 <- accuracy_table %>%
+  filter(year == 1987)
+acc17 <- accuracy_table %>%
+  filter(year == 2017)
+
+SE57 <- sqrt(sum(((area57DF$area.km2^2)*((acc57$producers/100)-((acc57$producers/100)^2)))/(refSum57-1)))
+SE87 <- sqrt(sum(((area87DF$area.km2^2)*((acc87$producers/100)-((acc87$producers/100)^2)))/(refSum87-1)))
+SE17 <- sqrt(sum(((area17DF$area.km2^2)*((acc17$producers/100)-((acc17$producers/100)^2)))/(refSum17-1)))
+
+# ensure validation data sample size calculations are included here
+((1.96^2)*0.82*(1-0.82))/(.01^2)
+((1.96^2)*0.71*(1-0.71))/(.01^2)
+((1.96^2)*0.87*(1-0.87))/(.01^2)
 
 ##### save validation tables ----
 
@@ -463,6 +484,7 @@ write.table(confusion17, paste0(dirSave, "/confusion17_table.csv"), sep=",")
 
 #0=other, 1=tree,2=build,3=pavement
 colsClass <- c("#FFFFFF","#008C17","#9287A1","#3B3B3A")
+colsClass74 <- c("#FFFFFF","#FFFFFF","#9287A1","#3B3B3A")
 #coordinates for area labels
 areayoff <- c(-0.5,0.5,0.5,0.5)
 
@@ -533,13 +555,13 @@ axis(2, seq(0,8, by=2), las=2, cex.axis= cap)
 mtext("Land cover type", side=1, line=2.5, cex=lax )
 mtext(expression(paste("Area (km"^"2",")")), side=2, line=1.5, cex=lax )
 mtext("g", side=3, at=4.2,  line=llc, cex=pcx)
-### 1987 ###
-# 1987 image
+### 1974 ###
+# 1974 image
 par(mai=c(0.01,0.01,0.01,0.01))
 plot(img87_crop, col=grey(1:100/100),axes=FALSE, mar=NA, legend=FALSE,
      maxcell=ncell(img87_crop))
 mtext("b", side=3, at=360500,  line=llc, cex=pcx)
-# 1987 land cover
+# 1974 land cover
 par(mai=c(0.01,0.01,0.01,0.01))
 
 plot(lc1987_crop, breaks=c(-0.5,0.5,1.5,2.5,3.5),col=colsClass,
